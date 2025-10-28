@@ -1,7 +1,0 @@
-workspace: Tides.xcworkspace
-schemes:
-  - Tides
-targets:
-  - Tides
-
-retain_public: true

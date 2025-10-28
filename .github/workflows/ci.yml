@@ -14,20 +14,20 @@ jobs:
       matrix:
         include:
           - platform: iOS
-            destination: "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.6"
+            destination: "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.0"
             buildNumberSuffix: ".1"
           - platform: macOS
             destination: "platform=macOS"
             buildNumberSuffix: ".2"
           - platform: visionOS
-            destination: "platform=visionOS Simulator,name=Apple Vision Pro,OS=26.0"
+            destination: "platform=visionOS Simulator,name=Apple Vision Pro,OS=2.0"
             buildNumberSuffix: ".3"
 
     steps:
       - uses: actions/checkout@v5
 
       - name: Select Xcode
-        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.1.app
+        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.0.app
 
       - name: Install tuist
         run: |
@@ -102,7 +102,7 @@ jobs:
           TUIST_BUILD_NUMBER: "${{ github.run_id }}.0"
 
       - name: periphery scan
-        run: periphery scan --strict
+        run: periphery scan --workspace Tides.xcworkspace --schemes Tides --targets Tides --retain-public --strict
 
   rubocop:
     name: RuboCop
