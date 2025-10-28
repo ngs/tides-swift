@@ -1,0 +1,24 @@
+Tides bietet präzise Gezeitenvorhersagen mit einer eleganten, nativen Oberfläche für iPhone, iPad, Mac und Apple Vision Pro.
+
+INTERAKTIVE KARTE
+Erkunden Sie Gezeitenstationen weltweit mit Apple Maps. Tippen Sie auf einen beliebigen Ort, um sofort aktuelle Gezeitenbedingungen und Vorhersagen anzuzeigen. Die intuitive Kartenoberfläche macht es einfach, Gezeiteninformationen für Ihre Lieblingsstrände, Häfen und Küstengebiete zu finden.
+
+DETAILLIERTE GEZEITENDIAGRAMME
+Visualisieren Sie Gezeitenmuster mit schönen, leicht lesbaren Diagrammen auf Basis von Swift Charts. Sehen Sie Flut, Ebbe und alles dazwischen auf einen Blick. Planen Sie Ihre Aktivitäten mit Vertrauen durch präzise Vorhersagen.
+
+NAHTLOSE ERFAHRUNG
+• Native SwiftUI-Oberfläche für alle Apple-Plattformen optimiert
+• Unterstützung für iPhone, iPad, Mac und Apple Vision Pro
+• Automatische Standortspeicherung - startet dort, wo Sie aufgehört haben
+• Reverse Geocoding zur Identifizierung von Orten nach Namen
+• Sauberes, modernes Design nach Apples Designprinzipien
+
+PERFEKT FÜR
+• Angelbegeisterte bei der Planung ihres nächsten Ausflugs
+• Surfer auf der Suche nach optimalen Wellenbedingungen
+• Bootsfahrer bei der Navigation in Küstengewässern
+• Strandbesucher beim Timing ihres Besuchs
+• Fotografen beim Einfangen von Küstenszenen
+• Alle, die das Meer lieben
+
+Ob professioneller Seemann oder gelegentlicher Strandbesucher - Tides bietet die benötigten Gezeiteninformationen in einem schönen, benutzerfreundlichen Paket. Laden Sie noch heute herunter und synchronisieren Sie sich mit dem Rhythmus des Ozeans.

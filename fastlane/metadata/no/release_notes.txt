@@ -1,0 +1,3 @@
+• Ny støtte for macOS-menylinje for rask tilgang til stoppeklokke-funksjonen
+• Forbedret macOS-vindu og meny-konfigurasjon for bedre brukeropplevelse
+• Økt app-stabilitet og ytelsesoptimaliseringer

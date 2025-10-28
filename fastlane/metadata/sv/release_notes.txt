@@ -1,0 +1,3 @@
+• Nytt stöd för macOS-menyraden för snabb åtkomst till stoppurfunktionen
+• Förbättrad macOS-fönster- och menykonfiguration för bättre användarupplevelse
+• Ökad appstabilitet och prestandaoptimeringar

@@ -1,0 +1,3 @@
+• Suport nou pentru bara de meniu macOS pentru acces rapid la funcția cronometru
+• Configurare îmbunătățită a ferestrelor și meniurilor macOS pentru o experiență de utilizator mai bună
+• Stabilitate crescută a aplicației și optimizări de performanță

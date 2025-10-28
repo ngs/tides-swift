@@ -1,0 +1,24 @@
+Tides tarjoaa tarkkoja vuorovesienn usteita elegantilla natiivikäyttöliittymällä, joka on suunniteltu iPhonelle, iPadille, Macille ja Apple Vision Prolle.
+
+INTERAKTIIVINEN KARTTA
+Tutki vuorovesiasemia ympäri maailmaa Apple Mapsin avulla. Napauta mitä tahansa sijaintia nähdäksesi välittömästi nykyiset vuorovesiolosuhteet ja ennusteet. Intuitiivinen karttakäyttöliittymä tekee helpoksi löytää vuorovesitietoja suosikkirannoillesi, satamillesi ja rannikkoalueillesi.
+
+YKSITYISKOHTAISET VUOROVESIKAAVIOT
+Visualisoi vuorovesikuviot kauniilla, helposti luettavilla kaavioilla, jotka perustuvat Swift Chartsiin. Näe korkea vesi, matala vesi ja kaikki siltä väliltä yhdellä silmäyksellä. Suunnittele toimintasi luottavaisesti tarkkojen ennusteiden avulla.
+
+SAUMATON KOKEMUS
+• Natiivi SwiftUI-käyttöliittymä optimoitu kaikille Apple-alustoille
+• Tuki iPhonelle, iPadille, Macille ja Apple Vision Prolle
+• Automaattinen sijaintimuisti - jatkaa siitä mihin jäit
+• Käänteinen geokoodaus sijaintien tunnistamiseksi nimen perusteella
+• Puhdas, moderni muotoilu Applen suunnitteluperiaatteiden mukaisesti
+
+TÄYDELLINEN
+• Kalastusharrastajille, jotka suunnittelevat seuraavaa retkeään
+• Surffaajille, jotka etsivät optimaalisia aalto-olosuhteita
+• Veneilijöille rannikkovesillä
+• Rannan kävijöille, jotka suunnittelevat käyntiään
+• Valokuvaajille, jotka tallentavat rannikkomaisemia
+• Kaikille, jotka rakastavat merta
+
+Olitpa ammattimainen merimies tai satunnainen rannan kävijä, Tides tarjoaa tarvitsemasi vuorovesitiedot kauniissa, helppokäyttöisessä paketissa. Lataa tänään ja synkronoi meren rytmin kanssa.

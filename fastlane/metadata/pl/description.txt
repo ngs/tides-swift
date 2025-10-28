@@ -1,0 +1,24 @@
+Tides oferuje dokładne prognozy przypływów z eleganckim natywnym interfejsem zaprojektowanym dla iPhone, iPad, Mac i Apple Vision Pro.
+
+INTERAKTYWNA MAPA
+Odkrywaj stacje przypływów na całym świecie dzięki Apple Maps. Dotknij dowolnego miejsca, aby natychmiast zobaczyć bieżące warunki przypływów i prognozy. Intuicyjny interfejs mapy ułatwia znalezienie informacji o przypływach dla Twoich ulubionych plaż, portów i obszarów przybrzeżnych.
+
+SZCZEGÓŁOWE WYKRESY PRZYPŁYWÓW
+Wizualizuj wzorce przypływów za pomocą pięknych, łatwych do odczytania wykresów opartych na Swift Charts. Zobacz przypływ, odpływ i wszystko pomiędzy na pierwszy rzut oka. Planuj swoje działania z pewnością, korzystając z dokładnych prognoz.
+
+BEZPROBLEMOWE DOŚWIADCZENIE
+• Natywny interfejs SwiftUI zoptymalizowany dla wszystkich platform Apple
+• Wsparcie dla iPhone, iPad, Mac i Apple Vision Pro
+• Automatyczna pamięć lokalizacji - kontynuuje tam, gdzie skończyłeś
+• Odwrotne geokodowanie do identyfikacji lokalizacji po nazwie
+• Czysty, nowoczesny design zgodny z zasadami projektowania Apple
+
+IDEALNY DLA
+• Entuzjastów wędkarstwa planujących kolejną wycieczkę
+• Surferów szukających optymalnych warunków fal
+• Żeglarzy w wodach przybrzeżnych
+• Odwiedzających plażę planujących wizytę
+• Fotografów uwieczniających sceny przybrzeżne
+• Wszystkich, którzy kochają ocean
+
+Bez względu na to, czy jesteś profesjonalnym marynarzem, czy okazjonalnym gościem plaży, Tides dostarcza potrzebnych informacji o przypływach w pięknym, łatwym w użyciu pakiecie. Pobierz dziś i zsynchronizuj się z rytmem oceanu.

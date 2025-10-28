@@ -1,0 +1,24 @@
+Tides offre des prévisions de marée précises avec une interface native élégante conçue pour iPhone, iPad, Mac et Apple Vision Pro.
+
+CARTE INTERACTIVE
+Explorez les stations de marée du monde entier avec Apple Maps. Appuyez sur n'importe quel endroit pour afficher instantanément les conditions de marée actuelles et les prévisions. L'interface cartographique intuitive facilite la recherche d'informations sur les marées pour vos plages, ports et zones côtières préférés.
+
+GRAPHIQUES DE MARÉE DÉTAILLÉS
+Visualisez les modèles de marée avec de magnifiques graphiques faciles à lire basés sur Swift Charts. Voyez les marées hautes, basses et tout ce qui se trouve entre les deux en un coup d'œil. Planifiez vos activités en toute confiance grâce à des prévisions précises.
+
+EXPÉRIENCE FLUIDE
+• Interface SwiftUI native optimisée pour toutes les plates-formes Apple
+• Support pour iPhone, iPad, Mac et Apple Vision Pro
+• Mémorisation automatique de la position - reprend où vous vous êtes arrêté
+• Géocodage inverse pour identifier les lieux par leur nom
+• Design épuré et moderne suivant les principes de conception d'Apple
+
+PARFAIT POUR
+• Les passionnés de pêche planifiant leur prochaine sortie
+• Les surfeurs recherchant des conditions de vagues optimales
+• Les plaisanciers naviguant dans les eaux côtières
+• Les visiteurs de plage planifiant leur visite
+• Les photographes capturant des scènes côtières
+• Tous ceux qui aiment l'océan
+
+Que vous soyez marin professionnel ou visiteur occasionnel de la plage, Tides fournit les informations sur les marées dont vous avez besoin dans un package magnifique et facile à utiliser. Téléchargez dès aujourd'hui et synchronisez-vous avec le rythme de l'océan.

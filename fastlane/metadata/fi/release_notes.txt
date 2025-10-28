@@ -1,0 +1,3 @@
+• Uusi macOS-valikkorivin tuki nopeaa pääsyä sekuntikello-toimintoon
+• Parannettu macOS-ikkunan ja valikon määrittely paremman käyttökokemuksen saavuttamiseksi
+• Lisääntynyt sovelluksen vakaus ja suorituskyvyn optimoinnit

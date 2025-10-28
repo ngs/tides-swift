@@ -1,0 +1,3 @@
+• Nieuwe ondersteuning voor de macOS-menubalk voor snelle toegang tot de stopwatchfunctie
+• Verbeterde macOS-venster- en menuconfiguratie voor een betere gebruikerservaring
+• Verbeterde app-stabiliteit en prestatieoptimalisaties

@@ -1,0 +1,3 @@
+• Új macOS menüsáv támogatás a stopper funkció gyors eléréséhez
+• Továbbfejlesztett macOS ablak és menü konfiguráció jobb felhasználói élményért
+• Megnövelt alkalmazás stabilitás és teljesítmény optimalizálások

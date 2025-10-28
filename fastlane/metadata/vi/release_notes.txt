@@ -1,0 +1,3 @@
+• Hỗ trợ thanh menu macOS mới để truy cập nhanh chức năng đồng hồ bấm giờ
+• Cải thiện cấu hình cửa sổ và menu macOS để mang lại trải nghiệm người dùng tốt hơn
+• Nâng cao độ ổn định ứng dụng và tối ưu hóa hiệu suất

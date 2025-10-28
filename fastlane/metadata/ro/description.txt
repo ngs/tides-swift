@@ -1,0 +1,24 @@
+Tides oferă previziuni precise ale mareelor cu o interfață nativă elegantă concepută pentru iPhone, iPad, Mac și Apple Vision Pro.
+
+HARTĂ INTERACTIVĂ
+Explorează stațiile de maree din întreaga lume cu Apple Maps. Atinge orice locație pentru a vizualiza instantaneu condițiile actuale ale mareelor și previziunile. Interfața de hartă intuitivă face ușoară găsirea informațiilor despre maree pentru plajele, porturile și zonele de coastă preferate.
+
+GRAFICE DETALIATE ALE MAREELOR
+Vizualizează modelele mareelor cu grafice frumoase, ușor de citit, bazate pe Swift Charts. Vezi flux, reflux și tot ceea ce se află între ele dintr-o privire. Planifică-ți activitățile cu încredere folosind previziuni precise.
+
+EXPERIENȚĂ PERFECTĂ
+• Interfață nativă SwiftUI optimizată pentru toate platformele Apple
+• Suport pentru iPhone, iPad, Mac și Apple Vision Pro
+• Memorie automată a locației - continuă de unde ai rămas
+• Geocodare inversă pentru identificarea locațiilor după nume
+• Design curat, modern, urmând principiile de design Apple
+
+PERFECT PENTRU
+• Pasionați de pescuit care își planifică următoarea călătorie
+• Surferi care caută condiții optime de valuri
+• Navigatori în apele de coastă
+• Vizitatori de plajă care își planifică vizita
+• Fotografi care surprind scene de coastă
+• Oricine iubește oceanul
+
+Fie că ești marinar profesionist sau vizitator ocazional de plajă, Tides oferă informațiile despre maree de care ai nevoie într-un pachet frumos, ușor de folosit. Descarcă astăzi și sincronizează-te cu ritmul oceanului.

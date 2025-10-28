@@ -1,0 +1,24 @@
+Tides ponúka presné predpovede prílivu s elegantným natívnym rozhraním navrhnutým pre iPhone, iPad, Mac a Apple Vision Pro.
+
+INTERAKTÍVNA MAPA
+Preskúmajte stanice prílivu po celom svete pomocou Apple Maps. Klepnite na ľubovoľné miesto a okamžite zobrazte aktuálne podmienky prílivu a predpovede. Intuitívne mapové rozhranie uľahčuje nájdenie informácií o prílive pre vaše obľúbené pláže, prístavy a pobrežné oblasti.
+
+PODROBNÉ GRAFY PRÍLIVU
+Vizualizujte vzory prílivu pomocou krásnych, ľahko čitateľných grafov založených na Swift Charts. Vidieť príliv, odliv a všetko medzi tým na prvý pohľad. Plánujte svoje aktivity s istotou pomocou presných predpovedí.
+
+BEZPROBLÉMOVÝ ZÁŽITOK
+• Natívne rozhranie SwiftUI optimalizované pre všetky platformy Apple
+• Podpora pre iPhone, iPad, Mac a Apple Vision Pro
+• Automatická pamäť polohy - pokračuje tam, kde ste skončili
+• Reverzné geokódovanie pre identifikáciu miest podľa názvu
+• Čistý, moderný dizajn podľa zásad dizajnu Apple
+
+IDEÁLNE PRE
+• Nadšencov rybárstva plánujúcich svoj ďalší výlet
+• Surférov hľadajúcich optimálne podmienky vĺn
+• Plavvcov v pobrežných vodách
+• Návštevníkov pláží plánujúcich svoju návštevu
+• Fotografov zachytávajúcich pobrežné scény
+• Každého, kto miluje oceán
+
+Či už ste profesionálny námorník alebo príležitostný návštevník pláže, Tides poskytuje informácie o prílive, ktoré potrebujete, v krásnom, ľahko použiteľnom balení. Stiahnite si dnes a synchronizujte sa s rytmom oceánu.

@@ -1,0 +1,24 @@
+Tides nudi precizne prognoze plime s elegantnim izvornim sučeljem dizajniranim za iPhone, iPad, Mac i Apple Vision Pro.
+
+INTERAKTIVNA KARTA
+Istražite postaje za plimu diljem svijeta s Apple Maps. Dodirnite bilo koju lokaciju za trenutni prikaz trenutnih uvjeta plime i prognoze. Intuitivno sučelje karte olakšava pronalaženje informacija o plimi za vaše omiljene plaže, luke i obalne područja.
+
+DETALJNI GRAFIKONI PLIME
+Vizualizirajte obrasce plime s prekrasnim, lako čitljivim grafikonima temeljenim na Swift Charts. Pogledajte visoku plimu, oseku i sve između na prvi pogled. Planirajte svoje aktivnosti s povjerenjem koristeći precizne prognoze.
+
+BESPRIJEKORNO ISKUSTVO
+• Izvorno SwiftUI sučelje optimizirano za sve Apple platforme
+• Podrška za iPhone, iPad, Mac i Apple Vision Pro
+• Automatska memorija lokacije - nastavlja tamo gdje ste stali
+• Obrnuto geokodiranje za identifikaciju lokacija po imenu
+• Čist, moderan dizajn prema Apple dizajn principima
+
+SAVRŠENO ZA
+• Ljubitelje ribolova koji planiraju svoj sljedeći put
+• Surfere koji traže optimalne uvjete valova
+• Nautičare u obalnim vodama
+• Posjetitelje plaža koji planiraju svoj posjet
+• Fotografe koji hvataju obalne scene
+• Sve koji vole ocean
+
+Bilo da ste profesionalni pomorac ili povremeni posjetitelj plaže, Tides pruža informacije o plimi koje su vam potrebne u prekrasnom, jednostavnom za korištenje paketu. Preuzmite danas i sinkronizirajte se s ritmom oceana.

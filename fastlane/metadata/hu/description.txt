@@ -1,0 +1,24 @@
+A Tides pontos árapály előrejelzéseket kínál elegáns natív felülettel, amely iPhone, iPad, Mac és Apple Vision Pro készülékekhez készült.
+
+INTERAKTÍV TÉRKÉP
+Fedezze fel az árapály állomásokat szerte a világon az Apple Maps segítségével. Érintsen meg bármely helyet az aktuális árapály körülmények és előrejelzések azonnali megtekintéséhez. Az intuitív térképfelület megkönnyíti az árapály információk megtalálását kedvenc strandjaihoz, kikötőihez és part menti területeihez.
+
+RÉSZLETES ÁRAPÁLY DIAGRAMOK
+Jelenítse meg az árapály mintákat gyönyörű, könnyen olvasható diagramokkal a Swift Charts alapján. Lássa a dagályt, apályt és mindent közöttük egy pillantásra. Tervezze meg tevékenységeit magabiztosan pontos előrejelzések használatával.
+
+ZÖKKENŐMENTES ÉLMÉNY
+• Natív SwiftUI felület minden Apple platformra optimalizálva
+• Támogatás iPhone, iPad, Mac és Apple Vision Pro készülékekhez
+• Automatikus helymemória - ott folytatja, ahol abbahagyta
+• Fordított geokódolás a helyek név szerinti azonosításához
+• Tiszta, modern dizájn az Apple tervezési elveit követve
+
+TÖKÉLETES
+• Horgász rajongóknak, akik tervezik következő kirándulásuk at
+• Szörfösöknek, akik optimális hullám körülményeket keresnek
+• Csónakázóknak parti vizekben
+• Strand látogatóknak, akik tervezik látogatásukat
+• Fotósoknak, akik part menti jeleneteket rögzítenek
+• Mindenkinek, aki szereti az óceánt
+
+Legyen akár profi tengerész vagy alkalmankénti strand látogató, a Tides a szükséges árapály információkat biztosítja gyönyörű, könnyen használható csomagban. Töltse le ma és szinkronizálódjon az óceán ritmusával.

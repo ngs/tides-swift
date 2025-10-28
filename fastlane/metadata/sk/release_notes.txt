@@ -1,0 +1,3 @@
+• Nová podpora panela ponúk macOS pre rýchly prístup k funkcii stopiek
+• Vylepšená konfigurácia okien a ponúk macOS pre lepší používateľský zážitok
+• Zvýšená stabilita aplikácie a optimalizácie výkonu

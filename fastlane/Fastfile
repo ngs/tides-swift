@@ -1,0 +1,290 @@
+# frozen_string_literal: true
+
+default_platform(:ios)
+
+platform :ios do
+  desc 'Match App Store Provisioning Profiles'
+  lane :release_match do
+    xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
+    match type: 'appstore', app_identifier: 'io.ngs.Tides', readonly: ENV['MATCH_READONLY'] == 'true'
+  end
+
+  desc 'Build app for release'
+  lane :release_build do
+    xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
+    release_match
+
+    # Get the provisioning profile name from match
+    profile_name = ENV['sigh_io.ngs.Tides_appstore_profile-name'] || 'match AppStore io.ngs.Tides'
+    identifier = 'io.ngs.Tides'
+
+    update_code_signing_settings(
+      profile_name: profile_name,
+      bundle_identifier: identifier,
+      use_automatic_signing: false,
+      code_sign_identity: 'Apple Distribution',
+      targets: ['Tides'],
+      build_configurations: %w[Release],
+      path: 'Tides.xcodeproj'
+    )
+
+    # Build the app and create the archive
+    build_app(
+      export_method: 'app-store',
+      scheme: 'Tides',
+      destination: 'generic/platform=iOS',
+      output_directory: './build/release/ios',
+      output_name: 'Tides-iOS',
+      sdk: 'iphoneos'
+    )
+  end
+
+  desc 'Publish app to App Store'
+  lane :release_upload do
+    setup_app_store_connect_api_key
+
+    pilot(
+      skip_waiting_for_build_processing: true,
+      ipa: './build/release/ios/Tides-iOS.ipa'
+    )
+  end
+
+  desc 'Update App Store metadata'
+  lane :deliver_metadata do
+    setup_app_store_connect_api_key
+
+    deliver(
+      platform: 'ios',
+      force: true,
+      skip_screenshots: true,
+      skip_binary_upload: true,
+      run_precheck_before_submit: false,
+      metadata_path: './fastlane/metadata',
+      app_identifier: 'io.ngs.Tides'
+    )
+  end
+
+  desc 'Update App Store screenshots'
+  lane :deliver_screenshots do
+    setup_app_store_connect_api_key
+
+    deliver(
+      platform: 'ios',
+      force: true,
+      skip_metadata: true,
+      skip_binary_upload: true,
+      run_precheck_before_submit: false,
+      overwrite_screenshots: true,
+      screenshots_path: './fastlane/screenshots/ios',
+      app_identifier: 'io.ngs.Tides'
+    )
+  end
+end
+
+platform :mac do
+  desc 'Create keychain'
+  lane :create_ci_keychain do
+    create_keychain(
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600
+    )
+  end
+
+  desc 'Match App Store Provisioning Profiles for macOS'
+  lane :release_match do
+    xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
+    # Get Application Distribution certificate and provisioning profile
+    match(
+      type: 'appstore',
+      app_identifier: 'io.ngs.Tides',
+      platform: 'macos',
+      readonly: ENV['MATCH_READONLY'] == 'true'
+    )
+    # Get Mac Installer Distribution certificate for PKG creation
+    match(
+      type: 'appstore',
+      app_identifier: 'io.ngs.Tides',
+      platform: 'macos',
+      additional_cert_types: 'mac_installer_distribution',
+      readonly: ENV['MATCH_READONLY'] == 'true'
+    )
+  end
+
+  desc 'Build app for macOS release'
+  lane :release_build do
+    xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
+    release_match
+
+    # Get the provisioning profile name from match
+    profile_name = ENV['sigh_io.ngs.Tides_appstore_macos_profile-name'] || 'match AppStore io.ngs.Tides macos'
+
+    update_code_signing_settings(
+      profile_name: profile_name,
+      bundle_identifier: 'io.ngs.Tides',
+      use_automatic_signing: false,
+      code_sign_identity: 'Apple Distribution',
+      targets: ['Tides'],
+      build_configurations: %w[Release],
+      path: 'Tides.xcodeproj'
+    )
+    build_app(
+      export_method: 'app-store',
+      scheme: 'Tides',
+      destination: 'generic/platform=macOS',
+      output_directory: './build/release/mac',
+      output_name: 'Tides-macOS',
+      sdk: 'macosx'
+    )
+  end
+
+  desc 'Publish macOS app to App Store'
+  lane :release_upload do
+    setup_app_store_connect_api_key
+
+    # Upload macOS app to App Store Connect
+    upload_to_app_store(
+      app_identifier: 'io.ngs.Tides',
+      platform: 'osx',
+      pkg: './build/release/mac/Tides-macOS.pkg',
+      skip_screenshots: true,
+      skip_metadata: true,
+      force: true,
+      run_precheck_before_submit: false
+    )
+  end
+
+  desc 'Update App Store metadata'
+  lane :deliver_metadata do
+    setup_app_store_connect_api_key
+
+    deliver(
+      platform: 'osx',
+      force: true,
+      skip_screenshots: true,
+      skip_binary_upload: true,
+      run_precheck_before_submit: false,
+      metadata_path: './fastlane/metadata',
+      app_identifier: 'io.ngs.Tides'
+    )
+  end
+
+  desc 'Update App Store screenshots'
+  lane :deliver_screenshots do
+    setup_app_store_connect_api_key
+
+    deliver(
+      platform: 'osx',
+      force: true,
+      skip_metadata: true,
+      skip_binary_upload: true,
+      run_precheck_before_submit: false,
+      overwrite_screenshots: true,
+      screenshots_path: './fastlane/screenshots/mac',
+      app_identifier: 'io.ngs.Tides'
+    )
+  end
+end
+
+# visionOS uses iOS platform but with different scheme
+platform :visionos do
+  desc 'Match App Store Provisioning Profiles for visionOS (alias to iOS)'
+  lane :release_match do
+    # visionOS uses iOS provisioning profiles, so just call the iOS lane
+    Fastlane::LaneManager.cruise_lane('ios', 'release_match')
+  end
+
+  desc 'Build app for visionOS release'
+  lane :release_build do
+    xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
+    release_match
+
+    # Get the provisioning profile name from match (visionOS uses iOS profiles)
+    profile_name = ENV['sigh_io.ngs.Tides_appstore_profile-name'] || 'match AppStore io.ngs.Tides'
+
+    update_code_signing_settings(
+      profile_name: profile_name,
+      bundle_identifier: 'io.ngs.Tides',
+      use_automatic_signing: false,
+      code_sign_identity: 'Apple Distribution',
+      targets: ['Tides'],
+      build_configurations: %w[Release],
+      path: 'Tides.xcodeproj'
+    )
+
+    # Load monkey patches
+    require_relative 'patches/gym_module_patch'
+
+    build_app(
+      export_method: 'app-store',
+      scheme: 'Tides',
+      destination: 'generic/platform=visionOS',
+      output_directory: './build/release/visionos',
+      output_name: 'Tides-visionOS',
+      sdk: 'xros'
+    )
+  end
+
+  desc 'Publish visionOS app to App Store'
+  lane :release_upload do
+    setup_app_store_connect_api_key
+
+    pilot(
+      skip_waiting_for_build_processing: true,
+      ipa: './build/release/visionos/Tides-visionOS.ipa'
+    )
+  end
+
+  desc 'Update App Store metadata'
+  lane :deliver_metadata do
+    setup_app_store_connect_api_key
+
+    deliver(
+      platform: 'xros',
+      force: true,
+      skip_screenshots: true,
+      skip_binary_upload: true,
+      run_precheck_before_submit: false,
+      metadata_path: './fastlane/metadata',
+      app_identifier: 'io.ngs.Tides'
+    )
+  end
+
+  desc 'Update App Store screenshots'
+  lane :deliver_screenshots do
+    UI.error 'Deliver screenshots for visionOS is not yet supported.'
+    # setup_app_store_connect_api_key
+
+    # deliver(
+    #   platform: 'xros',
+    #   force: true,
+    #   skip_metadata: true,
+    #   skip_binary_upload: true,
+    #   run_precheck_before_submit: false,
+    #   overwrite_screenshots: true,
+    #   screenshots_path: './fastlane/screenshots/visionos',
+    #   app_identifier: 'io.ngs.Tides'
+    # )
+  end
+end
+
+desc 'Setup AppStore Connect API Key'
+lane :setup_app_store_connect_api_key do
+  return unless ENV['APP_STORE_CONNECT_API_KEY_KEY_ID'] && ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID'] && ENV['APP_STORE_CONNECT_API_KEY_KEY']
+
+  app_store_connect_api_key(
+    key_id: ENV['APP_STORE_CONNECT_API_KEY_KEY_ID'],
+    issuer_id: ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+    key_content: ENV['APP_STORE_CONNECT_API_KEY_KEY'],
+    is_key_content_base64: ENV['APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64'] == 'true'
+  )
+end
+
+desc 'Create keychain'
+lane :create_ci_keychain do
+  create_keychain(
+    default_keychain: true,
+    unlock: true,
+    timeout: 3600
+  )
+end

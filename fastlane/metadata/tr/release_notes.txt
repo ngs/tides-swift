@@ -1,0 +1,3 @@
+• Kronometre işlevine hızlı erişim için yeni macOS menü çubuğu desteği
+• Daha iyi kullanıcı deneyimi için geliştirilmiş macOS pencere ve menü yapılandırması
+• Artırılmış uygulama kararlılığı ve performans optimizasyonları

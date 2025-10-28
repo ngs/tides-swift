@@ -1,0 +1,3 @@
+• Ny understøttelse af macOS-menulinjen for hurtig adgang til stopur-funktionen
+• Forbedret macOS-vindue og menu-konfiguration for bedre brugeroplevelse
+• Øget app-stabilitet og ydelsesoptimeringer

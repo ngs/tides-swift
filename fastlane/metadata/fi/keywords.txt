@@ -1,0 +1,1 @@
+vuorovesi,meri,surffaus,kalastus,vene,rannikko,ranta,satama,purjehdus

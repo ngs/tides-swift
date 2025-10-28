@@ -1,0 +1,24 @@
+Tides erbjuder exakta tidvattenprognoser med ett elegant, inbyggt gränssnitt designat för iPhone, iPad, Mac och Apple Vision Pro.
+
+INTERAKTIV KARTA
+Utforska tidvattenstationer över hela världen med Apple Maps. Tryck på valfri plats för att omedelbart se aktuella tidvattenförhållanden och prognoser. Det intuitiva kartgränssnittet gör det enkelt att hitta tidvatteninformation för dina favorit stränder, hamnar och kustområden.
+
+DETALJERADE TIDVATTENDIAGRAM
+Visualisera tidvattenmönster med vackra, lättlästa diagram baserade på Swift Charts. Se högvatten, lågvatten och allt däremellan vid ett ögonkast. Planera dina aktiviteter med förtroende med exakta prognoser.
+
+SÖMLÖS UPPLEVELSE
+• Inbyggt SwiftUI-gränssnitt optimerat för alla Apple-plattformar
+• Stöd för iPhone, iPad, Mac och Apple Vision Pro
+• Automatiskt platsminne - fortsätter där du slutade
+• Omvänd geokodning för att identifiera platser efter namn
+• Rent, modernt design enligt Apples designprinciper
+
+PERFEKT FÖR
+• Fiskeentusiaster som planerar sin nästa resa
+• Surfare som letar efter optimala vågförhållanden
+• Båtförare i kustvatten
+• Strandbesökare som planerar sitt besök
+• Fotografer som fångar kustscener
+• Alla som älskar havet
+
+Oavsett om du är en professionell sjöman eller en tillfällig strandbesökare, tillhandahåller Tides den tidvatteninformation du behöver i ett vackert, lättanvänt paket. Ladda ner idag och synkronisera med havets rytm.

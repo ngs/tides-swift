@@ -1,0 +1,3 @@
+• Nuevo soporte para la barra de menú de macOS para acceso rápido al cronómetro
+• Configuración mejorada de ventanas y menús de macOS para una mejor experiencia del usuario
+• Mejoras en la estabilidad de la app y optimizaciones de rendimiento

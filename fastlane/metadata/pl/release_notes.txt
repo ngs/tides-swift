@@ -1,0 +1,3 @@
+• Nowe wsparcie paska menu macOS dla szybkiego dostępu do funkcji stopera
+• Ulepszona konfiguracja okien i menu macOS dla lepszego doświadczenia użytkownika
+• Zwiększona stabilność aplikacji i optymalizacje wydajności

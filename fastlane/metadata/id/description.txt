@@ -1,0 +1,24 @@
+Tides menawarkan prediksi pasang surut yang akurat dengan antarmuka asli yang elegan yang dirancang untuk iPhone, iPad, Mac, dan Apple Vision Pro.
+
+PETA INTERAKTIF
+Jelajahi stasiun pasang surut di seluruh dunia dengan Apple Maps. Ketuk lokasi mana pun untuk segera melihat kondisi pasang surut saat ini dan prediksi. Antarmuka peta intuitif memudahkan menemukan informasi pasang surut untuk pantai, pelabuhan, dan area pesisir favorit Anda.
+
+GRAFIK PASANG SURUT TERPERINCI
+Visualisasikan pola pasang surut dengan grafik yang indah dan mudah dibaca berdasarkan Swift Charts. Lihat pasang naik, pasang surut, dan segalanya di antaranya sekilas. Rencanakan aktivitas Anda dengan percaya diri menggunakan prediksi yang akurat.
+
+PENGALAMAN MULUS
+• Antarmuka SwiftUI asli dioptimalkan untuk semua platform Apple
+• Dukungan untuk iPhone, iPad, Mac, dan Apple Vision Pro
+• Memori lokasi otomatis - melanjutkan dari tempat Anda berhenti
+• Geocoding terbalik untuk mengidentifikasi lokasi berdasarkan nama
+• Desain yang bersih dan modern mengikuti prinsip desain Apple
+
+SEMPURNA UNTUK
+• Penggemar memancing yang merencanakan perjalanan berikutnya
+• Peselancar yang mencari kondisi ombak optimal
+• Pelaut di perairan pesisir
+• Pengunjung pantai yang merencanakan kunjungan mereka
+• Fotografer yang menangkap pemandangan pesisir
+• Siapa pun yang mencintai samudra
+
+Baik Anda pelaut profesional atau pengunjung pantai santai, Tides menyediakan informasi pasang surut yang Anda butuhkan dalam paket yang indah dan mudah digunakan. Unduh hari ini dan sinkronkan dengan ritme samudra.

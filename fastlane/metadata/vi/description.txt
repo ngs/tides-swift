@@ -1,0 +1,24 @@
+Tides cung cấp dự báo thủy triều chính xác với giao diện gốc tao nhã được thiết kế cho iPhone, iPad, Mac và Apple Vision Pro.
+
+BẢN ĐỒ TƯƠNG TÁC
+Khám phá các trạm thủy triều trên khắp thế giới với Apple Maps. Chạm vào bất kỳ vị trí nào để ngay lập tức xem các điều kiện thủy triều hiện tại và dự báo. Giao diện bản đồ trực quan giúp dễ dàng tìm thấy thông tin thủy triều cho các bãi biển, cảng và khu vực ven biển yêu thích của bạn.
+
+BIỂU ĐỒ THỦY TRIỀU CHI TIẾT
+Trực quan hóa các mẫu thủy triều với biểu đồ đẹp, dễ đọc dựa trên Swift Charts. Xem thủy triều cao, thấp và mọi thứ ở giữa trong nháy mắt. Lên kế hoạch cho các hoạt động của bạn một cách tự tin bằng cách sử dụng dự báo chính xác.
+
+TRẢI NGHIỆM LIỀN MẠCH
+• Giao diện SwiftUI gốc được tối ưu hóa cho tất cả các nền tảng Apple
+• Hỗ trợ iPhone, iPad, Mac và Apple Vision Pro
+• Bộ nhớ vị trí tự động - tiếp tục từ nơi bạn dừng lại
+• Mã hóa địa lý ngược để xác định vị trí theo tên
+• Thiết kế sạch sẽ, hiện đại theo các nguyên tắc thiết kế của Apple
+
+HOÀN HẢO CHO
+• Những người đam mê câu cá đang lên kế hoạch cho chuyến đi tiếp theo
+• Người lướt sóng tìm kiếm điều kiện sóng tối ưu
+• Thuyền viên ở vùng nước ven biển
+• Du khách bãi biển đang lên kế hoạch cho chuyến thăm của họ
+• Nhiếp ảnh gia chụp cảnh ven biển
+• Bất kỳ ai yêu thích đại dương
+
+Cho dù bạn là thủy thủ chuyên nghiệp hay du khách bãi biển bình thường, Tides cung cấp thông tin thủy triều mà bạn cần trong một gói đẹp, dễ sử dụng. Tải xuống ngay hôm nay và đồng bộ với nhịp điệu của đại dương.

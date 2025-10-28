@@ -1,0 +1,24 @@
+Tides brings accurate tide predictions to your fingertips with an elegant, native interface designed for iPhone, iPad, Mac, and Apple Vision Pro.
+
+INTERACTIVE MAP
+Explore tide stations around the world using Apple Maps. Tap any location to instantly view current tide conditions and forecasts. The intuitive map interface makes it easy to find tide information for your favorite beaches, harbors, and coastal areas.
+
+DETAILED TIDE CHARTS
+Visualize tide patterns with beautiful, easy-to-read charts powered by Swift Charts. See high tides, low tides, and everything in between at a glance. Plan your activities with confidence using accurate predictions.
+
+SEAMLESS EXPERIENCE
+• Native SwiftUI interface optimized for all Apple platforms
+• Support for iPhone, iPad, Mac, and Apple Vision Pro
+• Automatic location memory - picks up where you left off
+• Reverse geocoding to identify locations by name
+• Clean, modern design that follows Apple's design principles
+
+PERFECT FOR
+• Fishing enthusiasts planning their next trip
+• Surfers looking for optimal wave conditions
+• Boaters navigating coastal waters
+• Beachgoers timing their visit
+• Photographers capturing coastal scenes
+• Anyone who loves the ocean
+
+Whether you're a professional mariner or a casual beach visitor, Tides provides the tide information you need in a beautiful, easy-to-use package. Download today and stay in sync with the ocean's rhythm.

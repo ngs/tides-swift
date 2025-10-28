@@ -1,0 +1,3 @@
+• Neue Unterstützung für die macOS-Menüleiste für schnellen Zugriff auf die Stoppuhr-Funktion
+• Verbesserte macOS-Fenster- und Menükonfiguration für bessere Benutzererfahrung
+• Erhöhte App-Stabilität und Leistungsoptimierungen

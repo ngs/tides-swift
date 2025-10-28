@@ -1,0 +1,3 @@
+• Sokongan bar menu macOS baharu untuk akses pantas kepada fungsi stopwatch
+• Konfigurasi tetingkap dan menu macOS yang dipertingkatkan untuk pengalaman pengguna yang lebih baik
+• Peningkatan kestabilan aplikasi dan pengoptimuman prestasi

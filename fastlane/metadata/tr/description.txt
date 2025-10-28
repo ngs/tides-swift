@@ -1,0 +1,24 @@
+Tides, iPhone, iPad, Mac ve Apple Vision Pro için tasarlanmış zarif, yerel arayüzle doğru gelgit tahminleri sunar.
+
+İNTERAKTİF HARİTA
+Apple Maps ile dünya çapında gelgit istasyonlarını keşfedin. Mevcut gelgit koşullarını ve tahminleri anında görüntülemek için herhangi bir konuma dokunun. Sezgisel harita arayüzü, favori plajlarınız, limanlarınız ve kıyı bölgeleriniz için gelgit bilgilerini bulmayı kolaylaştırır.
+
+DETAYLI GELGİT GRAFİKLERİ
+Swift Charts tabanlı güzel, kolay okunabilir grafiklerle gelgit desenlerini görselleştirin. Yüksek gelgit, alçak gelgit ve aradaki her şeyi bir bakışta görün. Doğru tahminlerle etkinliklerinizi güvenle planlayın.
+
+SORUNSUZ DENEYİM
+• Tüm Apple platformları için optimize edilmiş yerel SwiftUI arayüzü
+• iPhone, iPad, Mac ve Apple Vision Pro desteği
+• Otomatik konum hafızası - kaldığınız yerden devam eder
+• Konumları ada göre tanımlamak için ters coğrafi kodlama
+• Apple'ın tasarım ilkelerini takip eden temiz, modern tasarım
+
+ŞUNLAR İÇİN MÜKEMMEL
+• Bir sonraki gezilerini planlayan balıkçılık meraklıları
+• Optimal dalga koşulları arayan sörfçüler
+• Kıyı sularında gezinen tekneciler
+• Ziyaretlerini planlayan plaj ziyaretçileri
+• Kıyı manzaralarını yakalayan fotoğrafçılar
+• Okyanusu seven herkes
+
+İster profesyonel bir denizci ister gündelik bir plaj ziyaretçisi olun, Tides ihtiyacınız olan gelgit bilgilerini güzel, kullanımı kolay bir pakette sunar. Bugün indirin ve okyanusun ritmiyle senkronize olun.
