@@ -1,6 +1,4 @@
 import SwiftUI
-import TidesCore
-import TidesPlatform
 
 /// Main content view that combines map and tide graph
 public struct ContentView: View {

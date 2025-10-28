@@ -18,7 +18,7 @@ let project = Project(
             "CURRENT_PROJECT_VERSION": .string(buildNumber),
             "MARKETING_VERSION": .string(version),
             "DEVELOPMENT_TEAM": .string("3Y8APYUG2G"),
-            "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO",
+            "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO"
         ]),
     targets: [
         .target(
@@ -39,10 +39,10 @@ let project = Project(
                 "LSApplicationCategoryType": .string("public.app-category.weather"),
                 "UILaunchScreen": [
                     "UIColorName": "LaunchScreenBackground",
-                    "UIImageRespectsSafeAreaInsets": true,
+                    "UIImageRespectsSafeAreaInsets": true
                 ],
                 "NSLocationWhenInUseUsageDescription": .string(
-                    "We need your location to show tide predictions for your area."),
+                    "We need your location to show tide predictions for your area.")
             ]),
             sources: ["Sources/App/**"],
             resources: ["Resources/**"],
@@ -57,7 +57,7 @@ let project = Project(
             dependencies: [
                 .package(product: "TidesCore"),
                 .package(product: "TidesPlatform"),
-                .package(product: "TidesUI"),
+                .package(product: "TidesUI")
             ]
         ),
         .target(
@@ -74,7 +74,7 @@ let project = Project(
             dependencies: [
                 .target(name: "Tides"),
                 .package(product: "TidesCore"),
-                .package(product: "TidesUI"),
+                .package(product: "TidesUI")
             ]
         ),
     ],

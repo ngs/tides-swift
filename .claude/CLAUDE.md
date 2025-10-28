@@ -53,6 +53,7 @@ Tides/
 - Use Swift 6 with strict concurrency
 - Use actors for thread-safe data access
 - Prefer @MainActor for UI-related code
+- **NEVER include AI signatures or "Generated with Claude Code" in commit messages**
 
 ## Building
 

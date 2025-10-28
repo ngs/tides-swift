@@ -12,13 +12,6 @@ public struct TideGraphView: View {
   let locationName: String
   @Binding var selectedDate: Date
 
-  private let dateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .medium
-    formatter.timeStyle = .none
-    return formatter
-  }()
-
   private let timeFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .none
@@ -96,8 +89,7 @@ public struct TideGraphView: View {
     .padding(.vertical)
   }
 
-  @ViewBuilder
-  private var chartView: some View {
+  @ViewBuilder private var chartView: some View {
     VStack(alignment: .leading, spacing: 8) {
       // Chart
       Chart {

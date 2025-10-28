@@ -18,7 +18,7 @@ public enum TidesAPIError: Error, LocalizedError, Sendable {
       "Network error: \(error.localizedDescription)"
     case .invalidResponse:
       "Invalid response from API"
-    case .httpError(let statusCode, let message):
+    case let .httpError(statusCode, message):
       "HTTP error \(statusCode): \(message)"
     case .decodingError(let error):
       "Failed to decode response: \(error.localizedDescription)"
@@ -105,25 +105,28 @@ public actor TidesAPIClient {
     } catch let error as TidesAPIError {
       throw error
     } catch {
-      // Check for specific error types
-      let nsError = error as NSError
-      if nsError.domain == NSURLErrorDomain {
-        switch nsError.code {
-        case NSURLErrorCancelled:
-          logger.debug("Request cancelled (normal during map interaction)")
-          throw TidesAPIError.networkError(error)
-        case NSURLErrorTimedOut:
-          logger.error("Request timed out")
-          throw TidesAPIError.timeout
-        default:
-          logger.error("Network error: \(error)")
-          throw TidesAPIError.networkError(error)
-        }
-      }
-
-      logger.error("Network error: \(error)")
-      throw TidesAPIError.networkError(error)
+      throw try handleNetworkError(error)
     }
+  }
+
+  private func handleNetworkError(_ error: Error) throws -> Never {
+    let nsError = error as NSError
+    if nsError.domain == NSURLErrorDomain {
+      switch nsError.code {
+      case NSURLErrorCancelled:
+        logger.debug("Request cancelled (normal during map interaction)")
+        throw TidesAPIError.networkError(error)
+      case NSURLErrorTimedOut:
+        logger.error("Request timed out")
+        throw TidesAPIError.timeout
+      default:
+        logger.error("Network error: \(error)")
+        throw TidesAPIError.networkError(error)
+      }
+    }
+
+    logger.error("Network error: \(error)")
+    throw TidesAPIError.networkError(error)
   }
 
   /// Fetch available tidal constituents
