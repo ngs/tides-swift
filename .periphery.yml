@@ -1,10 +1,8 @@
-workspace: Tides.xcworkspace
+project: Tides.xcworkspace
 retain_objc_accessible: true
 retain_public: true
 strict: true
 schemes:
-  - Tides
-targets:
   - Tides
 
 # Retain SwiftUI property wrappers and modifiers
@@ -26,3 +24,6 @@ index_exclude:
   # Generated files
   - "**/*.generated.swift"
   - "**/GeneratedAssetSymbols.swift"
+
+build_arguments:
+  - -destination 'platform=iOS Simulator,OS=26.1,name=iPhone 16 Pro Max'
