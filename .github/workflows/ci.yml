@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    name: Test ${{ matrix.platform }}
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - platform: iOS
+            destination: "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.5"
+            buildNumberSuffix: ".1"
+          - platform: macOS
+            destination: "platform=macOS"
+            buildNumberSuffix: ".2"
+          - platform: visionOS
+            destination: "platform=visionOS Simulator,name=Apple Vision Pro,OS=2.5"
+            buildNumberSuffix: ".3"
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Select Xcode
+        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Install tuist
+        run: |
+          brew tap tuist/tuist
+          brew install --formula tuist
+
+      - name: Generate Xcode project and workspace
+        run: tuist generate --no-open
+        env:
+          TUIST_BUILD_NUMBER: ${{ github.run_id }}${{ matrix.buildNumberSuffix }}
+
+      - name: Build and Test (${{ matrix.platform }})
+        run: |
+          xcodebuild test \
+            -scheme Tides \
+            -destination '${{ matrix.destination }}' \
+            -derivedDataPath .build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            clean test
+
+  test-swift:
+    name: Swift Tests
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Select Xcode
+        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Run Swift Tests
+        run: swift test
+
+  lint:
+    name: SwiftLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --strict
+
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - platform: iOS
+            destination: "generic/platform=iOS Simulator"
+            buildNumberSuffix: ".1"
+          - platform: macOS
+            destination: "platform=macOS"
+            buildNumberSuffix: ".2"
+          - platform: visionOS
+            destination: "generic/platform=visionOS Simulator"
+            buildNumberSuffix: ".3"
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Select Xcode
+        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Install tuist
+        run: |
+          brew tap tuist/tuist
+          brew install --formula tuist
+
+      - name: Generate Xcode project and workspace
+        run: tuist generate --no-open
+        env:
+          TUIST_BUILD_NUMBER: "${{ github.run_id }}${{ matrix.buildNumberSuffix }}"
+
+      - name: Build ${{ matrix.platform }}
+        run: |
+          xcodebuild build \
+            -scheme Tides \
+            -destination '${{ matrix.destination }}' \
+            -derivedDataPath .build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            clean build

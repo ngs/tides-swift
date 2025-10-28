@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# SwiftPM
+.build/
+.swiftpm/
+
+# Tuist/Xcode generated artifacts
+Tides.xcodeproj/
+Tides.xcworkspace/
+Derived/
+
+# Xcode user data
+**/xcuserdata/
+**/*.xcuserstate
+**/*.xccheckout
+
+# Swift/LLVM
+*.dSYM
+
+**/__Snapshots__/**/*.latest.png
+*.p8
+
+fastlane/report.xml
+build/
+match_deploy_key*
+
+fastlane/Preview.html
