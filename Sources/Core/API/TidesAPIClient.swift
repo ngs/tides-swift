@@ -8,6 +8,7 @@ public enum TidesAPIError: Error, LocalizedError, Sendable {
   case invalidResponse
   case httpError(statusCode: Int, message: String)
   case decodingError(Error)
+  case timeout
 
   public var errorDescription: String? {
     switch self {
@@ -21,6 +22,8 @@ public enum TidesAPIError: Error, LocalizedError, Sendable {
       "HTTP error \(statusCode): \(message)"
     case .decodingError(let error):
       "Failed to decode response: \(error.localizedDescription)"
+    case .timeout:
+      "Request timed out"
     }
   }
 }
@@ -33,10 +36,19 @@ public actor TidesAPIClient {
 
   public init(
     baseURL: String = "https://api.tides.ngs.io",
-    session: URLSession = .shared
+    session: URLSession? = nil,
+    timeoutInterval: TimeInterval = 30
   ) {
     self.baseURL = baseURL
-    self.session = session
+
+    if let session {
+      self.session = session
+    } else {
+      let configuration = URLSessionConfiguration.default
+      configuration.timeoutIntervalForRequest = timeoutInterval
+      configuration.timeoutIntervalForResource = timeoutInterval * 2
+      self.session = URLSession(configuration: configuration)
+    }
   }
 
   /// Fetch tide predictions for a specific location and time range
@@ -60,7 +72,7 @@ public actor TidesAPIClient {
       URLQueryItem(name: "start", value: formatter.string(from: start)),
       URLQueryItem(name: "end", value: formatter.string(from: end)),
       URLQueryItem(name: "interval", value: interval),
-      URLQueryItem(name: "source", value: source),
+      URLQueryItem(name: "source", value: source)
     ]
 
     guard let url = components?.url else {
@@ -93,6 +105,22 @@ public actor TidesAPIClient {
     } catch let error as TidesAPIError {
       throw error
     } catch {
+      // Check for specific error types
+      let nsError = error as NSError
+      if nsError.domain == NSURLErrorDomain {
+        switch nsError.code {
+        case NSURLErrorCancelled:
+          logger.debug("Request cancelled (normal during map interaction)")
+          throw TidesAPIError.networkError(error)
+        case NSURLErrorTimedOut:
+          logger.error("Request timed out")
+          throw TidesAPIError.timeout
+        default:
+          logger.error("Network error: \(error)")
+          throw TidesAPIError.networkError(error)
+        }
+      }
+
       logger.error("Network error: \(error)")
       throw TidesAPIError.networkError(error)
     }

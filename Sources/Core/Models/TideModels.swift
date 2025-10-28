@@ -33,8 +33,8 @@ public struct TidePrediction: Codable, Identifiable, Sendable {
 public struct TideExtreme: Codable, Identifiable, Sendable {
   /// ISO 8601 datetime string
   public let time: String
-  /// Water depth in meters
-  public let depthM: Double
+  /// Tide height in meters (relative to datum)
+  public let heightM: Double
 
   public var id: String { time }
 
@@ -45,12 +45,12 @@ public struct TideExtreme: Codable, Identifiable, Sendable {
 
   enum CodingKeys: String, CodingKey {
     case time
-    case depthM = "depth_m"
+    case heightM = "height_m"
   }
 
-  public init(time: String, depthM: Double) {
+  public init(time: String, heightM: Double) {
     self.time = time
-    self.depthM = depthM
+    self.heightM = heightM
   }
 }
 
@@ -81,18 +81,37 @@ public struct TidePredictionsResponse: Codable, Sendable {
   public let predictions: [TidePrediction]
   public let extrema: TideExtrema?
   public let source: String
-  public let location: TideLocation
+  public let datum: String?
+  public let timezone: String?
+  public let constituents: [String]?
+  public let mslM: Double?
+
+  enum CodingKeys: String, CodingKey {
+    case predictions
+    case extrema
+    case source
+    case datum
+    case timezone
+    case constituents
+    case mslM = "msl_m"
+  }
 
   public init(
     predictions: [TidePrediction],
     extrema: TideExtrema?,
     source: String,
-    location: TideLocation
+    datum: String? = nil,
+    timezone: String? = nil,
+    constituents: [String]? = nil,
+    mslM: Double? = nil
   ) {
     self.predictions = predictions
     self.extrema = extrema
     self.source = source
-    self.location = location
+    self.datum = datum
+    self.timezone = timezone
+    self.constituents = constituents
+    self.mslM = mslM
   }
 }
 

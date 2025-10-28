@@ -1,0 +1,31 @@
+{
+  "source": "fes",
+  "datum": "MSL",
+  "timezone": "+09:00",
+  "predictions": [
+    {
+      "time": "2025-10-28T09:00:00+09:00",
+      "height_m": 3.024,
+      "depth_m": null
+    },
+    {
+      "time": "2025-10-28T09:30:00+09:00",
+      "height_m": 3.039,
+      "depth_m": null
+    }
+  ],
+  "extrema": {
+    "highs": [
+      {
+        "time": "2025-10-28T09:42:46+09:00",
+        "height_m": 3.04
+      }
+    ],
+    "lows": [
+      {
+        "time": "2025-10-28T13:56:58+09:00",
+        "height_m": 2.883
+      }
+    ]
+  }
+}

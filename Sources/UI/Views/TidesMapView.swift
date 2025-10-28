@@ -7,8 +7,7 @@ public struct TidesMapView: View {
   @Binding var position: MapPosition
   let onPositionChange: (MapPosition) -> Void
 
-  @State private var cameraPosition: MapCameraPosition
-  @State private var region: MKCoordinateRegion
+  @State private var mapRegion: MKCoordinateRegion
 
   public init(
     position: Binding<MapPosition>,
@@ -28,12 +27,14 @@ public struct TidesMapView: View {
       )
     )
 
-    self._cameraPosition = State(initialValue: .region(initialRegion))
-    self._region = State(initialValue: initialRegion)
+    self._mapRegion = State(initialValue: initialRegion)
   }
 
   public var body: some View {
-    Map(position: $cameraPosition) {
+    Map(
+      position: .constant(.region(mapRegion)),
+      interactionModes: .all
+    ) {
       // Add a marker at the center
       Marker("", coordinate: CLLocationCoordinate2D(
         latitude: position.lat,
@@ -42,24 +43,22 @@ public struct TidesMapView: View {
       .tint(.blue)
     }
     .mapStyle(.standard)
-    .onChange(of: cameraPosition) { _, newValue in
-      handleCameraChange(newValue)
+    .onMapCameraChange { context in
+      handleCameraChange(context.region)
     }
   }
 
-  private func handleCameraChange(_ newPosition: MapCameraPosition) {
-    // Extract region from camera position
-    if case .region(let newRegion) = newPosition {
-      let newMapPosition = MapPosition(
-        lat: newRegion.center.latitude,
-        lon: newRegion.center.longitude,
-        zoom: calculateZoom(from: newRegion.span)
-      )
+  private func handleCameraChange(_ newRegion: MKCoordinateRegion) {
+    let newMapPosition = MapPosition(
+      lat: newRegion.center.latitude,
+      lon: newRegion.center.longitude,
+      zoom: calculateZoom(from: newRegion.span)
+    )
 
-      if newMapPosition != position {
-        position = newMapPosition
-        onPositionChange(newMapPosition)
-      }
+    if newMapPosition != position {
+      mapRegion = newRegion
+      position = newMapPosition
+      onPositionChange(newMapPosition)
     }
   }
 

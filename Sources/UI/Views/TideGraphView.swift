@@ -103,10 +103,10 @@ public struct TideGraphView: View {
       Chart {
         // Tide predictions line
         ForEach(predictions) { prediction in
-          if let date = prediction.date, let depth = prediction.depthM {
+          if let date = prediction.date {
             LineMark(
               x: .value("Time", date),
-              y: .value("Depth", depth)
+              y: .value("Height", prediction.heightM)
             )
             .foregroundStyle(.blue)
             .interpolationMethod(.catmullRom)
@@ -118,7 +118,7 @@ public struct TideGraphView: View {
           if let date = high.date {
             PointMark(
               x: .value("Time", date),
-              y: .value("Depth", high.depthM)
+              y: .value("Height", high.heightM)
             )
             .foregroundStyle(.red)
             .symbol(.circle)
@@ -135,7 +135,7 @@ public struct TideGraphView: View {
           if let date = low.date {
             PointMark(
               x: .value("Time", date),
-              y: .value("Depth", low.depthM)
+              y: .value("Height", low.heightM)
             )
             .foregroundStyle(.green)
             .symbol(.circle)
@@ -199,7 +199,7 @@ public struct TideGraphView: View {
                       .font(.caption)
                       .foregroundStyle(.secondary)
                     Spacer()
-                    Text("\(high.depthM, specifier: "%.2f")m")
+                    Text("\(high.heightM, specifier: "%.2f")m")
                       .font(.caption)
                       .fontWeight(.medium)
                   }
@@ -221,7 +221,7 @@ public struct TideGraphView: View {
                       .font(.caption)
                       .foregroundStyle(.secondary)
                     Spacer()
-                    Text("\(low.depthM, specifier: "%.2f")m")
+                    Text("\(low.heightM, specifier: "%.2f")m")
                       .font(.caption)
                       .fontWeight(.medium)
                   }
@@ -240,20 +240,20 @@ public struct TideGraphView: View {
   @Previewable @State var selectedDate = Date()
 
   let predictions = [
-    TidePrediction(time: "2024-10-28T00:00:00Z", heightM: 1.5, depthM: 2.5),
-    TidePrediction(time: "2024-10-28T06:00:00Z", heightM: -0.5, depthM: 0.5),
-    TidePrediction(time: "2024-10-28T12:00:00Z", heightM: 1.8, depthM: 2.8),
-    TidePrediction(time: "2024-10-28T18:00:00Z", heightM: -0.3, depthM: 0.7),
+    TidePrediction(time: "2024-10-28T00:00:00Z", heightM: 1.5, depthM: nil),
+    TidePrediction(time: "2024-10-28T06:00:00Z", heightM: 2.5, depthM: nil),
+    TidePrediction(time: "2024-10-28T12:00:00Z", heightM: 1.8, depthM: nil),
+    TidePrediction(time: "2024-10-28T18:00:00Z", heightM: 2.7, depthM: nil)
   ]
 
   let highs = [
-    TideExtreme(time: "2024-10-28T06:15:00Z", depthM: 2.85),
-    TideExtreme(time: "2024-10-28T18:30:00Z", depthM: 2.92),
+    TideExtreme(time: "2024-10-28T06:15:00Z", heightM: 2.85),
+    TideExtreme(time: "2024-10-28T18:30:00Z", heightM: 2.92)
   ]
 
   let lows = [
-    TideExtreme(time: "2024-10-28T00:45:00Z", depthM: 0.45),
-    TideExtreme(time: "2024-10-28T12:20:00Z", depthM: 0.52),
+    TideExtreme(time: "2024-10-28T00:45:00Z", heightM: 0.45),
+    TideExtreme(time: "2024-10-28T12:20:00Z", heightM: 0.52)
   ]
 
   TideGraphView(

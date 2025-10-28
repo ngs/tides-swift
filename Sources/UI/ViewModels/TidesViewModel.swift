@@ -24,29 +24,42 @@ public class TidesViewModel: ObservableObject {
 
   private var debouncedPositionTask: Task<Void, Never>?
   private var fetchTask: Task<Void, Never>?
+  private var isInitialLoad = true
 
   public init() {
-    // Try to load last position
-    if let saved = Task { await storage.load() }.result {
-      if case .success(let data) = saved, let data {
-        self.mapPosition = data.position
-        self.locationName = data.locationName
-      } else {
-        self.mapPosition = .default
-      }
-    } else {
-      self.mapPosition = .default
-    }
+    // Initialize with default position
+    self.mapPosition = .default
 
-    // Start fetching initial data
+    // Load saved position and fetch data asynchronously
     Task {
-      await fetchLocationName(for: mapPosition)
-      await fetchTideData(for: mapPosition, date: selectedDate)
+      if let saved = await storage.load() {
+        self.mapPosition = saved.position
+        self.locationName = saved.locationName
+        await fetchTideData(for: saved.position, date: selectedDate)
+      } else {
+        await fetchLocationName(for: mapPosition)
+        await fetchTideData(for: mapPosition, date: selectedDate)
+      }
+      // Mark initial load complete
+      self.isInitialLoad = false
     }
   }
 
   /// Handle map position change with debouncing
   public func handlePositionChange(_ newPosition: MapPosition) {
+    // Skip if initial load is still in progress to avoid duplicate requests
+    guard !isInitialLoad else {
+      logger.debug("Skipping position change during initial load")
+      return
+    }
+
+    // Skip if position hasn't actually changed significantly (avoid unnecessary API calls)
+    let latDiff = abs(newPosition.lat - mapPosition.lat)
+    let lonDiff = abs(newPosition.lon - mapPosition.lon)
+    guard latDiff > 0.0001 || lonDiff > 0.0001 else {
+      return
+    }
+
     mapPosition = newPosition
 
     // Cancel previous debounce task
@@ -96,15 +109,15 @@ public class TidesViewModel: ObservableObject {
       error = nil
 
       do {
-        // Calculate start and end times (full day)
+        // Calculate start and end times (full day in UTC)
         var calendar = Calendar.current
-        calendar.timeZone = TimeZone.current
+        calendar.timeZone = TimeZone(identifier: "UTC")!
         let start = calendar.startOfDay(for: date)
         guard let end = calendar.date(byAdding: .day, value: 1, to: start) else {
           throw TidesAPIError.invalidURL
         }
 
-        logger.debug("Fetching tide data for \(position.lat), \(position.lon)")
+        logger.debug("Fetching tide data for \(position.lat), \(position.lon) from \(start) to \(end)")
 
         let response = try await apiClient.fetchTidePredictions(
           lat: position.lat,
@@ -127,7 +140,25 @@ public class TidesViewModel: ObservableObject {
         guard !Task.isCancelled else { return }
 
         logger.error("Failed to fetch tide data: \(error)")
-        self.error = error.localizedDescription
+
+        // Provide user-friendly error messages
+        if let apiError = error as? TidesAPIError {
+          switch apiError {
+          case .httpError(let statusCode, _) where statusCode == 503:
+            self.error = "Tide service is temporarily unavailable. Please try again later."
+          case .httpError(let statusCode, let message):
+            self.error = "API Error (\(statusCode)): \(message)"
+          case .timeout:
+            self.error = "Request timed out. Please check your internet connection and try again."
+          case .networkError:
+            self.error = "Network error. Please check your internet connection."
+          default:
+            self.error = error.localizedDescription
+          }
+        } else {
+          self.error = error.localizedDescription
+        }
+
         predictions = []
         highs = []
         lows = []
@@ -138,18 +169,5 @@ public class TidesViewModel: ObservableObject {
     }
 
     await fetchTask?.value
-  }
-}
-
-extension Task where Success == Never, Failure == Never {
-  var result: Result<Success, Error>? {
-    get async {
-      do {
-        try await self.value
-        return nil
-      } catch {
-        return .failure(error)
-      }
-    }
   }
 }

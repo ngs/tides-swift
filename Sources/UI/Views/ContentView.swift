@@ -79,10 +79,8 @@ public struct ContentView: View {
 
 #Preview("iPhone") {
   ContentView()
-    .previewDevice(PreviewDevice(rawValue: "iPhone 16 Pro"))
 }
 
 #Preview("iPad") {
   ContentView()
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
 }

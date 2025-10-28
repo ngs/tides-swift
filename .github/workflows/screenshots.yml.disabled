@@ -1,0 +1,67 @@
+name: Update screenshots
+
+on:
+  push:
+    branches: [master, fastlane]
+
+env:
+  # Load all secrets as environment variables
+  FASTLANE_SKIP_UPDATE_CHECK: "1"
+  APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+  APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+  APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
+  APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: "true"
+  PRECHECK_INCLUDE_IN_APP_PURCHASES: "false"
+  MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }} # Must be SSH format: git@github.com:user/repo.git
+  MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+  PRODUCE_ITC_TEAM_ID: ${{ secrets.PRODUCE_ITC_TEAM_ID }}
+  PRODUCE_TEAM_ID: ${{ secrets.PRODUCE_TEAM_ID }}
+  MATCH_KEYCHAIN_NAME: tmp.keychain
+  CERT_KEYCHAIN_NAME: tmp.keychain
+  KEYCHAIN_NAME: tmp.keychain
+  MATCH_KEYCHAIN_PASSWORD: tmp
+  CERT_KEYCHAIN_PASSWORD: tmp
+  KEYCHAIN_PASSWORD: tmp
+  MATCH_READONLY: "true"
+
+  # Additional Fastlane settings
+  FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "600"
+  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "5"
+
+jobs:
+  deliver:
+    name: Deliver ${{ matrix.name }}
+    strategy:
+      matrix:
+        include:
+          - platform: mac
+            name: macOS
+          - platform: ios
+            name: iOS
+          # visionos is not yet supported
+          # - platform: visionos
+          #   name: visionOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - run: bundle exec fastlane ${{ matrix.platform }} deliver_screenshots
+
+      - name: Upload report.xml
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fastlane-report-${{ matrix.platform }}-${{ github.sha }}
+          path: |
+            fastlane/report.xml
+          retention-days: 30

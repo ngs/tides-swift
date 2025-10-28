@@ -38,9 +38,6 @@ let package = Package(
                 .product(name: "Logging", package: "swift-log"),
             ],
             path: "Sources/Platform",
-            resources: [
-                .process("Resources")
-            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),
                 .swiftLanguageMode(.v6),
@@ -53,9 +50,6 @@ let package = Package(
                 .target(name: "TidesPlatform"),
             ],
             path: "Sources/UI",
-            resources: [
-                .process("Resources")
-            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency"),
                 .swiftLanguageMode(.v6),
