@@ -1,9 +1,7 @@
 workspace: Tides.xcworkspace
 schemes:
   - Tides
+targets:
+  - Tides
 
 retain_public: true
-
-# Disable warnings for unused public declarations
-# since they may be used by external consumers
-disable_unused_declarations: false
