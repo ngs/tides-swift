@@ -138,30 +138,8 @@ public class TidesViewModel: ObservableObject {
           "Fetched \(predictions.count) predictions, \(highs.count) highs, \(lows.count) lows")
       } catch {
         guard !Task.isCancelled else { return }
-
         logger.error("Failed to fetch tide data: \(error)")
-
-        // Provide user-friendly error messages
-        if let apiError = error as? TidesAPIError {
-          switch apiError {
-          case .httpError(let statusCode, _) where statusCode == 503:
-            self.error = "Tide service is temporarily unavailable. Please try again later."
-          case .httpError(let statusCode, let message):
-            self.error = "API Error (\(statusCode)): \(message)"
-          case .timeout:
-            self.error = "Request timed out. Please check your internet connection and try again."
-          case .networkError:
-            self.error = "Network error. Please check your internet connection."
-          default:
-            self.error = error.localizedDescription
-          }
-        } else {
-          self.error = error.localizedDescription
-        }
-
-        predictions = []
-        highs = []
-        lows = []
+        handleFetchError(error)
       }
 
       guard !Task.isCancelled else { return }
@@ -169,5 +147,29 @@ public class TidesViewModel: ObservableObject {
     }
 
     await fetchTask?.value
+  }
+
+  /// Handle fetch error and update UI state
+  private func handleFetchError(_ error: Error) {
+    if let apiError = error as? TidesAPIError {
+      switch apiError {
+      case let .httpError(statusCode, _) where statusCode == 503:
+        self.error = "Tide service is temporarily unavailable. Please try again later."
+      case let .httpError(statusCode, message):
+        self.error = "API Error (\(statusCode)): \(message)"
+      case .timeout:
+        self.error = "Request timed out. Please check your internet connection and try again."
+      case .networkError:
+        self.error = "Network error. Please check your internet connection."
+      default:
+        self.error = error.localizedDescription
+      }
+    } else {
+      self.error = error.localizedDescription
+    }
+
+    predictions = []
+    highs = []
+    lows = []
   }
 }

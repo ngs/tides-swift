@@ -11,5 +11,8 @@ Metrics/BlockLength:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/FetchEnvVar:
+  Enabled: false
+
 Layout/LineLength:
   Max: 150

@@ -76,7 +76,7 @@ let project = Project(
                 .package(product: "TidesCore"),
                 .package(product: "TidesUI")
             ]
-        ),
+        )
     ],
     schemes: [
         .scheme(
