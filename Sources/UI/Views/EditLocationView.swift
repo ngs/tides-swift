@@ -4,6 +4,10 @@ import TidesPlatform
 
 /// Edits a saved location: rename it and/or move it to another coordinate.
 /// Moving re-downloads the harmonic parameters for the new point.
+///
+/// The form fields carry their own labels, so they are never wrapped in a
+/// `LabeledContent` (on macOS that renders the label twice), and the map lives
+/// outside the form, where it cannot force the sheet wider than its frame.
 struct EditLocationView: View {
     @Environment(\.dismiss)
     private var dismiss
@@ -17,74 +21,7 @@ struct EditLocationView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("Name") {
-                    TextField("Location Name", text: $viewModel.name)
-                }
-
-                Section {
-                    LabeledContent("Latitude") {
-                        TextField("Latitude", text: $viewModel.latitudeText)
-                            .multilineTextAlignment(.trailing)
-                            .monospacedDigit()
-                            #if os(iOS)
-                            .keyboardType(.numbersAndPunctuation)
-                            #endif
-                    }
-                    LabeledContent("Longitude") {
-                        TextField("Longitude", text: $viewModel.longitudeText)
-                            .multilineTextAlignment(.trailing)
-                            .monospacedDigit()
-                            #if os(iOS)
-                            .keyboardType(.numbersAndPunctuation)
-                            #endif
-                    }
-                    map
-                        .frame(height: 220)
-                        .listRowInsets(EdgeInsets())
-                } header: {
-                    Text("Coordinates")
-                } footer: {
-                    if viewModel.enteredCoordinate == nil {
-                        Text("Enter a latitude between -90 and 90 and a longitude between -180 and 180.")
-                            .foregroundStyle(.red)
-                    } else if viewModel.coordinateChanged {
-                        Text("New tide parameters will be downloaded for the new coordinates.")
-                    } else {
-                        Text("Tap the map to move this location.")
-                    }
-                }
-            }
-            #if os(iOS)
-            .formStyle(.grouped)
-            #endif
-            .navigationTitle("Edit Location")
-            #if os(iOS) || os(visionOS)
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    if viewModel.isSaving {
-                        ProgressView()
-                            .controlSize(.small)
-                    } else {
-                        Button("Save") {
-                            Task {
-                                if await viewModel.save() {
-                                    dismiss()
-                                }
-                            }
-                        }
-                        .disabled(!viewModel.canSave)
-                    }
-                }
-            }
+        content
             .alert(
                 "Error",
                 isPresented: Binding(
@@ -96,11 +33,124 @@ struct EditLocationView: View {
             } message: {
                 Text(viewModel.errorMessage ?? "")
             }
-        }
+    }
+
+    @ViewBuilder private var content: some View {
         #if os(macOS)
-        .frame(minWidth: 460, minHeight: 560)
+        // A sheet on macOS has no navigation bar: title and buttons are laid
+        // out explicitly, so nothing overflows the sheet's frame.
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Edit Location")
+                .font(.headline)
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 12)
+
+            form
+            map
+                .frame(height: 200)
+
+            Divider()
+            HStack {
+                Spacer()
+                Button("Cancel") {
+                    dismiss()
+                }
+                .keyboardShortcut(.cancelAction)
+                saveButton
+                    .keyboardShortcut(.defaultAction)
+            }
+            .padding(16)
+        }
+        .frame(width: 460, height: 620)
+        #else
+        NavigationStack {
+            VStack(spacing: 0) {
+                form
+                map
+                    .frame(height: 220)
+            }
+            .navigationTitle("Edit Location")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    saveButton
+                }
+            }
+        }
         #endif
     }
+
+    // MARK: - Form
+
+    private var form: some View {
+        Form {
+            Section("Name") {
+                // The field's own label is the row label; wrapping it in a
+                // LabeledContent would show the label twice on macOS.
+                TextField("Location Name", text: $viewModel.name)
+            }
+
+            Section {
+                TextField("Latitude", text: $viewModel.latitudeText)
+                    .monospacedDigit()
+                    #if os(iOS)
+                    .keyboardType(.numbersAndPunctuation)
+                    #endif
+                TextField("Longitude", text: $viewModel.longitudeText)
+                    .monospacedDigit()
+                    #if os(iOS)
+                    .keyboardType(.numbersAndPunctuation)
+                    #endif
+            } header: {
+                Text("Coordinates")
+            } footer: {
+                footer
+            }
+        }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+    }
+
+    @ViewBuilder private var footer: some View {
+        Group {
+            if viewModel.enteredCoordinate == nil {
+                Text("Enter a latitude between -90 and 90 and a longitude between -180 and 180.")
+                    .foregroundStyle(.red)
+            } else if viewModel.coordinateChanged {
+                Text("New tide parameters will be downloaded for the new coordinates.")
+            } else {
+                Text("Tap the map to move this location.")
+            }
+        }
+        .font(.caption)
+        // Wrap instead of running past the sheet's edge.
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder private var saveButton: some View {
+        if viewModel.isSaving {
+            ProgressView()
+                .controlSize(.small)
+        } else {
+            Button("Save") {
+                Task {
+                    if await viewModel.save() {
+                        dismiss()
+                    }
+                }
+            }
+            .disabled(!viewModel.canSave)
+        }
+    }
+
+    // MARK: - Map
 
     private var map: some View {
         MapReader { proxy in

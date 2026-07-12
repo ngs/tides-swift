@@ -17,25 +17,46 @@ struct AddLocationView: View {
     @State private var cameraPosition: MapCameraPosition = .automatic
 
     var body: some View {
+        container
+            .alert(
+                "Error",
+                isPresented: Binding(
+                    get: { viewModel.errorMessage != nil },
+                    set: { if !$0 { viewModel.errorMessage = nil } }
+                )
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(viewModel.errorMessage ?? "")
+            }
+    }
+
+    /// A sheet on macOS has no navigation bar, so the title and the Cancel
+    /// button are laid out explicitly instead of leaving an empty bar's worth
+    /// of space at the top.
+    @ViewBuilder private var container: some View {
+        #if os(macOS)
+        VStack(spacing: 0) {
+            HStack {
+                Text("Add Location")
+                    .font(.headline)
+                Spacer()
+                Button("Cancel") {
+                    dismiss()
+                }
+                .keyboardShortcut(.cancelAction)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            Divider()
+            picker
+        }
+        .frame(width: 560, height: 640)
+        #else
         NavigationStack {
-            mapView
-                .safeAreaInset(edge: .top, spacing: 0) {
-                    searchField
-                }
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    controlPanel
-                }
-                .overlay(alignment: .top) {
-                    // Results float over the map instead of pushing it around.
-                    if !viewModel.searchResults.isEmpty {
-                        searchResultList
-                            .padding(.horizontal, 12)
-                    }
-                }
+            picker
                 .navigationTitle("Add Location")
-                #if os(iOS) || os(visionOS)
-                    .navigationBarTitleDisplayMode(.inline)
-                #endif
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
@@ -43,21 +64,25 @@ struct AddLocationView: View {
                         }
                     }
                 }
-                .alert(
-                    "Error",
-                    isPresented: Binding(
-                        get: { viewModel.errorMessage != nil },
-                        set: { if !$0 { viewModel.errorMessage = nil } }
-                    )
-                ) {
-                    Button("OK", role: .cancel) {}
-                } message: {
-                    Text(viewModel.errorMessage ?? "")
-                }
         }
-        #if os(macOS)
-        .frame(minWidth: 560, minHeight: 640)
         #endif
+    }
+
+    private var picker: some View {
+        mapView
+            .safeAreaInset(edge: .top, spacing: 0) {
+                searchField
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                controlPanel
+            }
+            .overlay(alignment: .top) {
+                // Results float over the map instead of pushing it around.
+                if !viewModel.searchResults.isEmpty {
+                    searchResultList
+                        .padding(.horizontal, 12)
+                }
+            }
     }
 
     // MARK: - Search
