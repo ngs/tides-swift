@@ -18,12 +18,17 @@ struct TidesWidget: Widget {
         }
         .configurationDisplayName("Tides")
         .description("Current tide and next high and low water for a saved location.")
-        .supportedFamilies([
-            .systemSmall,
-            .systemMedium,
-            .accessoryRectangular,
-            .accessoryInline
-        ])
+        .supportedFamilies(Self.supportedFamilies)
+    }
+
+    /// Accessory families exist on the iOS lock screen only; macOS supports
+    /// the system families in Notification Center.
+    private static var supportedFamilies: [WidgetFamily] {
+        #if os(iOS)
+        [.systemSmall, .systemMedium, .accessoryRectangular, .accessoryInline]
+        #else
+        [.systemSmall, .systemMedium]
+        #endif
     }
 }
 
@@ -36,6 +41,7 @@ struct TidesWidgetView: View {
         if entry.locationName == nil {
             emptyView
         } else {
+            #if os(iOS)
             switch family {
             case .accessoryInline:
                 inlineView
@@ -44,6 +50,9 @@ struct TidesWidgetView: View {
             default:
                 standardView
             }
+            #else
+            standardView
+            #endif
         }
     }
 

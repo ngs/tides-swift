@@ -116,10 +116,11 @@ platform :mac do
   desc 'Match App Store Provisioning Profiles for macOS'
   lane :release_match do
     xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
-    # Get Application Distribution certificate and provisioning profile
+    # Get Application Distribution certificate and provisioning profiles
+    # (the app and the widget extension embedded in it).
     match(
       type: 'appstore',
-      app_identifier: 'io.ngs.Tides',
+      app_identifier: ['io.ngs.Tides', 'io.ngs.Tides.widget'],
       platform: 'macos',
       readonly: ENV['MATCH_READONLY'] == 'true'
     )
@@ -150,6 +151,20 @@ platform :mac do
       build_configurations: %w[Release],
       path: 'Tides.xcodeproj'
     )
+
+    # The widget extension embedded in the macOS app needs its own profile
+    widget_profile_name = ENV['sigh_io.ngs.Tides.widget_appstore_macos_profile-name'] ||
+                          'match AppStore io.ngs.Tides.widget macos'
+    update_code_signing_settings(
+      profile_name: widget_profile_name,
+      bundle_identifier: 'io.ngs.Tides.widget',
+      use_automatic_signing: false,
+      code_sign_identity: 'Apple Distribution',
+      targets: ['TidesWidget'],
+      build_configurations: %w[Release],
+      path: 'Tides.xcodeproj'
+    )
+
     build_app(
       export_method: 'app-store',
       scheme: 'Tides',

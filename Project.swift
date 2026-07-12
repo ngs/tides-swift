@@ -9,7 +9,17 @@ let buildNumber = Environment.buildNumber.getString(default: "0")
 let entitlementFiles: [Path] = [
     "Resources/Tides.entitlements",
     "Resources/Tides-iOS.entitlements",
-    "Resources/TidesWidget.entitlements"
+    "Resources/TidesWidget.entitlements",
+    "Resources/TidesWidget-macOS.entitlements"
+]
+
+/// iOS-style entitlements (bare App Group identifier) also apply to visionOS;
+/// macOS needs the Team ID prefix and keeps the base file.
+let iOSEntitlementOverrides: SettingsDictionary = [
+    "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": "Resources/Tides-iOS.entitlements",
+    "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": "Resources/Tides-iOS.entitlements",
+    "CODE_SIGN_ENTITLEMENTS[sdk=xros*]": "Resources/Tides-iOS.entitlements",
+    "CODE_SIGN_ENTITLEMENTS[sdk=xrsimulator*]": "Resources/Tides-iOS.entitlements"
 ]
 
 let project = Project(
@@ -74,29 +84,24 @@ let project = Project(
                 .package(product: "TidesCore"),
                 .package(product: "TidesPlatform"),
                 .package(product: "TidesUI"),
-                // The watch app and the widget are only embedded in the iOS
-                // build; the App Group they share is an iOS entitlement.
+                // The watch app is iOS-only; the widget is embedded in the
+                // iOS and macOS builds.
                 .target(name: "TidesWatch", condition: .when([.ios])),
-                .target(name: "TidesWidget", condition: .when([.ios]))
+                .target(name: "TidesWidget", condition: .when([.ios, .macos]))
             ],
-            settings: .settings(
-                base: [
-                    // Only the iOS build declares the App Group shared with
-                    // the widget; macOS and visionOS keep the base file.
-                    "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": "Resources/Tides-iOS.entitlements",
-                    "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]":
-                        "Resources/Tides-iOS.entitlements"
-                ]
-            )
+            settings: .settings(base: iOSEntitlementOverrides)
         ),
         // Home screen / lock screen widget: current tide and next high and low
         // water for a saved location, computed offline from the shared store.
         .target(
             name: "TidesWidget",
-            destinations: [.iPhone, .iPad],
+            destinations: [.iPhone, .iPad, .mac],
             product: .appExtension,
             bundleId: "io.ngs.Tides.widget",
-            deploymentTargets: .iOS("18.0"),
+            deploymentTargets: .multiplatform(
+                iOS: "18.0",
+                macOS: "15.0"
+            ),
             infoPlist: .extendingDefault(with: [
                 "CFBundleDisplayName": .string("Tides"),
                 "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
@@ -109,11 +114,21 @@ let project = Project(
             resources: [
                 .glob(pattern: "Resources/**", excluding: entitlementFiles)
             ],
-            entitlements: .file(path: "Resources/TidesWidget.entitlements"),
+            // macOS extensions must be sandboxed and use the Team ID-prefixed
+            // App Group; iOS uses the bare identifier.
+            entitlements: .file(path: "Resources/TidesWidget-macOS.entitlements"),
             dependencies: [
                 .package(product: "TidesCore"),
                 .package(product: "TidesPlatform")
-            ]
+            ],
+            settings: .settings(
+                base: [
+                    "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]":
+                        "Resources/TidesWidget.entitlements",
+                    "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]":
+                        "Resources/TidesWidget.entitlements"
+                ]
+            )
         ),
         // Apple Watch companion app.
         .target(

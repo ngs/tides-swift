@@ -13,7 +13,7 @@ A native iOS, iPadOS, macOS, visionOS, and watchOS application for offline tide 
 - **Place Search**: Find a spot by name or address (MKLocalSearch), or tap the map; zoom controls and an automatic zoom on selection make placing the point precise
 - **Saved Locations**: Multiple locations persisted with SwiftData, shown in a sidebar (NavigationSplitView); rename, move (re-downloading the parameters for the new coordinate) or delete them
 - **Apple Watch App**: Companion watchOS app showing the current tide and next high/low water
-- **Home Screen Widget**: WidgetKit extension (iOS) showing the current tide and next high/low water for a chosen location, computed offline from the App Group shared store
+- **Widgets (iOS and macOS)**: WidgetKit extension showing the current tide and next high/low water for a chosen location, computed offline from the App Group shared store (iOS also supports lock screen accessory widgets)
 
 ### Platform Support
 
@@ -47,7 +47,7 @@ Tides/
 ├── Sources/
 │   ├── App/           # iOS/macOS/visionOS app entry point
 │   ├── Watch/         # watchOS app
-│   ├── Widget/        # WidgetKit extension (iOS)
+│   ├── Widget/        # WidgetKit extension (iOS + macOS)
 │   ├── Core/          # TidesCore: tide engine + API client (Foundation only)
 │   ├── Platform/      # TidesPlatform: SwiftData store, place search, geocoding
 │   └── UI/            # TidesUI: SwiftUI views and view models
@@ -93,7 +93,7 @@ Base URL: `https://api.tides.ngs.io/` (configurable via the `API_HOST` Info.plis
 
 ### App Settings
 - **Bundle ID**: `io.ngs.Tides` (watch: `io.ngs.Tides.watchkitapp`, widget: `io.ngs.Tides.widget`)
-- **App Group**: `group.io.ngs.Tides` (iOS app + widget)
+- **App Group**: `group.io.ngs.Tides` — iOS/visionOS use the bare identifier, macOS requires the Team ID prefix (`$(TeamIdentifierPrefix)group.io.ngs.Tides`); both refer to the same registered group
 - **Display Name**: Tides
 - **Team ID**: Configured via Tuist
 

@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ · %@": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        }
+      }
+    },
     "Add Location": {
       "localizations": {
         "ja": {
