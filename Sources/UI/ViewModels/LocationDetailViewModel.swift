@@ -16,8 +16,8 @@ final class LocationDetailViewModel {
         var id: Date { time }
     }
 
-    let parameters: HarmonicParameters
-    private let predictor: TidePredictor
+    private(set) var parameters: HarmonicParameters
+    private var predictor: TidePredictor
     private let calendar: Calendar
 
     /// Start of the currently displayed day.
@@ -38,6 +38,15 @@ final class LocationDetailViewModel {
         self.predictor = TidePredictor(parameters: parameters)
         self.calendar = calendar
         self.dayStart = calendar.startOfDay(for: now)
+        reload()
+    }
+
+    /// Swaps in parameters downloaded for a new coordinate (the location was
+    /// moved) and recomputes the displayed window.
+    func replace(parameters newParameters: HarmonicParameters) {
+        guard newParameters != parameters else { return }
+        parameters = newParameters
+        predictor = TidePredictor(parameters: newParameters)
         reload()
     }
 

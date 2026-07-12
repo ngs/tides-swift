@@ -6,8 +6,9 @@ platform :ios do
   desc 'Match App Store Provisioning Profiles'
   lane :release_match do
     xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
-    # Includes the embedded watchOS app.
-    match type: 'appstore', app_identifier: ['io.ngs.Tides', 'io.ngs.Tides.watchkitapp'],
+    # Includes the embedded watchOS app and the widget extension.
+    match type: 'appstore',
+          app_identifier: ['io.ngs.Tides', 'io.ngs.Tides.watchkitapp', 'io.ngs.Tides.widget'],
           readonly: ENV['MATCH_READONLY'] == 'true'
   end
 
@@ -30,18 +31,24 @@ platform :ios do
       path: 'Tides.xcodeproj'
     )
 
-    # The watch app embedded in the iOS build needs its own profile
-    watch_profile_name = ENV['sigh_io.ngs.Tides.watchkitapp_appstore_profile-name'] ||
-                         'match AppStore io.ngs.Tides.watchkitapp'
-    update_code_signing_settings(
-      profile_name: watch_profile_name,
-      bundle_identifier: 'io.ngs.Tides.watchkitapp',
-      use_automatic_signing: false,
-      code_sign_identity: 'Apple Distribution',
-      targets: ['TidesWatch'],
-      build_configurations: %w[Release],
-      path: 'Tides.xcodeproj'
-    )
+    # The watch app and the widget embedded in the iOS build need their own profiles
+    embedded_targets = {
+      'TidesWatch' => 'io.ngs.Tides.watchkitapp',
+      'TidesWidget' => 'io.ngs.Tides.widget'
+    }
+    embedded_targets.each do |target, embedded_identifier|
+      embedded_profile_name = ENV["sigh_#{embedded_identifier}_appstore_profile-name"] ||
+                              "match AppStore #{embedded_identifier}"
+      update_code_signing_settings(
+        profile_name: embedded_profile_name,
+        bundle_identifier: embedded_identifier,
+        use_automatic_signing: false,
+        code_sign_identity: 'Apple Distribution',
+        targets: [target],
+        build_configurations: %w[Release],
+        path: 'Tides.xcodeproj'
+      )
+    end
 
     # Build the app and create the archive
     build_app(

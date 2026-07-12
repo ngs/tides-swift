@@ -1,16 +1,24 @@
 import Charts
+import SwiftData
 import SwiftUI
 import TidesCore
 import TidesPlatform
 
 /// Tide detail screen: two-day tide curve, current level, high/low water list
-/// and day navigation. Works fully offline from the saved parameters.
+/// and day navigation. Works fully offline from the saved parameters, and lets
+/// the location be renamed, moved or deleted.
 struct LocationDetailView: View {
     let location: SavedLocation
+    /// Cleared by the parent when this location is deleted.
+    @Binding var selection: SavedLocation?
 
     var body: some View {
         if let parameters = location.parameters {
-            LocationDetailContentView(location: location, parameters: parameters)
+            LocationDetailContentView(
+                location: location,
+                parameters: parameters,
+                selection: $selection
+            )
         } else {
             ContentUnavailableView(
                 "Tide Data Unavailable",
@@ -23,10 +31,20 @@ struct LocationDetailView: View {
 
 private struct LocationDetailContentView: View {
     let location: SavedLocation
+    @Binding var selection: SavedLocation?
+    @Environment(\.modelContext)
+    private var modelContext
     @State private var viewModel: LocationDetailViewModel
+    @State private var isEditing = false
+    @State private var isConfirmingDelete = false
 
-    init(location: SavedLocation, parameters: HarmonicParameters) {
+    init(
+        location: SavedLocation,
+        parameters: HarmonicParameters,
+        selection: Binding<SavedLocation?>
+    ) {
         self.location = location
+        _selection = selection
         _viewModel = State(initialValue: LocationDetailViewModel(parameters: parameters))
     }
 
@@ -72,9 +90,47 @@ private struct LocationDetailContentView: View {
             }
         }
         .navigationTitle(location.name)
+        .toolbar {
+            ToolbarItem {
+                Menu("Location Options", systemImage: "ellipsis.circle") {
+                    Button("Edit Location", systemImage: "pencil") {
+                        isEditing = true
+                    }
+                    Button("Delete", systemImage: "trash", role: .destructive) {
+                        isConfirmingDelete = true
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $isEditing) {
+            EditLocationView(location: location)
+        }
+        .confirmationDialog(
+            "Delete Location",
+            isPresented: $isConfirmingDelete,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                delete()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("\(location.name) and its offline tide data will be removed.")
+        }
         .onAppear {
             viewModel.reload()
         }
+        .onChange(of: location.parametersJSON) { _, _ in
+            // The location was moved: recompute from the new parameters.
+            if let parameters = location.parameters {
+                viewModel.replace(parameters: parameters)
+            }
+        }
+    }
+
+    private func delete() {
+        selection = nil
+        modelContext.delete(location)
     }
 
     private var currentTideRow: some View {

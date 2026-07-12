@@ -38,14 +38,11 @@ public final class SavedLocation {
         parameters: HarmonicParameters,
         fetchedAt: Date = .now
     ) throws {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        let data = try encoder.encode(parameters)
         self.init(
             name: name,
             latitude: latitude,
             longitude: longitude,
-            parametersJSON: data,
+            parametersJSON: try Self.encode(parameters),
             fetchedAt: fetchedAt
         )
     }
@@ -53,5 +50,33 @@ public final class SavedLocation {
     /// Decoded harmonic parameters, or `nil` if the stored JSON is corrupt.
     public var parameters: HarmonicParameters? {
         try? HarmonicParameters.decoder().decode(HarmonicParameters.self, from: parametersJSON)
+    }
+
+    /// Encodes harmonic parameters for storage in `parametersJSON`.
+    public static func encode(_ parameters: HarmonicParameters) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return try encoder.encode(parameters)
+    }
+
+    /// Renames the location. Blank names are ignored.
+    public func rename(to newName: String) {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        name = trimmed
+    }
+
+    /// Moves the location to a new coordinate, replacing its parameters with
+    /// the ones freshly downloaded for that coordinate.
+    public func move(
+        latitude newLatitude: Double,
+        longitude newLongitude: Double,
+        parameters newParameters: HarmonicParameters,
+        fetchedAt newFetchedAt: Date = .now
+    ) throws {
+        parametersJSON = try Self.encode(newParameters)
+        latitude = newLatitude
+        longitude = newLongitude
+        fetchedAt = newFetchedAt
     }
 }

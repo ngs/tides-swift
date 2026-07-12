@@ -5,6 +5,13 @@ let copyright = "© 2024 Atsushi Nagase. All rights reserved."
 
 let buildNumber = Environment.buildNumber.getString(default: "0")
 
+/// Entitlements are code-signing inputs, never bundle resources.
+let entitlementFiles: [Path] = [
+    "Resources/Tides.entitlements",
+    "Resources/Tides-iOS.entitlements",
+    "Resources/TidesWidget.entitlements"
+]
+
 let project = Project(
     name: "Tides",
     organizationName: "Atsushi Nagase",
@@ -50,10 +57,10 @@ let project = Project(
                     "Your location is used to show nearby tide points on the map.")
             ]),
             sources: ["Sources/App/**"],
-            // The entitlements file must not be copied into the bundle,
-            // otherwise code signing fails on macOS.
+            // Entitlements files must not be copied into the bundle, otherwise
+            // code signing fails on macOS.
             resources: [
-                .glob(pattern: "Resources/**", excluding: ["Resources/Tides.entitlements"])
+                .glob(pattern: "Resources/**", excluding: entitlementFiles)
             ],
             entitlements: .file(path: "Resources/Tides.entitlements"),
             scripts: [
@@ -67,8 +74,45 @@ let project = Project(
                 .package(product: "TidesCore"),
                 .package(product: "TidesPlatform"),
                 .package(product: "TidesUI"),
-                // The watch app is only embedded in the iOS build.
-                .target(name: "TidesWatch", condition: .when([.ios]))
+                // The watch app and the widget are only embedded in the iOS
+                // build; the App Group they share is an iOS entitlement.
+                .target(name: "TidesWatch", condition: .when([.ios])),
+                .target(name: "TidesWidget", condition: .when([.ios]))
+            ],
+            settings: .settings(
+                base: [
+                    // Only the iOS build declares the App Group shared with
+                    // the widget; macOS and visionOS keep the base file.
+                    "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": "Resources/Tides-iOS.entitlements",
+                    "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]":
+                        "Resources/Tides-iOS.entitlements"
+                ]
+            )
+        ),
+        // Home screen / lock screen widget: current tide and next high and low
+        // water for a saved location, computed offline from the shared store.
+        .target(
+            name: "TidesWidget",
+            destinations: [.iPhone, .iPad],
+            product: .appExtension,
+            bundleId: "io.ngs.Tides.widget",
+            deploymentTargets: .iOS("18.0"),
+            infoPlist: .extendingDefault(with: [
+                "CFBundleDisplayName": .string("Tides"),
+                "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
+                "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
+                "NSExtension": .dictionary([
+                    "NSExtensionPointIdentifier": .string("com.apple.widgetkit-extension")
+                ])
+            ]),
+            sources: ["Sources/Widget/**"],
+            resources: [
+                .glob(pattern: "Resources/**", excluding: entitlementFiles)
+            ],
+            entitlements: .file(path: "Resources/TidesWidget.entitlements"),
+            dependencies: [
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform")
             ]
         ),
         // Apple Watch companion app.

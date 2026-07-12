@@ -3,8 +3,9 @@ import SwiftData
 import SwiftUI
 import TidesPlatform
 
-/// Map-based location picker: tap to drop a pin, download the harmonic
-/// parameters for that point, name it and save.
+/// Location picker: search by name or address, or tap the map. Zoom controls
+/// and an automatic zoom on selection make it possible to place the point
+/// precisely instead of somewhere in a whole region.
 struct AddLocationView: View {
     @Environment(\.dismiss)
     private var dismiss
@@ -16,6 +17,7 @@ struct AddLocationView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                searchBar
                 mapView
                 controlPanel
             }
@@ -43,9 +45,81 @@ struct AddLocationView: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 480, minHeight: 520)
+        .frame(minWidth: 520, minHeight: 620)
         #endif
     }
+
+    // MARK: - Search
+
+    @ViewBuilder private var searchBar: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                TextField("Search for a place or address", text: $viewModel.searchQuery)
+                    .textFieldStyle(.plain)
+                    .onSubmit {
+                        Task { await viewModel.search() }
+                    }
+                    #if os(iOS)
+                    .submitLabel(.search)
+                    .autocorrectionDisabled()
+                    #endif
+                if viewModel.isSearching {
+                    ProgressView()
+                        .controlSize(.small)
+                } else if !viewModel.searchQuery.isEmpty {
+                    Button("Clear Search", systemImage: "xmark.circle.fill") {
+                        viewModel.clearSearch()
+                    }
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
+                }
+                Button("Search") {
+                    Task { await viewModel.search() }
+                }
+                .disabled(viewModel.searchQuery.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+
+            if !viewModel.searchResults.isEmpty {
+                searchResultList
+            }
+            Divider()
+        }
+    }
+
+    private var searchResultList: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(viewModel.searchResults) { suggestion in
+                    Button {
+                        viewModel.select(suggestion: suggestion)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(suggestion.name)
+                            if !suggestion.subtitle.isEmpty {
+                                Text(suggestion.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                        .padding(.vertical, 6)
+                        .padding(.horizontal)
+                    }
+                    .buttonStyle(.plain)
+                    Divider()
+                }
+            }
+        }
+        .frame(maxHeight: 180)
+    }
+
+    // MARK: - Map
 
     private var mapView: some View {
         MapReader { proxy in
@@ -53,13 +127,53 @@ struct AddLocationView: View {
                 if let coordinate = viewModel.selectedCoordinate {
                     Marker("Selected Point", systemImage: "water.waves", coordinate: coordinate)
                 }
+                UserAnnotation()
+            }
+            .mapControls {
+                MapUserLocationButton()
+                MapCompass()
+                MapScaleView()
             }
             .onTapGesture { point in
                 guard let coordinate = proxy.convert(point, from: .local) else { return }
                 viewModel.select(coordinate: coordinate)
             }
+            .onMapCameraChange(frequency: .onEnd) { context in
+                viewModel.mapCameraChanged(to: context.region)
+            }
+            .onChange(of: viewModel.pendingCamera) { _, target in
+                guard let target else { return }
+                withAnimation {
+                    cameraPosition = .region(target.region)
+                }
+                viewModel.consumePendingCamera()
+            }
+            .overlay(alignment: .topTrailing) {
+                zoomControls
+                    .padding(8)
+            }
         }
     }
+
+    private var zoomControls: some View {
+        VStack(spacing: 0) {
+            Button("Zoom In", systemImage: "plus") {
+                viewModel.zoomIn()
+            }
+            Divider().frame(width: 28)
+            Button("Zoom Out", systemImage: "minus") {
+                viewModel.zoomOut()
+            }
+        }
+        .labelStyle(.iconOnly)
+        .buttonStyle(.plain)
+        .padding(6)
+        .frame(width: 32)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .shadow(radius: 1)
+    }
+
+    // MARK: - Controls
 
     @ViewBuilder private var controlPanel: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -70,7 +184,7 @@ struct AddLocationView: View {
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("Tap the map to select a location.")
+                    Text("Search for a place, or tap the map to select a location.")
                         .foregroundStyle(.secondary)
                 }
                 Button {

@@ -33,7 +33,10 @@ Tuist(`Project.swift`)のアプリターゲットがそれらに依存する。
 |---|---|---|---|
 | `Tides` | app | `Sources/App/` | iPhone / iPad / macOS / Vision Pro |
 | `TidesWatch` | app | `Sources/Watch/` | watchOS(iOSビルドに埋め込み) |
+| `TidesWidget` | appExtension | `Sources/Widget/` | iOS(WidgetKit、iOSビルドに埋め込み) |
 | `TidesTests` | unitTests | `Tests/TidesUITests/` | iOS / macOS / visionOS |
+
+アプリとウィジェットは App Group `group.io.ngs.Tides` の SwiftData ストアを共有する(`TidesModelContainer`)。App Group の entitlement は iOS ビルドのみ(`Resources/Tides-iOS.entitlements`、`CODE_SIGN_ENTITLEMENTS[sdk=iphone*]` で切替)。macOS / visionOS は `Resources/Tides.entitlements` のまま。
 
 SPM テストターゲット: `Tests/TidesCoreTests/`(ゴールデンフィクスチャ)、`Tests/TidesUITests/`(ViewModel テスト)。`swift test` で実行できる。
 

@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 import TidesPlatform
 import TidesUI
@@ -9,6 +8,7 @@ struct TidesApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: SavedLocation.self)
+        // Shared with the widget extension through the App Group container.
+        .modelContainer(TidesModelContainer.shared)
     }
 }

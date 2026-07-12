@@ -13,7 +13,7 @@ public struct ContentView: View {
             LocationListView(selection: $selection)
         } detail: {
             if let location = selection {
-                LocationDetailView(location: location)
+                LocationDetailView(location: location, selection: $selection)
                     .id(location.persistentModelID)
             } else {
                 ContentUnavailableView(

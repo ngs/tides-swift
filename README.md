@@ -10,8 +10,10 @@ A native iOS, iPadOS, macOS, visionOS, and watchOS application for offline tide 
 - **Interactive Map Picker**: Tap anywhere on the map to select a location; MapKit reverse geocoding suggests a name
 - **Two-Day Tide Chart**: Swift Charts curve with high/low water markers, a "now" indicator and day navigation
 - **High/Low Water Times**: Extrema located on a 1-minute grid and refined by parabolic interpolation
-- **Saved Locations**: Multiple locations persisted with SwiftData, shown in a sidebar (NavigationSplitView)
+- **Place Search**: Find a spot by name or address (MKLocalSearch), or tap the map; zoom controls and an automatic zoom on selection make placing the point precise
+- **Saved Locations**: Multiple locations persisted with SwiftData, shown in a sidebar (NavigationSplitView); rename, move (re-downloading the parameters for the new coordinate) or delete them
 - **Apple Watch App**: Companion watchOS app showing the current tide and next high/low water
+- **Home Screen Widget**: WidgetKit extension (iOS) showing the current tide and next high/low water for a chosen location, computed offline from the App Group shared store
 
 ### Platform Support
 
@@ -45,8 +47,9 @@ Tides/
 ├── Sources/
 │   ├── App/           # iOS/macOS/visionOS app entry point
 │   ├── Watch/         # watchOS app
+│   ├── Widget/        # WidgetKit extension (iOS)
 │   ├── Core/          # TidesCore: tide engine + API client (Foundation only)
-│   ├── Platform/      # TidesPlatform: SwiftData models, geocoding
+│   ├── Platform/      # TidesPlatform: SwiftData store, place search, geocoding
 │   └── UI/            # TidesUI: SwiftUI views and view models
 ├── Resources/         # Assets, string catalog, entitlements
 ├── WatchResources/    # watchOS assets and string catalog
@@ -68,11 +71,15 @@ Logic lives in a local Swift package (`Package.swift`) with three libraries; the
 
 - **TidesPlatform** (`Sources/Platform/`)
   - `Storage/SavedLocation.swift`: SwiftData model persisting the downloaded parameters as JSON
-  - `Location/ReverseGeocoder.swift`: CLGeocoder-based name suggestions
+  - `Storage/TidesModelContainer.swift`: SwiftData stack in the App Group container, shared with the widget
+  - `Location/PlaceSearchService.swift`: MKLocalSearch place/address search
+  - `Location/ReverseGeocoder.swift`: name suggestions from nearby landmarks, falling back to reverse geocoding (region-scale names such as "Honshu" are never suggested)
 
 - **TidesUI** (`Sources/UI/`)
-  - `Views/`: `ContentView` (split view), `LocationListView`, `AddLocationView` (map picker), `LocationDetailView` (chart)
-  - `ViewModels/`: `AddLocationViewModel`, `LocationDetailViewModel`
+  - `Views/`: `ContentView` (split view), `LocationListView`, `AddLocationView` (search + map picker), `EditLocationView` (rename / move), `LocationDetailView` (chart)
+  - `ViewModels/`: `AddLocationViewModel`, `EditLocationViewModel`, `LocationDetailViewModel`
+
+The widget (`Sources/Widget/`) reads the same SwiftData store through the `group.io.ngs.Tides` App Group and predicts tides with `TidePredictor`, so it works without network access.
 
 The engine is a port of the Go implementation in tides-api (`internal/domain/tide.go`, `nodal.go`). Golden fixtures in `Tests/TidesCoreTests/Fixtures/` are generated from the Go code; the Swift port must match them within the tolerances recorded in each fixture.
 
@@ -85,7 +92,8 @@ Base URL: `https://api.tides.ngs.io/` (configurable via the `API_HOST` Info.plis
 ## Configuration
 
 ### App Settings
-- **Bundle ID**: `io.ngs.Tides` (watch: `io.ngs.Tides.watchkitapp`)
+- **Bundle ID**: `io.ngs.Tides` (watch: `io.ngs.Tides.watchkitapp`, widget: `io.ngs.Tides.widget`)
+- **App Group**: `group.io.ngs.Tides` (iOS app + widget)
 - **Display Name**: Tides
 - **Team ID**: Configured via Tuist
 
