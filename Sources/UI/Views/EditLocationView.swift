@@ -47,8 +47,9 @@ struct EditLocationView: View {
                 .padding(.bottom, 12)
 
             form
+                .frame(maxHeight: 300)
             map
-                .frame(height: 200)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             Divider()
             HStack {

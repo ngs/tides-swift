@@ -47,12 +47,17 @@ public final class EditLocationViewModel {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 
+    /// Precision the coordinate fields are displayed with (about 1 m). Changes
+    /// smaller than this are round-trip noise from formatting the stored value,
+    /// not an edit, and must not trigger a re-download.
+    static let coordinateTolerance = 1e-5
+
     /// True when the entered coordinate differs from the stored one and thus
     /// requires new parameters.
     public var coordinateChanged: Bool {
         guard let coordinate = enteredCoordinate else { return false }
-        return abs(coordinate.latitude - location.latitude) > 1e-6
-            || abs(coordinate.longitude - location.longitude) > 1e-6
+        return abs(coordinate.latitude - location.latitude) > Self.coordinateTolerance
+            || abs(coordinate.longitude - location.longitude) > Self.coordinateTolerance
     }
 
     public var trimmedName: String {

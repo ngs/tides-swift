@@ -13,8 +13,11 @@ public struct ContentView: View {
             LocationListView(selection: $selection)
         } detail: {
             if let location = selection {
-                LocationDetailView(location: location, selection: $selection)
-                    .id(location.persistentModelID)
+                // Its own stack, so pushing the calendar gets a back button.
+                NavigationStack {
+                    LocationDetailView(location: location, selection: $selection)
+                }
+                .id(location.persistentModelID)
             } else {
                 ContentUnavailableView(
                     "Select a Location",

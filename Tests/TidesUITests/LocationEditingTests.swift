@@ -266,6 +266,31 @@ struct EditLocationViewModelTests {
         #expect(!viewModel.canSave)
     }
 
+    /// Opening the sheet must not look like an edit: the fields are formatted
+    /// to five decimals, and re-parsing them must not read as a coordinate
+    /// change (which would re-download parameters on every save).
+    @Test
+    func openingTheSheetDoesNotCountAsACoordinateChange() throws {
+        let location = try SavedLocation(
+            name: "Nojimazaki",
+            latitude: 34.8993402,
+            longitude: 139.8657579,
+            parameters: makeParameters()
+        )
+        let viewModel = EditLocationViewModel(
+            location: location,
+            client: StubAPIClient(
+                result: .failure(TidesAPIError(message: "must not be called", statusCode: 500))
+            )
+        )
+
+        #expect(!viewModel.coordinateChanged)
+
+        // Renaming alone must therefore save without touching the network.
+        viewModel.name = "Nojima"
+        #expect(viewModel.canSave)
+    }
+
     @Test
     func mapTapUpdatesTheCoordinateFields() throws {
         let location = try makeSavedLocation()
