@@ -12,9 +12,11 @@ let package = Package(
     ],
     products: [
         // Expose core and UI as libraries so an app target in Xcode can depend on them.
-        .library(name: "TidesCore", targets: ["TidesCore"]),
-        .library(name: "TidesPlatform", targets: ["TidesPlatform"]),
-        .library(name: "TidesUI", targets: ["TidesUI"]),
+        // Static so Xcode never embeds them as (separately signed) dynamic
+        // frameworks in the app bundles.
+        .library(name: "TidesCore", type: .static, targets: ["TidesCore"]),
+        .library(name: "TidesPlatform", type: .static, targets: ["TidesPlatform"]),
+        .library(name: "TidesUI", type: .static, targets: ["TidesUI"]),
     ],
     targets: [
         // Offline harmonic tide engine + parameters API client (Foundation only).
