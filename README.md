@@ -10,6 +10,7 @@ A native iOS, iPadOS, macOS, visionOS, and watchOS application for offline tide 
 - **Interactive Map Picker**: Tap anywhere on the map to select a location; MapKit reverse geocoding suggests a name
 - **Two-Day Tide Chart**: Swift Charts curve with high/low water markers, a "now" indicator and day navigation
 - **High/Low Water Times**: Extrema located on a 1-minute grid and refined by parabolic interpolation
+- **Moon Phase Calendar**: Month grid with a moon-phase icon and that day's high/low water times per day; selecting a day lists all of its tides with the lunar age and illuminated fraction (Moon–Sun elongation computed offline from Meeus' algorithms)
 - **Place Search**: Find a spot by name or address (MKLocalSearch), or tap the map; zoom controls and an automatic zoom on selection make placing the point precise
 - **Saved Locations**: Multiple locations persisted with SwiftData, shown in a sidebar (NavigationSplitView); rename, move (re-downloading the parameters for the new coordinate) or delete them
 - **Apple Watch App**: Companion watchOS app showing the current tide and next high/low water
@@ -66,6 +67,7 @@ Logic lives in a local Swift package (`Package.swift`) with three libraries; the
 - **TidesCore** (`Sources/Core/`) — depends on Foundation only, builds for all platforms including watchOS
   - `HarmonicParameters.swift`: Codable model of the `/v1/tides/parameters` response
   - `NodalCorrection.swift`: Astronomical nodal corrections f/u (Schureman 1958)
+  - `MoonPhase.swift`: Lunar age, illuminated fraction and phase icon (Meeus, ch. 25/47), validated against published new/full moon instants
   - `TidePredictor.swift`: Height series, high/low water detection and refinement
   - `API/TidesAPIClient.swift`: URLSession client for the parameters endpoint
 
@@ -76,8 +78,8 @@ Logic lives in a local Swift package (`Package.swift`) with three libraries; the
   - `Location/ReverseGeocoder.swift`: name suggestions from nearby landmarks, falling back to reverse geocoding (region-scale names such as "Honshu" are never suggested)
 
 - **TidesUI** (`Sources/UI/`)
-  - `Views/`: `ContentView` (split view), `LocationListView`, `AddLocationView` (search + map picker), `EditLocationView` (rename / move), `LocationDetailView` (chart)
-  - `ViewModels/`: `AddLocationViewModel`, `EditLocationViewModel`, `LocationDetailViewModel`
+  - `Views/`: `ContentView` (split view), `LocationListView`, `AddLocationView` (search + map picker), `EditLocationView` (rename / move), `LocationDetailView` (chart), `TideCalendarView` (moon phase calendar)
+  - `ViewModels/`: `AddLocationViewModel`, `EditLocationViewModel`, `LocationDetailViewModel`, `TideCalendarViewModel`
 
 The widget (`Sources/Widget/`) reads the same SwiftData store through the `group.io.ngs.Tides` App Group and predicts tides with `TidePredictor`, so it works without network access.
 

@@ -2,7 +2,6 @@
   "sourceLanguage": "en",
   "strings": {
     "%@ and its offline tide data will be removed.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -23,7 +22,6 @@
       }
     },
     "Add Location": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -34,7 +32,6 @@
       }
     },
     "Add a location from the iPhone app.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -45,7 +42,6 @@
       }
     },
     "Add a location from the map to see tide predictions.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -56,7 +52,6 @@
       }
     },
     "Available Offline": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -77,7 +72,6 @@
       }
     },
     "Cancel": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -88,7 +82,6 @@
       }
     },
     "Choose a saved location, or add one from the map.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -109,7 +102,6 @@
       }
     },
     "Clear Search": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -120,7 +112,6 @@
       }
     },
     "Coordinates": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -131,7 +122,6 @@
       }
     },
     "Current Tide": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -152,7 +142,6 @@
       }
     },
     "Date": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -163,7 +152,6 @@
       }
     },
     "Delete": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -174,7 +162,6 @@
       }
     },
     "Delete Location": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -185,7 +172,6 @@
       }
     },
     "Edit Location": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -196,7 +182,6 @@
       }
     },
     "Enter a latitude between -90 and 90 and a longitude between -180 and 180.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -207,7 +192,6 @@
       }
     },
     "Error": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -218,7 +202,6 @@
       }
     },
     "Fetch Parameters for This Location": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -229,7 +212,6 @@
       }
     },
     "Fetched": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -240,7 +222,6 @@
       }
     },
     "Fetching parameters…": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -281,7 +262,6 @@
       }
     },
     "High Tide": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -292,7 +272,6 @@
       }
     },
     "High and Low Tides": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -313,7 +292,6 @@
       }
     },
     "Latitude": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -334,7 +312,6 @@
       }
     },
     "Location Name": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -345,7 +322,6 @@
       }
     },
     "Location Options": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -356,7 +332,6 @@
       }
     },
     "Locations": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -367,7 +342,6 @@
       }
     },
     "Longitude": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -388,7 +362,6 @@
       }
     },
     "Low Tide": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -419,7 +392,6 @@
       }
     },
     "Name": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -430,7 +402,6 @@
       }
     },
     "New Location": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -451,7 +422,6 @@
       }
     },
     "New tide parameters will be downloaded for the new coordinates.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -462,7 +432,6 @@
       }
     },
     "Next Day": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -473,7 +442,6 @@
       }
     },
     "Next High Tide": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -484,7 +452,6 @@
       }
     },
     "Next Low Tide": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -505,7 +472,6 @@
       }
     },
     "No Location Set": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -526,7 +492,6 @@
       }
     },
     "No high or low tides in this period.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -537,7 +502,6 @@
       }
     },
     "No places found for this search.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -548,7 +512,6 @@
       }
     },
     "Now": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -559,7 +522,6 @@
       }
     },
     "OK": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -570,7 +532,6 @@
       }
     },
     "Previous Day": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -591,7 +552,6 @@
       }
     },
     "Save": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -602,7 +562,6 @@
       }
     },
     "Search": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -613,7 +572,6 @@
       }
     },
     "Search for a place or address": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -624,7 +582,6 @@
       }
     },
     "Search for a place, or tap the map to select a location.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -645,7 +602,6 @@
       }
     },
     "Select a Location": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -656,7 +612,6 @@
       }
     },
     "Selected Point": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -667,7 +622,6 @@
       }
     },
     "Tap the map to move this location.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -678,7 +632,6 @@
       }
     },
     "Tap the map to select a location.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -689,7 +642,6 @@
       }
     },
     "The saved parameters for this location could not be read.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -700,7 +652,6 @@
       }
     },
     "The server returned an invalid response.": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -711,7 +662,6 @@
       }
     },
     "Tide Chart": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -722,7 +672,6 @@
       }
     },
     "Tide Data Unavailable": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -733,7 +682,6 @@
       }
     },
     "Tide Height (m)": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -754,7 +702,6 @@
       }
     },
     "Today": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -815,7 +762,6 @@
       }
     },
     "Zoom In": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {
@@ -826,7 +772,6 @@
       }
     },
     "Zoom Out": {
-      "extractionState": "stale",
       "localizations": {
         "ja": {
           "stringUnit": {

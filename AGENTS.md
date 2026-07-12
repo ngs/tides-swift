@@ -25,7 +25,7 @@ Tuist(`Project.swift`)のアプリターゲットがそれらに依存する。
 
 | モジュール | パス | 内容 |
 |---|---|---|
-| `TidesCore` | `Sources/Core/` | 調和計算エンジン(HarmonicParameters / NodalCorrection / TidePredictor)+ パラメータAPIクライアント。**Foundation のみに依存(UIフレームワーク禁止)** |
+| `TidesCore` | `Sources/Core/` | 調和計算エンジン(HarmonicParameters / NodalCorrection / TidePredictor)+ 月相計算(MoonPhase)+ パラメータAPIクライアント。**Foundation のみに依存(UIフレームワーク禁止)** |
 | `TidesPlatform` | `Sources/Platform/` | SwiftData 永続化(SavedLocation)、逆ジオコーディング |
 | `TidesUI` | `Sources/UI/` | SwiftUI Views / ViewModels |
 
@@ -50,6 +50,11 @@ SPM テストターゲット: `Tests/TidesCoreTests/`(ゴールデンフィク�
   - V_k: サーバが `equilibrium_argument_deg` として配信(基準エポック評価値、静的)
   - f/u(nodal補正): クライアントで絶対時刻の天文引数(Schureman)から計算
 - **ゴールデンフィクスチャ**: `Tests/TidesCoreTests/Fixtures/*.json` は Go 実装から生成した正解値。Swift 移植はこれと一致しなければならない(許容誤差はフィクスチャ側に記載)。Go 側の計算式を変えた場合はフィクスチャ再生成が必要(tides-api リポジトリの `tmp/fixturegen` 参照)。
+
+### MoonPhase(月相)
+- Meeus『Astronomical Algorithms』(ch.25 / 47)の主要項による月-太陽の離角から、月齢・輝面比・8相(SF Symbols の `moonphase.*`)を算出。Foundation のみ。
+- テストは実測の新月・満月・上下弦の時刻(USNO/IMCCE)と照合(`Tests/TidesCoreTests/MoonPhaseTests.swift`)。
+- 月齢の日次増加は 0.85〜1.15日/日で変動する(軌道離心率による正しい挙動)。
 
 ### API
 - `GET /v1/tides/parameters?lat=&lon=` … 調和定数パラメータ(このアプリの主要API)

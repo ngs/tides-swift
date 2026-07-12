@@ -306,7 +306,7 @@ struct TideCalendarViewModelTests {
         let now = Date(timeIntervalSince1970: 1_767_225_600)  // 2026-01-01
         let viewModel = makeViewModel(now: now)
 
-        #expect(viewModel.days.count % 7 == 0)
+        #expect(viewModel.days.count.isMultiple(of: 7))
         #expect(viewModel.weekdaySymbols.count == 7)
 
         let inMonth = viewModel.days.filter(\.isInDisplayedMonth)
