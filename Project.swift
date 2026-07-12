@@ -50,7 +50,11 @@ let project = Project(
                     "Your location is used to show nearby tide points on the map.")
             ]),
             sources: ["Sources/App/**"],
-            resources: ["Resources/**"],
+            // The entitlements file must not be copied into the bundle,
+            // otherwise code signing fails on macOS.
+            resources: [
+                .glob(pattern: "Resources/**", excluding: ["Resources/Tides.entitlements"])
+            ],
             entitlements: .file(path: "Resources/Tides.entitlements"),
             scripts: [
                 .pre(
