@@ -129,12 +129,19 @@ jobs:
           - platform: iOS
             destination: "generic/platform=iOS Simulator"
             buildNumberSuffix: ".1"
+            scheme: Tides
           - platform: macOS
             destination: "platform=macOS"
             buildNumberSuffix: ".2"
+            scheme: Tides
           - platform: visionOS
             destination: "generic/platform=visionOS Simulator"
             buildNumberSuffix: ".3"
+            scheme: Tides
+          - platform: watchOS
+            destination: "generic/platform=watchOS Simulator"
+            buildNumberSuffix: ".4"
+            scheme: TidesWatch
 
     steps:
       - uses: actions/checkout@v5
@@ -155,7 +162,7 @@ jobs:
       - name: Build ${{ matrix.platform }}
         run: |
           xcodebuild build \
-            -scheme Tides \
+            -scheme '${{ matrix.scheme }}' \
             -destination '${{ matrix.destination }}' \
             -derivedDataPath .build \
             CODE_SIGNING_ALLOWED=NO \

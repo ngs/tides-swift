@@ -6,7 +6,9 @@ platform :ios do
   desc 'Match App Store Provisioning Profiles'
   lane :release_match do
     xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
-    match type: 'appstore', app_identifier: 'io.ngs.Tides', readonly: ENV['MATCH_READONLY'] == 'true'
+    # Includes the embedded watchOS app.
+    match type: 'appstore', app_identifier: ['io.ngs.Tides', 'io.ngs.Tides.watchkitapp'],
+          readonly: ENV['MATCH_READONLY'] == 'true'
   end
 
   desc 'Build app for release'
@@ -24,6 +26,19 @@ platform :ios do
       use_automatic_signing: false,
       code_sign_identity: 'Apple Distribution',
       targets: ['Tides'],
+      build_configurations: %w[Release],
+      path: 'Tides.xcodeproj'
+    )
+
+    # The watch app embedded in the iOS build needs its own profile
+    watch_profile_name = ENV['sigh_io.ngs.Tides.watchkitapp_appstore_profile-name'] ||
+                         'match AppStore io.ngs.Tides.watchkitapp'
+    update_code_signing_settings(
+      profile_name: watch_profile_name,
+      bundle_identifier: 'io.ngs.Tides.watchkitapp',
+      use_automatic_signing: false,
+      code_sign_identity: 'Apple Distribution',
+      targets: ['TidesWatch'],
       build_configurations: %w[Release],
       path: 'Tides.xcodeproj'
     )

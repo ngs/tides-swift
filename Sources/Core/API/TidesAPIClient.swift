@@ -1,186 +1,81 @@
 import Foundation
-import Logging
 
-/// Error types for Tides API
-public enum TidesAPIError: Error, LocalizedError, Sendable {
-  case invalidURL
-  case networkError(Error)
-  case invalidResponse
-  case httpError(statusCode: Int, message: String)
-  case decodingError(Error)
-  case timeout
-
-  public var errorDescription: String? {
-    switch self {
-    case .invalidURL:
-      "Invalid API URL"
-    case .networkError(let error):
-      "Network error: \(error.localizedDescription)"
-    case .invalidResponse:
-      "Invalid response from API"
-    case let .httpError(statusCode, message):
-      "HTTP error \(statusCode): \(message)"
-    case .decodingError(let error):
-      "Failed to decode response: \(error.localizedDescription)"
-    case .timeout:
-      "Request timed out"
-    }
-  }
+/// Abstraction over the tides-api network client so view models can be unit
+/// tested with a mock.
+public protocol TidesAPIClientProtocol: Sendable {
+    /// Fetches harmonic constituent parameters for a coordinate.
+    func fetchParameters(latitude: Double, longitude: Double) async throws -> HarmonicParameters
 }
 
-/// Client for the Tides API
-public actor TidesAPIClient {
-  private let baseURL: String
-  private let session: URLSession
-  private let logger = Logger(label: "io.ngs.Tides.TidesAPIClient")
+/// Error returned by tides-api (`{"error": "..."}` with a 4xx/5xx status).
+public struct TidesAPIError: Error, LocalizedError, Equatable {
+    public var message: String
+    public var statusCode: Int
 
-  public init(
-    baseURL: String = "https://api.tides.ngs.io",
-    session: URLSession? = nil,
-    timeoutInterval: TimeInterval = 30
-  ) {
-    self.baseURL = baseURL
-
-    if let session {
-      self.session = session
-    } else {
-      let configuration = URLSessionConfiguration.default
-      configuration.timeoutIntervalForRequest = timeoutInterval
-      configuration.timeoutIntervalForResource = timeoutInterval * 2
-      self.session = URLSession(configuration: configuration)
-    }
-  }
-
-  /// Fetch tide predictions for a specific location and time range
-  public func fetchTidePredictions(
-    lat: Double,
-    lon: Double,
-    start: Date,
-    end: Date,
-    interval: String = "30m",
-    source: String = "fes"
-  ) async throws -> TidePredictionsResponse {
-    var components = URLComponents(string: "\(baseURL)/v1/tides/predictions")
-    guard components != nil else {
-      throw TidesAPIError.invalidURL
+    public init(message: String, statusCode: Int) {
+        self.message = message
+        self.statusCode = statusCode
     }
 
-    let formatter = ISO8601DateFormatter()
-    components?.queryItems = [
-      URLQueryItem(name: "lat", value: String(lat)),
-      URLQueryItem(name: "lon", value: String(lon)),
-      URLQueryItem(name: "start", value: formatter.string(from: start)),
-      URLQueryItem(name: "end", value: formatter.string(from: end)),
-      URLQueryItem(name: "interval", value: interval),
-      URLQueryItem(name: "source", value: source)
-    ]
+    public var errorDescription: String? { message }
+}
 
-    guard let url = components?.url else {
-      throw TidesAPIError.invalidURL
+/// Thin async/await URLSession client for tides-api. Used once per location
+/// to download harmonic parameters; all predictions afterwards are computed
+/// locally by `TidePredictor`.
+public struct TidesAPIClient: TidesAPIClientProtocol {
+    /// Default API host, used when the `API_HOST` Info.plist key is absent.
+    public static let defaultHost = "api.tides.ngs.io"
+
+    public var host: String
+    public var session: URLSession
+
+    public init(host: String, session: URLSession = .shared) {
+        self.host = host
+        self.session = session
     }
 
-    logger.debug("Fetching tide predictions from \(url.absoluteString)")
-
-    do {
-      let (data, response) = try await session.data(from: url)
-
-      guard let httpResponse = response as? HTTPURLResponse else {
-        throw TidesAPIError.invalidResponse
-      }
-
-      guard httpResponse.statusCode == 200 else {
-        let message = String(data: data, encoding: .utf8) ?? "Unknown error"
-        throw TidesAPIError.httpError(statusCode: httpResponse.statusCode, message: message)
-      }
-
-      do {
-        let decoder = JSONDecoder()
-        let result = try decoder.decode(TidePredictionsResponse.self, from: data)
-        logger.debug("Successfully fetched \(result.predictions.count) predictions")
-        return result
-      } catch {
-        logger.error("Failed to decode response: \(error)")
-        throw TidesAPIError.decodingError(error)
-      }
-    } catch let error as TidesAPIError {
-      throw error
-    } catch {
-      throw try handleNetworkError(error)
-    }
-  }
-
-  private func handleNetworkError(_ error: Error) throws -> Never {
-    let nsError = error as NSError
-    if nsError.domain == NSURLErrorDomain {
-      switch nsError.code {
-      case NSURLErrorCancelled:
-        logger.debug("Request cancelled (normal during map interaction)")
-        throw TidesAPIError.networkError(error)
-      case NSURLErrorTimedOut:
-        logger.error("Request timed out")
-        throw TidesAPIError.timeout
-      default:
-        logger.error("Network error: \(error)")
-        throw TidesAPIError.networkError(error)
-      }
+    /// Creates a client using the `API_HOST` Info.plist key.
+    public init() {
+        let host = Bundle.main.object(forInfoDictionaryKey: "API_HOST") as? String
+        if let host, !host.isEmpty {
+            self.init(host: host)
+        } else {
+            self.init(host: Self.defaultHost)
+        }
     }
 
-    logger.error("Network error: \(error)")
-    throw TidesAPIError.networkError(error)
-  }
+    public func fetchParameters(latitude: Double, longitude: Double) async throws -> HarmonicParameters {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = host
+        components.path = "/v1/tides/parameters"
+        components.queryItems = [
+            URLQueryItem(name: "lat", value: String(latitude)),
+            URLQueryItem(name: "lon", value: String(longitude))
+        ]
+        guard let url = components.url else {
+            throw URLError(.badURL)
+        }
 
-  /// Fetch available tidal constituents
-  public func fetchConstituents() async throws -> [Constituent] {
-    guard let url = URL(string: "\(baseURL)/v1/constituents") else {
-      throw TidesAPIError.invalidURL
+        let (data, response) = try await session.data(from: url)
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+
+        let decoder = HarmonicParameters.decoder()
+
+        guard http.statusCode == 200 else {
+            struct ErrorBody: Decodable { var error: String }
+            if let body = try? decoder.decode(ErrorBody.self, from: data) {
+                throw TidesAPIError(message: body.error, statusCode: http.statusCode)
+            }
+            throw TidesAPIError(
+                message: String(localized: "The server returned an invalid response."),
+                statusCode: http.statusCode
+            )
+        }
+
+        return try decoder.decode(HarmonicParameters.self, from: data)
     }
-
-    logger.debug("Fetching constituents from \(url.absoluteString)")
-
-    do {
-      let (data, response) = try await session.data(from: url)
-
-      guard let httpResponse = response as? HTTPURLResponse else {
-        throw TidesAPIError.invalidResponse
-      }
-
-      guard httpResponse.statusCode == 200 else {
-        let message = String(data: data, encoding: .utf8) ?? "Unknown error"
-        throw TidesAPIError.httpError(statusCode: httpResponse.statusCode, message: message)
-      }
-
-      do {
-        let decoder = JSONDecoder()
-        let result = try decoder.decode([Constituent].self, from: data)
-        logger.debug("Successfully fetched \(result.count) constituents")
-        return result
-      } catch {
-        logger.error("Failed to decode response: \(error)")
-        throw TidesAPIError.decodingError(error)
-      }
-    } catch let error as TidesAPIError {
-      throw error
-    } catch {
-      logger.error("Network error: \(error)")
-      throw TidesAPIError.networkError(error)
-    }
-  }
-
-  /// Check API health status
-  public func checkHealth() async -> Bool {
-    guard let url = URL(string: "\(baseURL)/healthz") else {
-      return false
-    }
-
-    do {
-      let (_, response) = try await session.data(from: url)
-      guard let httpResponse = response as? HTTPURLResponse else {
-        return false
-      }
-      return httpResponse.statusCode == 200
-    } catch {
-      logger.error("Health check failed: \(error)")
-      return false
-    }
-  }
 }
