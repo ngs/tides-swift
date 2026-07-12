@@ -160,10 +160,8 @@ jobs:
             ${{ runner.os }}-certificates-${{ matrix.platform }}-
             ${{ runner.os }}-certificates-
 
-      - name: Install tuist
-        run: |
-          brew tap tuist/tuist
-          brew install --formula tuist
+      - name: Install tuist (mise)
+        uses: jdx/mise-action@v2
 
       - name: Generate Xcode project and workspace
         run: |
