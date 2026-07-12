@@ -72,10 +72,13 @@ struct TidesWidgetView: View {
 
     private var rectangularView: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(entry.locationName ?? "")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+            HStack(spacing: 3) {
+                Text(entry.locationName ?? "")
+                    .lineLimit(1)
+                Image(systemName: entry.moon.phase.systemImageName)
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
             Text(heightText(entry.currentHeightMeters))
                 .font(.headline)
                 .monospacedDigit()
@@ -87,10 +90,14 @@ struct TidesWidgetView: View {
 
     private var standardView: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Label(entry.locationName ?? "", systemImage: "water.waves")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+            HStack(spacing: 4) {
+                Label(entry.locationName ?? "", systemImage: "water.waves")
+                    .lineLimit(1)
+                Spacer(minLength: 2)
+                Image(systemName: entry.moon.phase.systemImageName)
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
 
             Text(heightText(entry.currentHeightMeters))
                 .font(.system(.title, design: .rounded, weight: .semibold))

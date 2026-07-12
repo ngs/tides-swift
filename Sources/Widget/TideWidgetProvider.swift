@@ -14,6 +14,11 @@ struct TideEntry: TimelineEntry {
     var nextHigh: TideLevel?
     var nextLow: TideLevel?
 
+    /// The Moon at the entry's date; tides and the Moon are read together.
+    var moon: MoonPhase {
+        MoonPhase(date: date)
+    }
+
     /// Placeholder shown while the widget loads or in the gallery.
     static func placeholder(date: Date = .now) -> TideEntry {
         TideEntry(

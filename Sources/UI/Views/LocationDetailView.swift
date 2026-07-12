@@ -92,6 +92,13 @@ private struct LocationDetailContentView: View {
         .navigationTitle(location.name)
         .toolbar {
             ToolbarItem {
+                NavigationLink {
+                    TideCalendarView(location: location, parameters: viewModel.parameters)
+                } label: {
+                    Label("Calendar", systemImage: "calendar")
+                }
+            }
+            ToolbarItem {
                 Menu("Location Options", systemImage: "ellipsis.circle") {
                     Button("Edit Location", systemImage: "pencil") {
                         isEditing = true
@@ -134,7 +141,7 @@ private struct LocationDetailContentView: View {
     }
 
     private var currentTideRow: some View {
-        HStack(alignment: .firstTextBaseline) {
+        HStack(alignment: .center) {
             Image(systemName: "water.waves")
                 .foregroundStyle(.tint)
             if let height = viewModel.currentHeightMeters {
@@ -143,18 +150,36 @@ private struct LocationDetailContentView: View {
                     .monospacedDigit()
             }
             Spacer()
-            Text(Date.now, format: .dateTime.hour().minute())
-                .foregroundStyle(.secondary)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(Date.now, format: .dateTime.hour().minute())
+                    .foregroundStyle(.secondary)
+                moonSummary
+            }
         }
     }
 
+    /// The Moon today: icon plus lunar age, the other half of a tide table.
+    private var moonSummary: some View {
+        let moon = MoonPhase(date: .now)
+        return HStack(spacing: 4) {
+            Image(systemName: moon.phase.systemImageName)
+            Text(
+                "Moon age \(moon.ageDays, format: .number.precision(.fractionLength(1))) days"
+            )
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .monospacedDigit()
+    }
+
     private var dayNavigator: some View {
-        HStack {
+        HStack(spacing: 12) {
             Button("Previous Day", systemImage: "chevron.backward") {
                 viewModel.goToPreviousDay()
             }
             .labelStyle(.iconOnly)
-            Spacer()
+            .buttonStyle(.borderless)
+
             DatePicker(
                 "Date",
                 selection: Binding(
@@ -164,17 +189,21 @@ private struct LocationDetailContentView: View {
                 displayedComponents: .date
             )
             .labelsHidden()
-            Button("Today") {
-                viewModel.goToToday()
-            }
-            .buttonStyle(.bordered)
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .center)
+
             Button("Next Day", systemImage: "chevron.forward") {
                 viewModel.goToNextDay()
             }
             .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+
+            Button("Today") {
+                viewModel.goToToday()
+            }
+            .buttonStyle(.bordered)
+            .disabled(viewModel.isShowingToday)
         }
-        .buttonStyle(.borderless)
+        .lineLimit(1)
     }
 
     private var chart: some View {

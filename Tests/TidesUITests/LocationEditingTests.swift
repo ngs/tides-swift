@@ -281,3 +281,67 @@ struct EditLocationViewModelTests {
         #expect(viewModel.coordinateChanged)
     }
 }
+
+// MARK: - Calendar
+
+@MainActor
+struct TideCalendarViewModelTests {
+    private var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Tokyo") ?? .gmt
+        return calendar
+    }
+
+    private func makeViewModel(now: Date) -> TideCalendarViewModel {
+        TideCalendarViewModel(
+            parameters: makeParameters(),
+            calendar: calendar,
+            now: now
+        )
+    }
+
+    /// The grid covers whole weeks and marks which days belong to the month.
+    @Test
+    func gridCoversWholeWeeksOfTheMonth() {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)  // 2026-01-01
+        let viewModel = makeViewModel(now: now)
+
+        #expect(viewModel.days.count % 7 == 0)
+        #expect(viewModel.weekdaySymbols.count == 7)
+
+        let inMonth = viewModel.days.filter(\.isInDisplayedMonth)
+        #expect(inMonth.count == 31)
+        #expect(inMonth.first?.dayOfMonth == 1)
+        #expect(inMonth.last?.dayOfMonth == 31)
+    }
+
+    /// Every day carries its Moon phase and that day's tides.
+    @Test
+    func daysCarryMoonPhaseAndTides() {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)
+        let viewModel = makeViewModel(now: now)
+
+        let day = try? #require(viewModel.days.first { $0.isInDisplayedMonth })
+        guard let day else { return }
+
+        #expect((0...1).contains(day.moon.illuminatedFraction))
+        // A semidiurnal M2-only location has roughly two highs and two lows a day.
+        #expect(day.highs.count >= 1)
+        #expect(day.lows.count >= 1)
+        #expect(day.highs.allSatisfy { $0.time >= day.date })
+    }
+
+    @Test
+    func monthNavigationMovesTheGrid() {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)
+        let viewModel = makeViewModel(now: now)
+        let january = viewModel.monthStart
+
+        viewModel.goToNextMonth()
+        #expect(calendar.component(.month, from: viewModel.monthStart) == 2)
+        #expect(!viewModel.isShowingCurrentMonth || calendar.isDate(viewModel.monthStart, equalTo: .now, toGranularity: .month))
+
+        viewModel.goToPreviousMonth()
+        #expect(viewModel.monthStart == january)
+    }
+}

@@ -61,6 +61,11 @@ final class LocationDetailViewModel {
         currentHeightMeters = predictor.height(at: now)
     }
 
+    /// True when the displayed day is today (used to disable the Today button).
+    var isShowingToday: Bool {
+        calendar.isDate(dayStart, inSameDayAs: .now)
+    }
+
     func goToToday(now: Date = .now) {
         dayStart = calendar.startOfDay(for: now)
         reload(now: now)

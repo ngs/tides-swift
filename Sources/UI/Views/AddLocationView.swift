@@ -3,9 +3,11 @@ import SwiftData
 import SwiftUI
 import TidesPlatform
 
-/// Location picker: search by name or address, or tap the map. Zoom controls
-/// and an automatic zoom on selection make it possible to place the point
-/// precisely instead of somewhere in a whole region.
+/// Location picker: search by name or address, or tap the map.
+///
+/// The map fills the sheet; the search field and the action panel float above
+/// it as safe area insets, so the map never gets squeezed and the layout does
+/// not jump when the flow changes phase.
 struct AddLocationView: View {
     @Environment(\.dismiss)
     private var dismiss
@@ -16,77 +18,80 @@ struct AddLocationView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                searchBar
-                mapView
-                controlPanel
-            }
-            .navigationTitle("Add Location")
-            #if os(iOS) || os(visionOS)
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
+            mapView
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    searchField
+                }
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    controlPanel
+                }
+                .overlay(alignment: .top) {
+                    // Results float over the map instead of pushing it around.
+                    if !viewModel.searchResults.isEmpty {
+                        searchResultList
+                            .padding(.horizontal, 12)
                     }
                 }
-            }
-            .alert(
-                "Error",
-                isPresented: Binding(
-                    get: { viewModel.errorMessage != nil },
-                    set: { if !$0 { viewModel.errorMessage = nil } }
-                )
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(viewModel.errorMessage ?? "")
-            }
+                .navigationTitle("Add Location")
+                #if os(iOS) || os(visionOS)
+                    .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            dismiss()
+                        }
+                    }
+                }
+                .alert(
+                    "Error",
+                    isPresented: Binding(
+                        get: { viewModel.errorMessage != nil },
+                        set: { if !$0 { viewModel.errorMessage = nil } }
+                    )
+                ) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(viewModel.errorMessage ?? "")
+                }
         }
         #if os(macOS)
-        .frame(minWidth: 520, minHeight: 620)
+        .frame(minWidth: 560, minHeight: 640)
         #endif
     }
 
     // MARK: - Search
 
-    @ViewBuilder private var searchBar: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.secondary)
-                TextField("Search for a place or address", text: $viewModel.searchQuery)
-                    .textFieldStyle(.plain)
-                    .onSubmit {
-                        Task { await viewModel.search() }
-                    }
-                    #if os(iOS)
-                    .submitLabel(.search)
-                    .autocorrectionDisabled()
-                    #endif
-                if viewModel.isSearching {
-                    ProgressView()
-                        .controlSize(.small)
-                } else if !viewModel.searchQuery.isEmpty {
-                    Button("Clear Search", systemImage: "xmark.circle.fill") {
-                        viewModel.clearSearch()
-                    }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                }
-                Button("Search") {
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+            TextField("Search for a place or address", text: $viewModel.searchQuery)
+                .textFieldStyle(.plain)
+                .onSubmit {
                     Task { await viewModel.search() }
                 }
-                .disabled(viewModel.searchQuery.trimmingCharacters(in: .whitespaces).isEmpty)
+                #if os(iOS)
+                .submitLabel(.search)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                #endif
+            if viewModel.isSearching {
+                ProgressView()
+                    .controlSize(.small)
+            } else if !viewModel.searchQuery.isEmpty {
+                Button("Clear Search", systemImage: "xmark.circle.fill") {
+                    viewModel.clearSearch()
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
             }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-
-            if !viewModel.searchResults.isEmpty {
-                searchResultList
-            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(.regularMaterial)
+        .overlay(alignment: .bottom) {
             Divider()
         }
     }
@@ -100,23 +105,31 @@ struct AddLocationView: View {
                     } label: {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(suggestion.name)
+                                .lineLimit(1)
                             if !suggestion.subtitle.isEmpty {
                                 Text(suggestion.subtitle)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                    .lineLimit(1)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
-                        .padding(.vertical, 6)
-                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
                     }
                     .buttonStyle(.plain)
-                    Divider()
+
+                    if suggestion.id != viewModel.searchResults.last?.id {
+                        Divider()
+                    }
                 }
             }
         }
-        .frame(maxHeight: 180)
+        .frame(maxHeight: 220)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .shadow(radius: 8, y: 2)
+        .padding(.top, 8)
     }
 
     // MARK: - Map
@@ -148,9 +161,11 @@ struct AddLocationView: View {
                 }
                 viewModel.consumePendingCamera()
             }
-            .overlay(alignment: .topTrailing) {
+            // Bottom-leading keeps the zoom stack clear of the system map
+            // controls (compass, user location, scale), which sit top-trailing.
+            .overlay(alignment: .bottomLeading) {
                 zoomControls
-                    .padding(8)
+                    .padding(12)
             }
         }
     }
@@ -160,67 +175,99 @@ struct AddLocationView: View {
             Button("Zoom In", systemImage: "plus") {
                 viewModel.zoomIn()
             }
-            Divider().frame(width: 28)
+            .frame(width: 32, height: 32)
+            Divider()
+                .frame(width: 32)
             Button("Zoom Out", systemImage: "minus") {
                 viewModel.zoomOut()
             }
+            .frame(width: 32, height: 32)
         }
         .labelStyle(.iconOnly)
         .buttonStyle(.plain)
-        .padding(6)
-        .frame(width: 32)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
-        .shadow(radius: 1)
+        .shadow(radius: 2)
     }
 
-    // MARK: - Controls
+    // MARK: - Action panel
 
-    @ViewBuilder private var controlPanel: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            switch viewModel.phase {
-            case .selecting, .fetching:
-                if let coordinate = viewModel.selectedCoordinate {
-                    Text(String(format: "%.4f, %.4f", coordinate.latitude, coordinate.longitude))
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text("Search for a place, or tap the map to select a location.")
-                        .foregroundStyle(.secondary)
-                }
-                Button {
-                    Task { await viewModel.fetchParameters() }
-                } label: {
-                    if viewModel.phase == .fetching {
-                        HStack {
-                            ProgressView()
-                            Text("Fetching parameters…")
-                        }
-                        .frame(maxWidth: .infinity)
-                    } else {
-                        Text("Fetch Parameters for This Location")
-                            .frame(maxWidth: .infinity)
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!viewModel.canFetch)
+    private var controlPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Divider()
+            coordinateSummary
 
-            case .naming:
-                Label("Available Offline", systemImage: "checkmark.icloud")
-                    .font(.callout)
-                    .foregroundStyle(.green)
+            if viewModel.phase == .naming {
                 TextField("Location Name", text: $viewModel.locationName)
                     .textFieldStyle(.roundedBorder)
-                Button {
-                    save()
-                } label: {
-                    Text("Save")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!viewModel.canSave)
             }
+
+            primaryButton
+                // A fixed height keeps the panel from resizing between phases.
+                .frame(height: 32)
         }
-        .padding()
+        .padding(.horizontal, 12)
+        .padding(.top, 4)
+        .padding(.bottom, 12)
+        .background(.regularMaterial)
+    }
+
+    @ViewBuilder private var coordinateSummary: some View {
+        if let coordinate = viewModel.selectedCoordinate {
+            HStack(spacing: 6) {
+                if viewModel.phase == .naming {
+                    Label("Available Offline", systemImage: "checkmark.icloud")
+                        .foregroundStyle(.green)
+                } else {
+                    Image(systemName: "mappin.and.ellipse")
+                        .foregroundStyle(.secondary)
+                }
+                Text(String(format: "%.4f, %.4f", coordinate.latitude, coordinate.longitude))
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            .font(.caption)
+            .lineLimit(1)
+        } else {
+            Text("Search for a place, or tap the map to select a location.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+    }
+
+    @ViewBuilder private var primaryButton: some View {
+        switch viewModel.phase {
+        case .selecting, .fetching:
+            Button {
+                Task { await viewModel.fetchParameters() }
+            } label: {
+                Group {
+                    if viewModel.phase == .fetching {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .controlSize(.small)
+                            Text("Fetching parameters…")
+                        }
+                    } else {
+                        Text("Fetch Parameters for This Location")
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!viewModel.canFetch)
+
+        case .naming:
+            Button {
+                save()
+            } label: {
+                Text("Save")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!viewModel.canSave)
+        }
     }
 
     private func save() {

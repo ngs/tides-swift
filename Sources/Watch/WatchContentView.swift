@@ -45,6 +45,9 @@ struct WatchTideView: View {
                     Text(heightText(predictor.height(at: now)))
                         .font(.system(.title2, design: .rounded, weight: .semibold))
                         .monospacedDigit()
+                    Spacer()
+                    Image(systemName: MoonPhase(date: now).phase.systemImageName)
+                        .foregroundStyle(.secondary)
                 }
             }
             Section {
