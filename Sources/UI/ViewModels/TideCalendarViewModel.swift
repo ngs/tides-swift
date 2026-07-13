@@ -130,7 +130,7 @@ public final class TideCalendarViewModel {
 
     /// Whole weeks covering the month, each day carrying its Moon phase and
     /// tide extrema. Pure, so `reload` can run it off the main actor.
-    private nonisolated static func makeDays(
+    nonisolated private static func makeDays(
         monthStart: Date,
         predictor: TidePredictor,
         calendar: Calendar,
@@ -158,7 +158,7 @@ public final class TideCalendarViewModel {
         }
     }
 
-    private nonisolated static func makeDay(
+    nonisolated private static func makeDay(
         date: Date,
         monthStart: Date,
         predictor: TidePredictor,
