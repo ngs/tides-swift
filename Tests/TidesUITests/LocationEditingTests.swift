@@ -388,6 +388,25 @@ struct TideCalendarViewModelTests {
         #expect(day.highs.allSatisfy { $0.time >= day.date })
     }
 
+    /// Recomputing the grid (e.g. switching the datum) keeps the selected day.
+    @Test
+    func reloadKeepsTheSelectedDay() throws {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)
+        let viewModel = TideCalendarViewModel(
+            parameters: makeParameters(),
+            datum: .chartDatum,
+            calendar: calendar,
+            now: now
+        )
+        let target = try #require(viewModel.days.first { $0.isInDisplayedMonth && $0.dayOfMonth == 15 })
+        viewModel.selectedDay = target
+
+        viewModel.setDatum(.meanSeaLevel)
+
+        let selected = try #require(viewModel.selectedDay)
+        #expect(calendar.isDate(selected.date, inSameDayAs: target.date))
+    }
+
     @Test
     func monthNavigationMovesTheGrid() {
         let now = Date(timeIntervalSince1970: 1_767_225_600)

@@ -8,7 +8,7 @@ public protocol TidesAPIClientProtocol: Sendable {
 }
 
 /// Error returned by tides-api (`{"error": "..."}` with a 4xx/5xx status).
-public struct TidesAPIError: Error, LocalizedError, Equatable {
+public struct TidesAPIError: Error, LocalizedError, Equatable, Sendable {
     public var message: String
     public var statusCode: Int
 

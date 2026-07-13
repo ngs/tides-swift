@@ -116,9 +116,14 @@ public final class TideCalendarViewModel {
             return makeDay(date: date, now: now)
         }
 
-        // Keep a selection so the list under the grid is never empty.
+        // Keep the user's selection when the rebuilt grid still shows that
+        // day; otherwise fall back so the list under the grid is never empty.
+        let previousDate = selectedDay?.date
+        let preserved = previousDate.flatMap { date in
+            days.first { $0.isInDisplayedMonth && calendar.isDate($0.date, inSameDayAs: date) }
+        }
         let today = days.first { $0.isToday && $0.isInDisplayedMonth }
-        selectedDay = today ?? days.first { $0.isInDisplayedMonth }
+        selectedDay = preserved ?? today ?? days.first { $0.isInDisplayedMonth }
     }
 
     private func makeDay(date: Date, now: Date) -> Day {
