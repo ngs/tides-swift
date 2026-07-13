@@ -3,7 +3,8 @@ import Foundation
 /// A single predicted tide level.
 public struct TideLevel: Equatable, Sendable {
     public var time: Date
-    /// Tide height in meters relative to the datum in the parameters.
+    /// Tide height in meters, relative to the datum the producing
+    /// `TidePredictor` was configured with (mean sea level or chart datum).
     public var heightMeters: Double
 
     public init(time: Date, heightMeters: Double) {

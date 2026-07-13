@@ -107,13 +107,15 @@ public final class TideCalendarViewModel {
         let monthStart = monthStart
         let predictor = predictor
         let calendar = calendar
-        reloadTask = Task { [weak self] in
-            let days = await Task.detached(priority: .userInitiated) {
-                Self.makeDays(monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
-            }.value
-            guard let self, !Task.isCancelled else { return }
-            self.days = days
-            self.updateSelection()
+        // The detached task IS the reload task, so cancelling it reaches the
+        // computation (checked day by day in `makeDays`), not just the await.
+        reloadTask = Task.detached(priority: .userInitiated) { [weak self] in
+            let days = Self.makeDays(monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                self?.days = days
+                self?.updateSelection()
+            }
         }
     }
 
@@ -150,12 +152,17 @@ public final class TideCalendarViewModel {
             ?? lastDay
         let totalDays = calendar.dateComponents([.day], from: gridStart, to: gridEnd).day ?? 42
 
-        return (0..<totalDays).compactMap { offset in
+        var days: [Day] = []
+        days.reserveCapacity(totalDays)
+        for offset in 0..<totalDays {
+            // A cancelled reload's result is discarded: stop burning CPU.
+            if Task.isCancelled { return [] }
             guard let date = calendar.date(byAdding: .day, value: offset, to: gridStart) else {
-                return nil
+                continue
             }
-            return makeDay(date: date, monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
+            days.append(makeDay(date: date, monthStart: monthStart, predictor: predictor, calendar: calendar, now: now))
         }
+        return days
     }
 
     nonisolated private static func makeDay(
