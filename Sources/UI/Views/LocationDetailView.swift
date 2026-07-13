@@ -84,21 +84,7 @@ private struct LocationDetailContentView: View {
                 Text("Tide Chart")
             }
 
-            Section("High and Low Tides") {
-                if viewModel.visibleExtrema.isEmpty {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                    } else {
-                        Text("No high or low tides in this period.")
-                            .foregroundStyle(.secondary)
-                    }
-                } else {
-                    ForEach(viewModel.visibleExtrema) { extremum in
-                        extremumRow(extremum)
-                    }
-                }
-            }
+            HighLowSection(viewModel: viewModel, pan: pan)
 
             Section {
                 LabeledContent("Coordinates") {
@@ -214,6 +200,46 @@ private struct LocationDetailContentView: View {
         #if os(macOS)
         .frame(minWidth: 520, minHeight: 620)
         #endif
+    }
+}
+
+/// The high and low waters inside the visible window.
+///
+/// Takes `pan` so the list follows the cursor while the drag is still in
+/// flight, like the cursor readout and the day navigator, and lives in its
+/// own view so a pan frame invalidates this section alone rather than the
+/// whole surrounding `List`.
+private struct HighLowSection: View {
+    let viewModel: LocationDetailViewModel
+    let pan: ChartPanState
+
+    /// `extrema` is chronological, so the window is taken by binary search:
+    /// a pan frame stays O(log n + k) as the computed range grows.
+    private var visibleExtrema: ArraySlice<LocationDetailViewModel.ExtremumItem> {
+        let center = viewModel.centerDate.addingTimeInterval(pan.offsetSeconds)
+        let half = viewModel.visibleSpanSeconds / 2
+        return viewModel.extrema.slice(
+            in: center.addingTimeInterval(-half)...center.addingTimeInterval(half),
+            by: \.time
+        )
+    }
+
+    var body: some View {
+        Section("High and Low Tides") {
+            if visibleExtrema.isEmpty {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                } else {
+                    Text("No high or low tides in this period.")
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                ForEach(visibleExtrema) { extremum in
+                    extremumRow(extremum)
+                }
+            }
+        }
     }
 
     private func extremumRow(_ extremum: LocationDetailViewModel.ExtremumItem) -> some View {

@@ -181,6 +181,13 @@ final class LocationDetailViewModel {
         isLoading = true
         let request = rangeRequest(from: rangeStart, to: rangeEnd)
         reloadTask?.cancel()
+        // An extension in flight is computing the range this reload replaces.
+        // Its result is discarded by the generation guard anyway, but leaving
+        // the handle set would keep `extendRangeIfNeeded` from starting a new
+        // extension until the stale one finished — so panning to an edge just
+        // after a reload would silently fail to grow the range.
+        extensionTask?.cancel()
+        extensionTask = nil
         reloadTask = Task(priority: .userInitiated) { [weak self] in
             let data = await Self.computeRangeData(for: request)
             guard let self, !Task.isCancelled, self.generation == expected else { return }
@@ -273,9 +280,12 @@ final class LocationDetailViewModel {
         let request = rangeRequest(from: newStart, to: newEnd)
         extensionTask = Task { [weak self] in
             let data = await Self.computeRangeData(for: request)
-            guard let self else { return }
+            // Clear the handle only when this task is still the current one.
+            // A reload cancels the extension and drops the handle, so a stale
+            // task must not nil out the handle of the extension that replaced
+            // it — that would let two extensions run at once.
+            guard let self, !Task.isCancelled, self.generation == expected else { return }
             self.extensionTask = nil
-            guard self.generation == expected else { return }
             self.rangeStart = newStart
             self.rangeEnd = newEnd
             self.apply(data)
@@ -355,11 +365,6 @@ final class LocationDetailViewModel {
             night.append(DateInterval(start: cursor, end: rangeEnd))
         }
         return night
-    }
-
-    /// Highs and lows within the visible window, for the list below the chart.
-    var visibleExtrema: [ExtremumItem] {
-        extrema.filter { (windowStart...windowEnd).contains($0.time) }
     }
 
     /// Fixed Y domain covering everything the loaded range can show, on

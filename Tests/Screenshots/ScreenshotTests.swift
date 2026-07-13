@@ -31,10 +31,12 @@ final class ScreenshotTests: XCTestCase {
         app.launch()
 
         // The seeded store re-opens the location the app was last showing, so
-        // the chart is on screen at launch with no navigation at all.
-        let chart = app.descendants(matching: .any)[TideAccessibilityID.calendar]
+        // the chart is on screen at launch with no navigation at all. The
+        // Calendar toolbar button only exists on the detail screen, so its
+        // appearance is what tells us we are there.
+        let calendarButton = app.descendants(matching: .any)[TideAccessibilityID.calendar]
         XCTAssertTrue(
-            chart.waitForExistence(timeout: timeout),
+            calendarButton.waitForExistence(timeout: timeout),
             "The detail screen never appeared. Is the seed reaching the app?"
         )
         // Let the curve finish its first asynchronous computation.
