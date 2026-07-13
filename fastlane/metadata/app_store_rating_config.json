@@ -1,8 +1,8 @@
 {
   "alcoholTobaccoOrDrugUseOrReferences": "NONE",
   "contests": "NONE",
-  "gambling": false,
   "gamblingSimulated": "NONE",
+  "gunsOrOtherWeapons": "NONE",
   "horrorOrFearThemes": "NONE",
   "matureOrSuggestiveThemes": "NONE",
   "medicalOrTreatmentInformation": "NONE",
@@ -12,5 +12,18 @@
   "violenceCartoonOrFantasy": "NONE",
   "violenceRealistic": "NONE",
   "violenceRealisticProlongedGraphicOrSadistic": "NONE",
-  "unrestrictedWebAccess": false
+
+  "advertising": false,
+  "ageAssurance": false,
+  "gambling": false,
+  "healthOrWellnessTopics": false,
+  "lootBox": false,
+  "messagingAndChat": false,
+  "parentalControls": false,
+  "unrestrictedWebAccess": false,
+  "userGeneratedContent": false,
+
+  "ageRatingOverrideV2": "NONE",
+  "koreaAgeRatingOverride": "NONE",
+  "kidsAgeBand": null
 }
