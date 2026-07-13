@@ -66,6 +66,15 @@ public struct TidesAPIClient: TidesAPIClientProtocol {
         let decoder = HarmonicParameters.decoder()
 
         guard http.statusCode == 200 else {
+            // 404 means the FES grid has no tidal data at the coordinate —
+            // in practice, the point is on land. The server's message is
+            // English-only, so replace it with a localized one.
+            if http.statusCode == 404 {
+                throw TidesAPIError(
+                    message: String(localized: "No tide data is available for this location. It may be on land."),
+                    statusCode: http.statusCode
+                )
+            }
             struct ErrorBody: Decodable { var error: String }
             if let body = try? decoder.decode(ErrorBody.self, from: data) {
                 throw TidesAPIError(message: body.error, statusCode: http.statusCode)

@@ -1,0 +1,47 @@
+{
+  "comment": "Locations seeded into the app for App Store screenshots. `parameters` names the file in this directory holding the tides-api response for that coordinate, verbatim; `names` gives the label to show per screenshot locale, falling back to `en-US`. Regenerate a parameters file with: curl 'https://api.tides.ngs.io/v1/tides/parameters?lat=<lat>&lon=<lon>'",
+  "locations": [
+    {
+      "parameters": "tokyo-bay.json",
+      "latitude": 35.44,
+      "longitude": 139.83,
+      "names": {
+        "en-US": "Tokyo Bay",
+        "ja": "東京湾",
+        "zh-Hans": "东京湾",
+        "ko": "도쿄만",
+        "de-DE": "Bucht von Tokio",
+        "fr-FR": "Baie de Tokyo",
+        "es-ES": "Bahía de Tokio"
+      }
+    },
+    {
+      "parameters": "san-francisco.json",
+      "latitude": 37.806,
+      "longitude": -122.465,
+      "names": {
+        "en-US": "San Francisco",
+        "ja": "サンフランシスコ",
+        "zh-Hans": "旧金山",
+        "ko": "샌프란시스코",
+        "de-DE": "San Francisco",
+        "fr-FR": "San Francisco",
+        "es-ES": "San Francisco"
+      }
+    },
+    {
+      "parameters": "sydney.json",
+      "latitude": -33.85,
+      "longitude": 151.28,
+      "names": {
+        "en-US": "Sydney Harbour",
+        "ja": "シドニー湾",
+        "zh-Hans": "悉尼港",
+        "ko": "시드니항",
+        "de-DE": "Hafen von Sydney",
+        "fr-FR": "Port de Sydney",
+        "es-ES": "Puerto de Sídney"
+      }
+    }
+  ]
+}

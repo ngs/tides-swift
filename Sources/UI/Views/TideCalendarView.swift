@@ -3,19 +3,29 @@ import TidesCore
 import TidesPlatform
 
 /// Month calendar for a saved location: each day shows the Moon's phase and
-/// that day's high and low waters. Selecting a day lists all of its tides.
+/// that day's high and low waters. Selecting a day lists all of its tides,
+/// and optionally reports the pick to the presenter (date-selection mode).
 struct TideCalendarView: View {
     let location: SavedLocation
+    /// Called with the tapped day, so the presenting screen can jump to it.
+    private let onSelectDay: ((Date) -> Void)?
     @AppStorage(TideDatumSettings.storageKey, store: TideDatumSettings.defaults)
     private var datum: TideDatum = TideDatumSettings.defaultDatum
     @State private var viewModel: TideCalendarViewModel
 
-    init(location: SavedLocation, parameters: HarmonicParameters) {
+    init(
+        location: SavedLocation,
+        parameters: HarmonicParameters,
+        initialDate: Date? = nil,
+        onSelectDay: ((Date) -> Void)? = nil
+    ) {
         self.location = location
+        self.onSelectDay = onSelectDay
         _viewModel = State(initialValue: TideCalendarViewModel(
             parameters: parameters,
             latitude: location.latitude,
-            longitude: location.longitude
+            longitude: location.longitude,
+            initialDate: initialDate
         ))
     }
 
@@ -89,6 +99,7 @@ struct TideCalendarView: View {
             ForEach(viewModel.days) { day in
                 Button {
                     viewModel.selectedDay = day
+                    onSelectDay?(day.date)
                 } label: {
                     dayCell(day)
                 }

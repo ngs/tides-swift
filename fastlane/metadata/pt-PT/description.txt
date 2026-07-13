@@ -1,4 +1,4 @@
-Tides oferece previsões precisas de marés com uma interface nativa elegante concebida para iPhone, iPad, Mac e Apple Vision Pro.
+Shiomi oferece previsões precisas de marés com uma interface nativa elegante concebida para iPhone, iPad, Mac e Apple Vision Pro.
 
 MAPA INTERATIVO
 Explore estações de marés em todo o mundo com Apple Maps. Toque em qualquer localização para visualizar instantaneamente as condições atuais de maré e previsões. A interface de mapa intuitiva facilita encontrar informações de marés para as suas praias, portos e áreas costeiras favoritas.
@@ -21,4 +21,4 @@ PERFEITO PARA
 • Fotógrafos a capturar cenas costeiras
 • Qualquer pessoa que ame o oceano
 
-Seja um marinheiro profissional ou um visitante casual da praia, Tides fornece as informações de marés de que necessita num pacote bonito e fácil de usar. Descarregue hoje e sincronize-se com o ritmo do oceano.
+Seja um marinheiro profissional ou um visitante casual da praia, Shiomi fornece as informações de marés de que necessita numa aplicação bonita e fácil de usar. Descarregue hoje e sincronize-se com o ritmo do oceano.

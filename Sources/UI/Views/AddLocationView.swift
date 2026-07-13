@@ -83,6 +83,11 @@ struct AddLocationView: View {
                         .padding(.horizontal, 12)
                 }
             }
+            .overlay {
+                if viewModel.phase == .fetching {
+                    FetchingParametersOverlay()
+                }
+            }
     }
 
     // MARK: - Search
@@ -197,16 +202,25 @@ struct AddLocationView: View {
 
     private var zoomControls: some View {
         VStack(spacing: 0) {
-            Button("Zoom In", systemImage: "plus") {
+            // The frame and content shape live inside the button: outside,
+            // only the glyph itself would be tappable and a near-miss would
+            // fall through to the map and move the pin.
+            Button {
                 viewModel.zoomIn()
+            } label: {
+                Label("Zoom In", systemImage: "plus")
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
             }
-            .frame(width: 32, height: 32)
             Divider()
                 .frame(width: 32)
-            Button("Zoom Out", systemImage: "minus") {
+            Button {
                 viewModel.zoomOut()
+            } label: {
+                Label("Zoom Out", systemImage: "minus")
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
             }
-            .frame(width: 32, height: 32)
         }
         .labelStyle(.iconOnly)
         .buttonStyle(.plain)

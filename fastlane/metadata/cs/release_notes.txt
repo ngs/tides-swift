@@ -1,3 +1,1 @@
-• Nová podpora lišty nabídek macOS pro rychlý přístup k funkci stopek
-• Vylepšená konfigurace oken a nabídek macOS pro lepší uživatelský zážitek
-• Zvýšená stabilita aplikace a optimalizace výkonu
+První vydání.

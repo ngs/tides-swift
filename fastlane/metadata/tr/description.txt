@@ -1,4 +1,4 @@
-Tides, iPhone, iPad, Mac ve Apple Vision Pro için tasarlanmış zarif, yerel arayüzle doğru gelgit tahminleri sunar.
+Shiomi, iPhone, iPad, Mac ve Apple Vision Pro için tasarlanmış zarif, yerel arayüzle doğru gelgit tahminleri sunar.
 
 İNTERAKTİF HARİTA
 Apple Maps ile dünya çapında gelgit istasyonlarını keşfedin. Mevcut gelgit koşullarını ve tahminleri anında görüntülemek için herhangi bir konuma dokunun. Sezgisel harita arayüzü, favori plajlarınız, limanlarınız ve kıyı bölgeleriniz için gelgit bilgilerini bulmayı kolaylaştırır.
@@ -10,7 +10,7 @@ SORUNSUZ DENEYİM
 • Tüm Apple platformları için optimize edilmiş yerel SwiftUI arayüzü
 • iPhone, iPad, Mac ve Apple Vision Pro desteği
 • Otomatik konum hafızası - kaldığınız yerden devam eder
-• Konumları ada göre tanımlamak için ters coğrafi kodlama
+• Konumları adlarıyla tanımlayan ters coğrafi kodlama
 • Apple'ın tasarım ilkelerini takip eden temiz, modern tasarım
 
 ŞUNLAR İÇİN MÜKEMMEL
@@ -21,4 +21,4 @@ SORUNSUZ DENEYİM
 • Kıyı manzaralarını yakalayan fotoğrafçılar
 • Okyanusu seven herkes
 
-İster profesyonel bir denizci ister gündelik bir plaj ziyaretçisi olun, Tides ihtiyacınız olan gelgit bilgilerini güzel, kullanımı kolay bir pakette sunar. Bugün indirin ve okyanusun ritmiyle senkronize olun.
+İster profesyonel bir denizci ister gündelik bir plaj ziyaretçisi olun, Shiomi ihtiyacınız olan gelgit bilgilerini güzel, kullanımı kolay bir pakette sunar. Bugün indirin ve okyanusun ritmiyle senkronize olun.

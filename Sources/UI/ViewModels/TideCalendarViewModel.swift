@@ -43,13 +43,16 @@ public final class TideCalendarViewModel {
     /// simply observe `days` updating when it finishes.
     public private(set) var reloadTask: Task<Void, Never>?
 
+    /// - Parameter initialDate: the day the calendar opens on (its month is
+    ///   displayed and the day preselected). Defaults to `now`.
     public init(
         parameters: HarmonicParameters,
         latitude: Double,
         longitude: Double,
         datum: TideDatum = TideDatumSettings.current,
         calendar: Calendar = .current,
-        now: Date = .now
+        now: Date = TideClock.now,
+        initialDate: Date? = nil
     ) {
         self.parameters = parameters
         self.latitude = latitude
@@ -58,7 +61,7 @@ public final class TideCalendarViewModel {
         let predictor = TidePredictor(parameters: parameters, datum: datum)
         self.predictor = predictor
         self.calendar = calendar
-        let monthStart = calendar.startOfMonth(for: now)
+        let monthStart = calendar.startOfMonth(for: initialDate ?? now)
         self.monthStart = monthStart
         // The first grid is computed synchronously so the view never appears
         // empty; later rebuilds happen off the main actor in `reload`.
@@ -70,7 +73,7 @@ public final class TideCalendarViewModel {
             longitude: longitude,
             now: now
         ))
-        updateSelection()
+        updateSelection(preferring: initialDate)
     }
 
     /// Immutable inputs of one grid computation, bundled so the pure helpers
@@ -110,13 +113,13 @@ public final class TideCalendarViewModel {
         step(months: 1)
     }
 
-    public func goToToday(now: Date = .now) {
+    public func goToToday(now: Date = TideClock.now) {
         monthStart = calendar.startOfMonth(for: now)
         reload(now: now)
     }
 
     public var isShowingCurrentMonth: Bool {
-        calendar.isDate(monthStart, equalTo: .now, toGranularity: .month)
+        calendar.isDate(monthStart, equalTo: TideClock.now, toGranularity: .month)
     }
 
     private func step(months: Int) {
@@ -130,7 +133,7 @@ public final class TideCalendarViewModel {
     /// Rebuilds the grid off the main actor: a month of extrema is a lot of
     /// harmonic evaluations, too heavy to run synchronously on the main
     /// thread when paging months or switching the datum.
-    private func reload(now: Date = .now) {
+    private func reload(now: Date = TideClock.now) {
         reloadTask?.cancel()
         let request = GridRequest(
             monthStart: monthStart,
@@ -151,10 +154,11 @@ public final class TideCalendarViewModel {
         }
     }
 
-    /// Keeps the user's selection when the rebuilt grid still shows that day;
-    /// otherwise falls back so the list under the grid is never empty.
-    private func updateSelection() {
-        let previousDate = selectedDay?.date
+    /// Keeps the user's selection when the rebuilt grid still shows that day
+    /// (or the explicitly preferred day); otherwise falls back so the list
+    /// under the grid is never empty.
+    private func updateSelection(preferring date: Date? = nil) {
+        let previousDate = date ?? selectedDay?.date
         let preserved = previousDate.flatMap { date in
             days.first { $0.isInDisplayedMonth && calendar.isDate($0.date, inSameDayAs: date) }
         }

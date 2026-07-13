@@ -1,4 +1,4 @@
-Tides tarjoaa tarkkoja vuorovesienn usteita elegantilla natiivikäyttöliittymällä, joka on suunniteltu iPhonelle, iPadille, Macille ja Apple Vision Prolle.
+Shiomi tarjoaa tarkkoja vuorovesiennusteita elegantilla natiivikäyttöliittymällä, joka on suunniteltu iPhonelle, iPadille, Macille ja Apple Vision Prolle.
 
 INTERAKTIIVINEN KARTTA
 Tutki vuorovesiasemia ympäri maailmaa Apple Mapsin avulla. Napauta mitä tahansa sijaintia nähdäksesi välittömästi nykyiset vuorovesiolosuhteet ja ennusteet. Intuitiivinen karttakäyttöliittymä tekee helpoksi löytää vuorovesitietoja suosikkirannoillesi, satamillesi ja rannikkoalueillesi.
@@ -21,4 +21,4 @@ TÄYDELLINEN
 • Valokuvaajille, jotka tallentavat rannikkomaisemia
 • Kaikille, jotka rakastavat merta
 
-Olitpa ammattimainen merimies tai satunnainen rannan kävijä, Tides tarjoaa tarvitsemasi vuorovesitiedot kauniissa, helppokäyttöisessä paketissa. Lataa tänään ja synkronoi meren rytmin kanssa.
+Olitpa ammattimainen merimies tai satunnainen rannan kävijä, Shiomi tarjoaa tarvitsemasi vuorovesitiedot kauniissa, helppokäyttöisessä paketissa. Lataa tänään ja synkronoi meren rytmin kanssa.

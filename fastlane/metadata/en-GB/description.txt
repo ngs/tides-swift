@@ -1,4 +1,4 @@
-Tides brings accurate tide predictions to your fingertips with an elegant, native interface designed for iPhone, iPad, Mac, and Apple Vision Pro.
+Shiomi brings accurate tide predictions to your fingertips with an elegant, native interface designed for iPhone, iPad, Mac, and Apple Vision Pro.
 
 INTERACTIVE MAP
 Explore tide stations around the world using Apple Maps. Tap any location to instantly view current tide conditions and forecasts. The intuitive map interface makes it easy to find tide information for your favorite beaches, harbors, and coastal areas.
@@ -21,4 +21,4 @@ PERFECT FOR
 • Photographers capturing coastal scenes
 • Anyone who loves the ocean
 
-Whether you're a professional mariner or a casual beach visitor, Tides provides the tide information you need in a beautiful, easy-to-use package. Download today and stay in sync with the ocean's rhythm.
+Whether you're a professional mariner or a casual beach visitor, Shiomi provides the tide information you need in a beautiful, easy-to-use package. Download today and stay in sync with the ocean's rhythm.

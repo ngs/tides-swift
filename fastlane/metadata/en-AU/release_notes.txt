@@ -1,3 +1,1 @@
-• New macOS menu bar support for quick access to stopwatch functionality
-• Enhanced macOS window and menu configuration for better user experience
-• Improved app stability and performance optimisations
+Initial release.

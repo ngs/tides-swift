@@ -22,6 +22,15 @@ struct EditLocationView: View {
 
     var body: some View {
         content
+            .overlay {
+                // Moving the pin re-downloads the parameters; that network
+                // round trip deserves a visible, input-blocking indicator.
+                // A rename-only save is instant and keeps just the small
+                // spinner in the toolbar.
+                if viewModel.isSaving && viewModel.coordinateChanged {
+                    FetchingParametersOverlay()
+                }
+            }
             .alert(
                 "Error",
                 isPresented: Binding(
@@ -67,9 +76,13 @@ struct EditLocationView: View {
         #else
         NavigationStack {
             VStack(spacing: 0) {
+                // Cap the form at its content's height so the map, not the
+                // form's trailing whitespace, absorbs the tall screen. With
+                // oversized dynamic type the form scrolls within the cap.
                 form
+                    .frame(maxHeight: 380)
                 map
-                    .frame(height: 220)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .navigationTitle("Edit Location")
             .navigationBarTitleDisplayMode(.inline)
@@ -184,16 +197,25 @@ struct EditLocationView: View {
 
     private var zoomControls: some View {
         VStack(spacing: 0) {
-            Button("Zoom In", systemImage: "plus") {
+            // The frame and content shape live inside the button: outside,
+            // only the glyph itself would be tappable and a near-miss would
+            // fall through to the map and move the pin.
+            Button {
                 viewModel.zoomIn()
+            } label: {
+                Label("Zoom In", systemImage: "plus")
+                    .frame(width: 30, height: 30)
+                    .contentShape(Rectangle())
             }
-            .frame(width: 30, height: 30)
             Divider()
                 .frame(width: 30)
-            Button("Zoom Out", systemImage: "minus") {
+            Button {
                 viewModel.zoomOut()
+            } label: {
+                Label("Zoom Out", systemImage: "minus")
+                    .frame(width: 30, height: 30)
+                    .contentShape(Rectangle())
             }
-            .frame(width: 30, height: 30)
         }
         .labelStyle(.iconOnly)
         .buttonStyle(.plain)

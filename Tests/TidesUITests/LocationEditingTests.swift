@@ -444,6 +444,82 @@ struct TideCalendarViewModelTests {
         viewModel.goToPreviousMonth()
         #expect(viewModel.monthStart == january)
     }
+
+    private func makeViewModel(now: Date, initialDate: Date?) -> TideCalendarViewModel {
+        TideCalendarViewModel(
+            parameters: makeParameters(),
+            latitude: 35.6762,
+            longitude: 139.6503,
+            calendar: calendar,
+            now: now,
+            initialDate: initialDate
+        )
+    }
+
+    /// Opening on an explicit date shows that date's month, not the current one.
+    @Test
+    func initialDateOpensOnItsOwnMonth() throws {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)  // 2026-01-01, JST
+        let march15 = Date(timeIntervalSince1970: 1_773_543_600)  // 2026-03-15 12:00 JST
+        let viewModel = makeViewModel(now: now, initialDate: march15)
+
+        // 2026-03-01 00:00 JST — the month the initial date falls in, not now's.
+        #expect(viewModel.monthStart == Date(timeIntervalSince1970: 1_772_290_800))
+        #expect(viewModel.days.filter(\.isInDisplayedMonth).count == 31)
+
+        let selected = try #require(viewModel.selectedDay)
+        #expect(selected.dayOfMonth == 15)
+        #expect(selected.isInDisplayedMonth)
+        // Today is in January, so no cell of the March grid is today.
+        #expect(!viewModel.days.contains { $0.isToday && $0.isInDisplayedMonth })
+    }
+
+    /// Within the current month the explicit date wins over today, which is
+    /// the fallback `updateSelection` uses when nothing is preferred.
+    @Test
+    func initialDateIsPreferredOverToday() throws {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)  // 2026-01-01, JST
+        let january20 = Date(timeIntervalSince1970: 1_768_878_000)  // 2026-01-20 12:00 JST
+        let viewModel = makeViewModel(now: now, initialDate: january20)
+
+        #expect(calendar.component(.month, from: viewModel.monthStart) == 1)
+
+        let selected = try #require(viewModel.selectedDay)
+        #expect(selected.dayOfMonth == 20)
+        #expect(!selected.isToday)
+        // Today is still marked in the grid — it just is not the selection.
+        #expect(viewModel.days.contains { $0.isToday && $0.dayOfMonth == 1 })
+    }
+
+    /// The month and day come from the calendar's time zone, not UTC. This
+    /// instant is 2026-03-31 in UTC but already 2026-04-01 in Tokyo, so the
+    /// calendar must open on April.
+    @Test
+    func initialDateResolvesTheMonthInTheCalendarsTimeZone() throws {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)
+        // 2026-03-31T15:30:00Z == 2026-04-01 00:30 JST
+        let acrossMidnight = Date(timeIntervalSince1970: 1_774_971_000)
+        let viewModel = makeViewModel(now: now, initialDate: acrossMidnight)
+
+        #expect(calendar.component(.month, from: viewModel.monthStart) == 4)
+
+        let selected = try #require(viewModel.selectedDay)
+        #expect(selected.dayOfMonth == 1)
+        #expect(selected.isInDisplayedMonth)
+    }
+
+    /// Without an explicit date the calendar still opens on today.
+    @Test
+    func withoutAnInitialDateTheCalendarOpensOnToday() throws {
+        let now = Date(timeIntervalSince1970: 1_767_225_600)  // 2026-01-01, JST
+        let viewModel = makeViewModel(now: now, initialDate: nil)
+
+        #expect(calendar.component(.month, from: viewModel.monthStart) == 1)
+
+        let selected = try #require(viewModel.selectedDay)
+        #expect(selected.isToday)
+        #expect(selected.dayOfMonth == 1)
+    }
 }
 
 // MARK: - Reordering

@@ -113,3 +113,9 @@ custom_rules:
     regex: '\bprint\('
     message: "Use proper logging instead of print()"
     severity: warning
+    # The screenshot tooling is command-line: standard output is how it reports
+    # what it captured, and how Scripts/screenshots.sh reads its results back.
+    excluded:
+      - ".*/Scripts/.*\\.swift"
+      - ".*/Tests/Screenshots/.*"
+      - ".*/Tests/WatchScreenshots/.*"

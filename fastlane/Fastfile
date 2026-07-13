@@ -95,9 +95,13 @@ platform :ios do
   end
 
   desc 'Update App Store screenshots'
+  desc 'Capture them first with Scripts/screenshots.sh.'
   lane :deliver_screenshots do
     setup_app_store_connect_api_key
 
+    # iPhone, iPad and the Watch all live here: deliver picks the store's
+    # display type from each file's pixel size, not from its name, and the watch
+    # app is part of the iOS app.
     deliver(
       platform: 'ios',
       force: true,
@@ -298,19 +302,22 @@ platform :visionos do
 
   desc 'Update App Store screenshots'
   lane :deliver_screenshots do
-    UI.error 'Deliver screenshots for visionOS is not yet supported.'
-    # setup_app_store_connect_api_key
+    setup_app_store_connect_api_key
 
-    # deliver(
-    #   platform: 'xros',
-    #   force: true,
-    #   skip_metadata: true,
-    #   skip_binary_upload: true,
-    #   run_precheck_before_submit: false,
-    #   overwrite_screenshots: true,
-    #   screenshots_path: './fastlane/screenshots/visionos',
-    #   app_identifier: 'io.ngs.Tides'
-    # )
+    # Supported since fastlane 2.230.0, which added the Vision Pro display type
+    # (and the 6.9" iPhone / 13" iPad sizes the iOS lane needs). The path has to
+    # keep the word "vision" in it: 3840x2160 is also an Apple TV size, and that
+    # is how deliver tells them apart.
+    deliver(
+      platform: 'xros',
+      force: true,
+      skip_metadata: true,
+      skip_binary_upload: true,
+      run_precheck_before_submit: false,
+      overwrite_screenshots: true,
+      screenshots_path: './fastlane/screenshots/visionos',
+      app_identifier: 'io.ngs.Tides'
+    )
   end
 end
 

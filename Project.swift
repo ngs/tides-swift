@@ -25,16 +25,31 @@ let iOSEntitlementOverrides: SettingsDictionary = [
 
 /// visionOS requires the layered app icon (a solid image stack); the flat
 /// AppIcon set serves iOS and macOS.
+///
+/// TIDES_BUNDLE_NAME feeds CFBundleName. On the iOS App Store the plain
+/// "Tides" was already taken by another app and App Store Connect rejected
+/// the binary during processing (ITMS-90129), so the app is branded Shiomi
+/// and iOS uses the full App Store Connect app name for the bundle name.
+/// The home screen label is "Shiomi" (潮見表 in Japanese) via the localized
+/// CFBundleDisplayName; macOS keeps the short name for the app menu.
 let appTargetOverrides: SettingsDictionary = iOSEntitlementOverrides.merging([
     "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xros*]": "AppIconVision",
-    "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xrsimulator*]": "AppIconVision"
+    "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xrsimulator*]": "AppIconVision",
+    "TIDES_BUNDLE_NAME": "Shiomi",
+    "TIDES_BUNDLE_NAME[sdk=iphoneos*]": "Shiomi - Simple Tide Chart",
+    "TIDES_BUNDLE_NAME[sdk=iphonesimulator*]": "Shiomi - Simple Tide Chart"
 ]) { _, new in new }
 
 let project = Project(
     name: "Tides",
     organizationName: "Atsushi Nagase",
     options: .options(
-        defaultKnownRegions: ["en", "ja"],
+        defaultKnownRegions: [
+            "en", "ar-SA", "ca", "cs", "da", "de-DE", "el", "es-ES", "es-MX",
+            "fi", "fr-CA", "fr-FR", "he", "hi", "hr", "hu", "id", "it", "ja",
+            "ko", "ms", "nl-NL", "no", "pl", "pt-BR", "pt-PT", "ro", "ru",
+            "sk", "sv", "th", "tr", "uk", "vi", "zh-Hans", "zh-Hant"
+        ],
         developmentRegion: "en"
     ),
     packages: [
@@ -65,6 +80,8 @@ let project = Project(
             ),
             infoPlist: .extendingDefault(with: [
                 "ITSAppUsesNonExemptEncryption": .boolean(false),
+                "CFBundleName": .string("$(TIDES_BUNDLE_NAME)"),
+                "CFBundleDisplayName": .string("Shiomi"),
                 "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
                 "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
                 "NSHumanReadableCopyright": .string(copyright),
@@ -117,7 +134,7 @@ let project = Project(
                 macOS: "15.0"
             ),
             infoPlist: .extendingDefault(with: [
-                "CFBundleDisplayName": .string("Tides"),
+                "CFBundleDisplayName": .string("Shiomi"),
                 "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
                 "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
                 "NSExtension": .dictionary([
@@ -153,6 +170,7 @@ let project = Project(
             deploymentTargets: .watchOS("11.0"),
             infoPlist: .extendingDefault(with: [
                 "ITSAppUsesNonExemptEncryption": .boolean(false),
+                "CFBundleDisplayName": .string("Shiomi"),
                 "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
                 "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
                 "NSHumanReadableCopyright": .string(copyright),
@@ -186,6 +204,66 @@ let project = Project(
                 .package(product: "TidesPlatform"),
                 .package(product: "TidesUI")
             ]
+        ),
+        // Captures the App Store screenshots. Driven by Scripts/screenshots.sh,
+        // never by CI's test run: it is a photo shoot, not a test.
+        .target(
+            name: "TidesScreenshots",
+            destinations: [.iPhone, .iPad, .mac],
+            product: .uiTests,
+            bundleId: "io.ngs.TidesScreenshots",
+            deploymentTargets: .multiplatform(
+                iOS: "18.0",
+                macOS: "15.0"
+            ),
+            sources: ["Tests/Screenshots/*.swift"],
+            dependencies: [
+                .target(name: "Tides"),
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform"),
+                .package(product: "TidesUI")
+            ]
+        ),
+        // The same capture test, on visionOS.
+        //
+        // A second target rather than another destination on the one above,
+        // because Tuist refuses to *link* a UI test target to an app on
+        // visionOS — the combination is missing from its lint table, and the
+        // fix is still an open pull request (tuist/tuist#11513). Naming the
+        // app under test in a build setting sidesteps the dependency edge the
+        // linter objects to; Xcode itself has supported visionOS UI tests since
+        // Xcode 15, and `xcodebuild test` runs this exactly like the others.
+        .target(
+            name: "TidesScreenshotsVision",
+            destinations: [.appleVision],
+            product: .uiTests,
+            bundleId: "io.ngs.TidesScreenshotsVision",
+            deploymentTargets: .visionOS("2.0"),
+            sources: ["Tests/Screenshots/*.swift"],
+            dependencies: [
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform"),
+                .package(product: "TidesUI")
+            ],
+            settings: .settings(base: ["TEST_TARGET_NAME": "Tides"])
+        ),
+        // And on the watch, whose app is a separate target with its own UI.
+        .target(
+            name: "TidesWatchScreenshots",
+            destinations: [.appleWatch],
+            product: .uiTests,
+            bundleId: "io.ngs.TidesWatchScreenshots",
+            deploymentTargets: .watchOS("11.0"),
+            // Shares the config/work-directory plumbing with the phone's run.
+            sources: [
+                "Tests/WatchScreenshots/*.swift",
+                "Tests/Screenshots/ScreenshotEnvironment.swift"
+            ],
+            dependencies: [
+                .target(name: "TidesWatch"),
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform")
+            ]
         )
     ],
     schemes: [
@@ -202,6 +280,24 @@ let project = Project(
         .scheme(
             name: "TidesWatch",
             buildAction: .buildAction(targets: ["TidesWatch"]),
+            runAction: .runAction(configuration: .debug)
+        ),
+        .scheme(
+            name: "TidesScreenshots",
+            buildAction: .buildAction(targets: ["Tides", "TidesScreenshots"]),
+            testAction: .targets(["TidesScreenshots"], configuration: .debug),
+            runAction: .runAction(configuration: .debug)
+        ),
+        .scheme(
+            name: "TidesScreenshotsVision",
+            buildAction: .buildAction(targets: ["Tides", "TidesScreenshotsVision"]),
+            testAction: .targets(["TidesScreenshotsVision"], configuration: .debug),
+            runAction: .runAction(configuration: .debug)
+        ),
+        .scheme(
+            name: "TidesWatchScreenshots",
+            buildAction: .buildAction(targets: ["TidesWatch", "TidesWatchScreenshots"]),
+            testAction: .targets(["TidesWatchScreenshots"], configuration: .debug),
             runAction: .runAction(configuration: .debug)
         )
     ]

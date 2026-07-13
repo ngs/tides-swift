@@ -16,7 +16,7 @@ struct TidesWidget: Widget {
             TidesWidgetView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("Tides")
+        .configurationDisplayName("Shiomi")
         .description("Current tide and next high and low water for a saved location.")
         .supportedFamilies(Self.supportedFamilies)
     }
