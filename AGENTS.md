@@ -24,7 +24,7 @@ The logic lives in three libraries of a local SPM package (`Package.swift`); the
 
 | Module | Path | Contents |
 |---|---|---|
-| `TidesCore` | `Sources/Core/` | Harmonic engine (HarmonicParameters / NodalCorrection / TidePredictor), moon phase (MoonPhase), and the parameters API client. **Depends on Foundation only — no UI frameworks.** |
+| `TidesCore` | `Sources/Core/` | Harmonic engine (HarmonicParameters / NodalCorrection / TidePredictor), moon phase (MoonPhase), sunrise/sunset (SunCalculator), and the parameters API client. **Depends on Foundation only — no UI frameworks.** |
 | `TidesPlatform` | `Sources/Platform/` | SwiftData persistence (SavedLocation), place search and reverse geocoding |
 | `TidesUI` | `Sources/UI/` | SwiftUI views and view models |
 
@@ -62,6 +62,11 @@ SPM test targets: `Tests/TidesCoreTests/` (golden fixtures) and `Tests/TidesUITe
 - Moon age, illuminated fraction and the eight phases (SF Symbols `moonphase.*`) from the moon–sun elongation, using the principal terms of Meeus, *Astronomical Algorithms* (ch. 25 / 47). Foundation only.
 - `Tests/TidesCoreTests/MoonPhaseTests.swift` checks it against observed new/full/quarter moon times (USNO / IMCCE).
 - Moon age advances by 0.85–1.15 days per day — that variation is the orbital eccentricity, not a bug.
+
+### SunCalculator
+- Sunrise/sunset per civil day from the NOAA solar position algorithm (Meeus ch. 25); handles polar day/night (`SolarDay.alwaysUp` / `.alwaysDown`). Foundation only.
+- The detail chart shades the night intervals so the fill reads as day vs night, and shows the displayed day's sunrise/sunset under the chart.
+- `Tests/TidesCoreTests/SunCalculatorTests.swift` pins the times against NAOJ (Tokyo) and NOAA (Sydney, Svalbard) references.
 
 ### API
 - `GET /v1/tides/parameters?lat=&lon=` — harmonic parameters; this is the endpoint the app relies on

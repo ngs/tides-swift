@@ -758,6 +758,26 @@
         }
       }
     },
+    "Sunrise" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日の出"
+          }
+        }
+      }
+    },
+    "Sunset" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日の入り"
+          }
+        }
+      }
+    },
     "Tap the map to move this location." : {
       "extractionState" : "stale",
       "localizations" : {
