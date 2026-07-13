@@ -22,22 +22,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7.0.0
 
+      # With skip_pull_request, the action reports rather than opens a PR: it
+      # writes the diff to the job summary and exits 1 when something is behind,
+      # and says "Everything is up-to-date" and exits 0 when nothing is. That
+      # exit code is the whole signal — it declares no outputs to branch on
+      # (the only one it ever sets is GHA_UPDATE_PR_NUMBER, and only when it
+      # opens a PR), so there is nothing to add after it.
+      #
+      # Dependabot (.github/dependabot.yml) is what actually raises the updates;
+      # this job is the thing that notices when they have not been merged.
       - name: Check for outdated actions
-        id: check
         uses: saadmk11/github-actions-version-updater@v0.9.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           skip_pull_request: "true"
-
-      - name: Report outdated actions
-        if: fromJSON(steps.check.outputs.updated_count) > 0
-        run: |
-          echo "::warning::Found ${{ steps.check.outputs.updated_count }} outdated GitHub Actions"
-          echo "Run Dependabot or manually update the actions."
-          echo ""
-          echo "Outdated actions detected. Please update them."
-          exit 1
-
-      - name: All actions up to date
-        if: fromJSON(steps.check.outputs.updated_count) == 0
-        run: echo "All GitHub Actions are up to date!"
