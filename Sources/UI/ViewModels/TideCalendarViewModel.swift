@@ -76,12 +76,12 @@ public final class TideCalendarViewModel {
     /// Immutable inputs of one grid computation, bundled so the pure helpers
     /// can hop off the main actor with a single value.
     private struct GridRequest: Sendable {
-        var monthStart: Date
-        var predictor: TidePredictor
-        var calendar: Calendar
-        var latitude: Double
-        var longitude: Double
-        var now: Date
+        let monthStart: Date
+        let predictor: TidePredictor
+        let calendar: Calendar
+        let latitude: Double
+        let longitude: Double
+        let now: Date
     }
 
     /// Switches the datum the heights are displayed against and recomputes.

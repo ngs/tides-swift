@@ -25,14 +25,17 @@ struct TideEntry: TimelineEntry {
 
     /// Placeholder shown while the widget loads or in the gallery.
     static func placeholder(date: Date = .now) -> TideEntry {
-        TideEntry(
+        // Sun times anchor to the civil day, not to `date`, so the sample
+        // looks plausible whatever time the gallery renders it.
+        let dayStart = Calendar.current.startOfDay(for: date)
+        return TideEntry(
             date: date,
             locationName: String(localized: "Tokyo Bay"),
             currentHeightMeters: 0.82,
             nextHigh: TideLevel(time: date.addingTimeInterval(3 * 3_600), heightMeters: 1.42),
             nextLow: TideLevel(time: date.addingTimeInterval(9 * 3_600), heightMeters: 0.11),
-            sunrise: date.addingTimeInterval(-4 * 3_600),
-            sunset: date.addingTimeInterval(7 * 3_600)
+            sunrise: dayStart.addingTimeInterval(6 * 3_600),
+            sunset: dayStart.addingTimeInterval(17 * 3_600 + 1_800)
         )
     }
 
