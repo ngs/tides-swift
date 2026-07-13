@@ -107,15 +107,19 @@ public final class TideCalendarViewModel {
         let monthStart = monthStart
         let predictor = predictor
         let calendar = calendar
-        // The detached task IS the reload task, so cancelling it reaches the
-        // computation (checked day by day in `makeDays`), not just the await.
-        reloadTask = Task.detached(priority: .userInitiated) { [weak self] in
-            let days = Self.makeDays(monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                self?.days = days
-                self?.updateSelection()
-            }
+        reloadTask = Task(priority: .userInitiated) { [weak self] in
+            // A nonisolated async function runs on the global executor
+            // (SE-0338), and being structured, cancelling `reloadTask`
+            // reaches the day-by-day checks inside `makeDays`.
+            let days = await Self.makeDaysOffMain(
+                monthStart: monthStart,
+                predictor: predictor,
+                calendar: calendar,
+                now: now
+            )
+            guard let self, !Task.isCancelled else { return }
+            self.days = days
+            self.updateSelection()
         }
     }
 
@@ -128,6 +132,17 @@ public final class TideCalendarViewModel {
         }
         let today = days.first { $0.isToday && $0.isInDisplayedMonth }
         selectedDay = preserved ?? today ?? days.first { $0.isInDisplayedMonth }
+    }
+
+    /// Runs `makeDays` away from the caller's actor, keeping the main thread
+    /// responsive while a reload computes.
+    nonisolated private static func makeDaysOffMain(
+        monthStart: Date,
+        predictor: TidePredictor,
+        calendar: Calendar,
+        now: Date
+    ) async -> [Day] {
+        makeDays(monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
     }
 
     /// Whole weeks covering the month, each day carrying its Moon phase and

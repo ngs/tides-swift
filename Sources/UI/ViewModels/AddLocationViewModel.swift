@@ -131,6 +131,7 @@ public final class AddLocationViewModel {
         let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
             searchResults = []
+            errorMessage = nil
             return
         }
         isSearching = true
@@ -250,11 +251,18 @@ public final class AddLocationViewModel {
         else {
             return nil
         }
-        return try? SavedLocation(
-            name: locationName.trimmingCharacters(in: .whitespacesAndNewlines),
-            latitude: coordinate.latitude,
-            longitude: coordinate.longitude,
-            parameters: parameters
-        )
+        do {
+            return try SavedLocation(
+                name: locationName.trimmingCharacters(in: .whitespacesAndNewlines),
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+                parameters: parameters
+            )
+        } catch {
+            // Encoding the parameters is the only throwing step; tell the
+            // user instead of silently ignoring the Save tap.
+            errorMessage = error.localizedDescription
+            return nil
+        }
     }
 }
