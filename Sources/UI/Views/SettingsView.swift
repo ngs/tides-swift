@@ -13,7 +13,12 @@ public struct SettingsView: View {
     public var body: some View {
         Form {
             Section {
+                // The section title carries the "Datum" label; the inline
+                // picker's own would render as a plain row above the options.
                 DatumPicker()
+                    .labelsHidden()
+            } header: {
+                Text("Datum")
             } footer: {
                 Text(datum.explanation)
                     .font(.caption)
