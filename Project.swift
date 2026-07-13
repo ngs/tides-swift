@@ -154,7 +154,8 @@ let project = Project(
             ]),
             sources: ["Sources/Watch/**"],
             resources: ["WatchResources/**"],
-            // No App Group on the watch: it reads the saved locations from the
+            // No App Group on the watch: App Groups only share within one
+            // device, so the watch gets the saved locations from the
             // CloudKit-mirrored SwiftData store instead.
             entitlements: .file(path: "Resources/TidesWatch.entitlements"),
             dependencies: [

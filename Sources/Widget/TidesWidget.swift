@@ -161,11 +161,12 @@ struct TidesWidgetView: View {
         guard let next else {
             return heightText(nil)
         }
-        let label = next.isHigh
-            ? String(localized: "High")
-            : String(localized: "Low")
         let time = next.level.time.formatted(.dateTime.hour().minute())
-        return "\(label) \(time) \(heightText(next.level.heightMeters))"
+        let height = heightText(next.level.heightMeters)
+        // One phrase per event, so translators can reorder the placeholders.
+        return next.isHigh
+            ? String(localized: "High \(time) \(height)")
+            : String(localized: "Low \(time) \(height)")
     }
 
     private func heightText(_ meters: Double?) -> String {

@@ -325,6 +325,16 @@
         }
       }
     },
+    "High %@ %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "満潮 %1$@ %2$@"
+          }
+        }
+      }
+    },
     "High and Low Tides" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -429,6 +439,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "干潮"
+          }
+        }
+      }
+    },
+    "Low %@ %@" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "干潮 %1$@ %2$@"
           }
         }
       }
