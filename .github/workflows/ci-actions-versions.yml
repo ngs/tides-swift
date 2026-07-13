@@ -30,7 +30,7 @@ jobs:
           skip_pull_request: "true"
 
       - name: Report outdated actions
-        if: steps.check.outputs.updated_count > 0
+        if: fromJSON(steps.check.outputs.updated_count) > 0
         run: |
           echo "::warning::Found ${{ steps.check.outputs.updated_count }} outdated GitHub Actions"
           echo "Run Dependabot or manually update the actions."
@@ -39,5 +39,5 @@ jobs:
           exit 1
 
       - name: All actions up to date
-        if: steps.check.outputs.updated_count == 0
+        if: fromJSON(steps.check.outputs.updated_count) == 0
         run: echo "All GitHub Actions are up to date!"
