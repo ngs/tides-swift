@@ -105,15 +105,19 @@ jobs:
 
   lint:
     name: SwiftLint
-    runs-on: ubuntu-latest
+    # The action-swiftlint image pins an old SwiftLint that cannot parse
+    # modern Swift (it misreads `nonisolated(unsafe)`), so run the current
+    # release from Homebrew instead - the same version developers have.
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v5
 
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
       - name: SwiftLint
-        uses: norio-nomura/action-swiftlint@3.2.1
-        with:
-          args: --strict
+        run: swiftlint lint --strict
 
   periphery:
     name: Periphery Scan
