@@ -93,11 +93,16 @@ public struct TidePredictor: Sendable {
     /// Port of Go `domain.GeneratePredictions`: enumerates `start`,
     /// `start + interval`, ... while the time does not exceed `end`
     /// (inclusive of `end` when it falls on the grid).
+    ///
+    /// Returns an empty series when `interval` is not positive — the server
+    /// rejects such requests up front; the port degrades gracefully instead
+    /// of looping forever.
     public func predictions(
         from start: Date,
         to end: Date,
         interval: TimeInterval
     ) -> [TideLevel] {
+        guard interval > 0 else { return [] }
         var result: [TideLevel] = []
         var time = start
         while time <= end {
@@ -121,8 +126,9 @@ public struct TidePredictor: Sendable {
         let maxPrecisePoints = 86_400.0
         var preciseInterval: TimeInterval = 60
         let span = end.timeIntervalSince(start)
-        if (span / preciseInterval).rounded(.down) > maxPrecisePoints {
-            preciseInterval = span / maxPrecisePoints
+        // The grid includes both endpoints, hence the +1 / −1.
+        if (span / preciseInterval).rounded(.down) + 1 > maxPrecisePoints {
+            preciseInterval = span / (maxPrecisePoints - 1)
             let rem = preciseInterval.truncatingRemainder(dividingBy: 60)
             if rem != 0 {
                 preciseInterval += 60 - rem
