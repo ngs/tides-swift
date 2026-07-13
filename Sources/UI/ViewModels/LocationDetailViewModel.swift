@@ -78,9 +78,22 @@ final class LocationDetailViewModel {
     /// Sunrises and sunsets within the pannable range, sorted by time.
     private(set) var sunEvents: [SunEvent] = []
 
-    /// Visible chart interval: one day either side of the center.
-    var windowStart: Date { centerDate.addingTimeInterval(-86_400) }
-    var windowEnd: Date { centerDate.addingTimeInterval(86_400) }
+    /// Seconds of chart time the visible window spans. Set by the chart
+    /// view from its width — the time scale (points per hour) is fixed, so
+    /// narrow screens show fewer hours instead of squeezing days in.
+    private(set) var visibleSpanSeconds: TimeInterval = 2 * 86_400
+
+    /// Visible chart interval, centered on the cursor.
+    var windowStart: Date { centerDate.addingTimeInterval(-visibleSpanSeconds / 2) }
+    var windowEnd: Date { centerDate.addingTimeInterval(visibleSpanSeconds / 2) }
+
+    /// Adopts the span the chart's width allows and tops up the computed
+    /// range if the wider window needs it.
+    func setVisibleSpan(_ seconds: TimeInterval) {
+        guard seconds > 0, seconds != visibleSpanSeconds else { return }
+        visibleSpanSeconds = seconds
+        extendRangeIfNeeded()
+    }
 
     /// When `reload` last ran, so a re-appearing view can refresh "now"
     /// without duplicating the load the initializer already did.

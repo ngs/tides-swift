@@ -335,15 +335,31 @@ private struct TideChartPane: View {
     /// below the chart lines up with the time axis.
     @State private var plotLeadingInset: CGFloat = 0
     @State private var plotTrailingInset: CGFloat = 0
+    /// Width of the plot area, which sets the visible span at the fixed
+    /// time scale.
+    @State private var plotWidth: CGFloat = 0
+
+    /// Fixed time scale: one hour of chart time occupies this many points.
+    /// The visible span follows from the width, so a narrow screen shows
+    /// fewer hours instead of squeezing whole days in.
+    private static let pointsPerHour: CGFloat = 16
 
     /// The instant at the chart's center, following the finger mid-pan.
     private var centerTime: Date {
         viewModel.centerDate.addingTimeInterval(pan.offsetSeconds)
     }
 
-    /// The visible two-day window around the (possibly mid-pan) center.
+    /// Seconds the plot can show at the fixed scale (two days until the
+    /// first layout pass reports the width).
+    private var visibleSeconds: TimeInterval {
+        guard plotWidth > 0 else { return 2 * 86_400 }
+        return Double(plotWidth / Self.pointsPerHour) * 3_600
+    }
+
+    /// The visible window around the (possibly mid-pan) center.
     private var chartDomain: ClosedRange<Date> {
-        centerTime.addingTimeInterval(-86_400)...centerTime.addingTimeInterval(86_400)
+        let half = visibleSeconds / 2
+        return centerTime.addingTimeInterval(-half)...centerTime.addingTimeInterval(half)
     }
 
     var body: some View {
@@ -547,13 +563,16 @@ private struct TideChartPane: View {
         return CGFloat(date.timeIntervalSince(chartDomain.lowerBound) / total)
     }
 
-    /// Records where the plot area sits inside the chart, so views below the
-    /// chart can align with the time axis.
+    /// Records where the plot area sits inside the chart — for the sun
+    /// events strip alignment and for the visible span — and tells the view
+    /// model how much time the plot now shows.
     private func updatePlotInsets(proxy: ChartProxy, geometry: GeometryProxy) {
         guard let anchor = proxy.plotFrame else { return }
         let frame = geometry[anchor]
         plotLeadingInset = frame.minX
         plotTrailingInset = geometry.size.width - frame.maxX
+        plotWidth = frame.width
+        viewModel.setVisibleSpan(visibleSeconds)
     }
 
     /// Day always reads brighter than night: on a light background the
