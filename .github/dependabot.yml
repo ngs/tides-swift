@@ -1,0 +1,40 @@
+version: 2
+
+# The actions are pinned to exact release tags (not floating majors), because
+# ci-actions-versions.yml compares them against the latest release tag literally
+# and fails the moment one falls behind. That check only reports — it never opens
+# a PR — so without Dependabot the build would simply stay red until someone
+# noticed. These updates are what turn it green again.
+#
+# Package.swift has no external dependencies (every target is local), so there is
+# no `swift` ecosystem here.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "10:00"
+      timezone: Asia/Tokyo
+    groups:
+      actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore
+
+  # Bundler pins fastlane and rubocop, and the lockfile's BUNDLED WITH goes stale
+  # silently — an old one breaks `bundle install` outright on a newer Ruby.
+  - package-ecosystem: bundler
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "10:00"
+      timezone: Asia/Tokyo
+    groups:
+      gems:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore
