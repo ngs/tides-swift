@@ -89,8 +89,13 @@ private struct LocationDetailContentView: View {
 
             Section("High and Low Tides") {
                 if viewModel.visibleExtrema.isEmpty {
-                    Text("No high or low tides in this period.")
-                        .foregroundStyle(.secondary)
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Text("No high or low tides in this period.")
+                            .foregroundStyle(.secondary)
+                    }
                 } else {
                     ForEach(viewModel.visibleExtrema) { extremum in
                         extremumRow(extremum)
@@ -384,6 +389,11 @@ private struct TideChartPane: View {
             chart
                 .frame(height: Self.chartHeight, alignment: .top)
                 .padding(.vertical, 8)
+                .overlay {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
             sunEventsStrip
         }
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }

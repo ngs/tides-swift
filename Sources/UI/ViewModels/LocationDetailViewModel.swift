@@ -99,11 +99,18 @@ final class LocationDetailViewModel {
     /// without duplicating the load the initializer already did.
     private var reloadedAt: Date = .distantPast
 
+    /// True while a full recomputation of the range is in flight — the
+    /// initial load after selecting a location, a datum switch, a location
+    /// move or a far calendar jump. Views show a progress indicator.
+    private(set) var isLoading = false
+
     /// In-flight background range extension, if any. At most one runs at a
     /// time; the next pan retriggers the check.
     private var extensionTask: Task<Void, Never>?
-    /// Bumped by every synchronous `reload` so a background extension that
-    /// raced it throws its stale result away.
+    /// In-flight full reload, if any. A newer reload cancels it.
+    private var reloadTask: Task<Void, Never>?
+    /// Bumped by every `reload` so a background extension or an older
+    /// reload that raced it throws its stale result away.
     private var generation = 0
 
     init(
@@ -162,11 +169,24 @@ final class LocationDetailViewModel {
         reload(now: now)
     }
 
+    /// Recomputes the whole loaded range off the main actor, so selecting a
+    /// location (or switching the datum) never blocks the UI. The cursor
+    /// readout works immediately — single heights are computed on demand —
+    /// while the curve and extrema swap in when ready.
     func reload(now: Date = .now) {
         generation += 1
-        apply(Self.rangeData(for: rangeRequest(from: rangeStart, to: rangeEnd)))
+        let expected = generation
         currentHeightMeters = predictor.height(at: now)
         reloadedAt = now
+        isLoading = true
+        let request = rangeRequest(from: rangeStart, to: rangeEnd)
+        reloadTask?.cancel()
+        reloadTask = Task(priority: .userInitiated) { [weak self] in
+            let data = await Self.computeRangeData(for: request)
+            guard let self, !Task.isCancelled, self.generation == expected else { return }
+            self.apply(data)
+            self.isLoading = false
+        }
     }
 
     private func rangeRequest(from start: Date, to end: Date) -> RangeRequest {
