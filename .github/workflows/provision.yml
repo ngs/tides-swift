@@ -28,7 +28,11 @@ env:
   MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
   MATCH_CLONE_BRANCH_DIRECTLY: "true"
   MATCH_KEYCHAIN_NAME: tmp.keychain
+  CERT_KEYCHAIN_NAME: tmp.keychain
+  KEYCHAIN_NAME: tmp.keychain
   MATCH_KEYCHAIN_PASSWORD: tmp
+  CERT_KEYCHAIN_PASSWORD: tmp
+  KEYCHAIN_PASSWORD: tmp
   MATCH_SHALLOW_CLONE: "true"
   # Writing new profiles is the whole point of this workflow.
   MATCH_READONLY: "false"
