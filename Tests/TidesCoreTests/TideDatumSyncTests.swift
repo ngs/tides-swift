@@ -36,6 +36,14 @@ struct TideDatumSyncTests {
         return defaults
     }
 
+    /// The observers hop to the main actor with a `Task`; yielding lets
+    /// those enqueued mirror jobs run before the assertions.
+    private func drainMainActor() async {
+        for _ in 0..<5 {
+            await Task.yield()
+        }
+    }
+
     @Test
     func startPullsTheICloudValueIntoTheLocalSuite() throws {
         let store = FakeUbiquitousStore()
@@ -49,21 +57,21 @@ struct TideDatumSyncTests {
     }
 
     @Test
-    func localChangesPushToICloud() throws {
+    func localChangesPushToICloud() async throws {
         let store = FakeUbiquitousStore()
         let defaults = try makeDefaults()
         let sync = TideDatumSync(ubiquitous: store, defaults: defaults, key: key)
         sync.start()
 
-        // What @AppStorage does when the user flips the datum picker; the
-        // defaults suite posts didChangeNotification synchronously.
+        // What @AppStorage does when the user flips the datum picker.
         defaults.set(TideDatum.meanSeaLevel.rawValue, forKey: key)
+        await drainMainActor()
 
         #expect(store.storage[key] == TideDatum.meanSeaLevel.rawValue)
     }
 
     @Test
-    func externalICloudChangesReachTheLocalSuite() throws {
+    func externalICloudChangesReachTheLocalSuite() async throws {
         let store = FakeUbiquitousStore()
         let defaults = try makeDefaults()
         defaults.set(TideDatum.chartDatum.rawValue, forKey: key)
@@ -75,6 +83,7 @@ struct TideDatumSyncTests {
             name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
             object: nil
         )
+        await drainMainActor()
 
         #expect(defaults.string(forKey: key) == TideDatum.meanSeaLevel.rawValue)
     }
@@ -95,13 +104,14 @@ struct TideDatumSyncTests {
     }
 
     @Test
-    func garbageInTheLocalSuiteIsNotPushed() throws {
+    func garbageInTheLocalSuiteIsNotPushed() async throws {
         let store = FakeUbiquitousStore()
         let defaults = try makeDefaults()
         let sync = TideDatumSync(ubiquitous: store, defaults: defaults, key: key)
         sync.start()
 
         defaults.set("not-a-datum", forKey: key)
+        await drainMainActor()
 
         #expect(store.storage[key] == nil)
     }
@@ -109,15 +119,17 @@ struct TideDatumSyncTests {
     /// The two observers must not feed each other: a pull writes the same
     /// value back, which the push observer sees and drops as identical.
     @Test
-    func mirroringSettlesWithoutRewriting() throws {
+    func mirroringSettlesWithoutRewriting() async throws {
         let store = FakeUbiquitousStore()
         store.storage[key] = TideDatum.meanSeaLevel.rawValue
         let defaults = try makeDefaults()
         let sync = TideDatumSync(ubiquitous: store, defaults: defaults, key: key)
         sync.start()
+        await drainMainActor()
         let settled = store.synchronizeCount
 
         defaults.set(TideDatum.meanSeaLevel.rawValue, forKey: key)
+        await drainMainActor()
 
         // Same value: no push, no extra synchronize.
         #expect(store.synchronizeCount == settled)

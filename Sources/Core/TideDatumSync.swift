@@ -57,12 +57,14 @@ public final class TideDatumSync {
     public func start() {
         guard observers.isEmpty else { return }
         let center = NotificationCenter.default
+        // An explicit hop: OperationQueue.main does not strictly guarantee
+        // the MainActor executor, so assuming isolation could trap.
         observers.append(center.addObserver(
             forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
             object: ubiquitous as? NSUbiquitousKeyValueStore,
             queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated {
+            Task { @MainActor in
                 self?.pullFromICloud()
             }
         })
@@ -71,7 +73,7 @@ public final class TideDatumSync {
             object: defaults,
             queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated {
+            Task { @MainActor in
                 self?.pushToICloud()
             }
         })
