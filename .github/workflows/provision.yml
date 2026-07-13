@@ -24,7 +24,8 @@ env:
   APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
   APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
   APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: "true"
-  MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+  # No MATCH_GIT_URL override: the Matchfile falls back to the certificates
+  # repo's SSH URL, which is what the deploy key set up below authenticates.
   MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
   # No CLONE_BRANCH_DIRECTLY / SHALLOW_CLONE: both break the first run,
   # where match still has to create the branch in the certificates repo.
