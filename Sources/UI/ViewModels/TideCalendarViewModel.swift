@@ -8,7 +8,7 @@ import TidesCore
 @Observable
 public final class TideCalendarViewModel {
     /// One day of the displayed month grid.
-    public struct Day: Identifiable, Equatable {
+    public struct Day: Identifiable, Equatable, Sendable {
         public let date: Date
         public let dayOfMonth: Int
         /// False for the leading/trailing days that pad the grid to whole weeks.
@@ -33,6 +33,9 @@ public final class TideCalendarViewModel {
     public private(set) var days: [Day] = []
     /// Day whose tides are listed below the grid.
     public var selectedDay: Day?
+    /// In-flight background rebuild of `days`, if any. Tests await it; views
+    /// simply observe `days` updating when it finishes.
+    public private(set) var reloadTask: Task<Void, Never>?
 
     public init(
         parameters: HarmonicParameters,
@@ -42,10 +45,15 @@ public final class TideCalendarViewModel {
     ) {
         self.parameters = parameters
         self.datum = datum
-        self.predictor = TidePredictor(parameters: parameters, datum: datum)
+        let predictor = TidePredictor(parameters: parameters, datum: datum)
+        self.predictor = predictor
         self.calendar = calendar
-        self.monthStart = calendar.startOfMonth(for: now)
-        reload(now: now)
+        let monthStart = calendar.startOfMonth(for: now)
+        self.monthStart = monthStart
+        // The first grid is computed synchronously so the view never appears
+        // empty; later rebuilds happen off the main actor in `reload`.
+        self.days = Self.makeDays(monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
+        updateSelection()
     }
 
     /// Switches the datum the heights are displayed against and recomputes.
@@ -91,15 +99,48 @@ public final class TideCalendarViewModel {
         reload()
     }
 
-    /// Rebuilds the grid: whole weeks covering the month, each day carrying its
-    /// Moon phase and tide extrema.
+    /// Rebuilds the grid off the main actor: a month of extrema is a lot of
+    /// harmonic evaluations, too heavy to run synchronously on the main
+    /// thread when paging months or switching the datum.
     private func reload(now: Date = .now) {
+        reloadTask?.cancel()
+        let monthStart = monthStart
+        let predictor = predictor
+        let calendar = calendar
+        reloadTask = Task { [weak self] in
+            let days = await Task.detached(priority: .userInitiated) {
+                Self.makeDays(monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
+            }.value
+            guard let self, !Task.isCancelled else { return }
+            self.days = days
+            self.updateSelection()
+        }
+    }
+
+    /// Keeps the user's selection when the rebuilt grid still shows that day;
+    /// otherwise falls back so the list under the grid is never empty.
+    private func updateSelection() {
+        let previousDate = selectedDay?.date
+        let preserved = previousDate.flatMap { date in
+            days.first { $0.isInDisplayedMonth && calendar.isDate($0.date, inSameDayAs: date) }
+        }
+        let today = days.first { $0.isToday && $0.isInDisplayedMonth }
+        selectedDay = preserved ?? today ?? days.first { $0.isInDisplayedMonth }
+    }
+
+    /// Whole weeks covering the month, each day carrying its Moon phase and
+    /// tide extrema. Pure, so `reload` can run it off the main actor.
+    private nonisolated static func makeDays(
+        monthStart: Date,
+        predictor: TidePredictor,
+        calendar: Calendar,
+        now: Date
+    ) -> [Day] {
         guard
             let monthRange = calendar.range(of: .day, in: .month, for: monthStart),
             let gridStart = calendar.startOfWeekContaining(monthStart)
         else {
-            days = []
-            return
+            return []
         }
 
         // Whole weeks: pad to cover the last day of the month.
@@ -109,24 +150,21 @@ public final class TideCalendarViewModel {
             ?? lastDay
         let totalDays = calendar.dateComponents([.day], from: gridStart, to: gridEnd).day ?? 42
 
-        days = (0..<totalDays).compactMap { offset in
+        return (0..<totalDays).compactMap { offset in
             guard let date = calendar.date(byAdding: .day, value: offset, to: gridStart) else {
                 return nil
             }
-            return makeDay(date: date, now: now)
+            return makeDay(date: date, monthStart: monthStart, predictor: predictor, calendar: calendar, now: now)
         }
-
-        // Keep the user's selection when the rebuilt grid still shows that
-        // day; otherwise fall back so the list under the grid is never empty.
-        let previousDate = selectedDay?.date
-        let preserved = previousDate.flatMap { date in
-            days.first { $0.isInDisplayedMonth && calendar.isDate($0.date, inSameDayAs: date) }
-        }
-        let today = days.first { $0.isToday && $0.isInDisplayedMonth }
-        selectedDay = preserved ?? today ?? days.first { $0.isInDisplayedMonth }
     }
 
-    private func makeDay(date: Date, now: Date) -> Day {
+    private nonisolated static func makeDay(
+        date: Date,
+        monthStart: Date,
+        predictor: TidePredictor,
+        calendar: Calendar,
+        now: Date
+    ) -> Day {
         let dayEnd = calendar.date(byAdding: .day, value: 1, to: date) ?? date
         let extrema = predictor.extrema(from: date, to: dayEnd)
         // Noon: the phase a calendar cell stands for, rather than midnight.

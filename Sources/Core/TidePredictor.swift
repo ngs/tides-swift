@@ -117,7 +117,7 @@ public struct TidePredictor: Sendable {
     public func extrema(from start: Date, to end: Date) -> TideExtrema {
         // Base grid: 1 minute. Cap the total number of grid points
         // (60 days at 1-minute resolution) and coarsen beyond that,
-        // keeping the grid aligned to whole minutes.
+        // keeping the interval a whole number of minutes.
         let maxPrecisePoints = 86_400.0
         var preciseInterval: TimeInterval = 60
         let span = end.timeIntervalSince(start)

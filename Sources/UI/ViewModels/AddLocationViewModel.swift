@@ -140,6 +140,8 @@ public final class AddLocationViewModel {
             searchResults = results
             if results.isEmpty {
                 errorMessage = String(localized: "No places found for this search.")
+            } else {
+                errorMessage = nil
             }
         } catch {
             searchResults = []
@@ -150,6 +152,7 @@ public final class AddLocationViewModel {
     public func clearSearch() {
         searchQuery = ""
         searchResults = []
+        errorMessage = nil
     }
 
     // MARK: - Camera

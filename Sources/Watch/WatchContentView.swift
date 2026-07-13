@@ -64,8 +64,10 @@ struct WatchTideView: View {
     private func tideList(predictor: TidePredictor) -> some View {
         let now = Date.now
         let extrema = predictor.extrema(from: now, to: now.addingTimeInterval(24 * 60 * 60))
-        let nextHigh = extrema.highs.first
-        let nextLow = extrema.lows.first
+        // Parabolic refinement can nudge the first extremum slightly before
+        // `now`; only events still ahead count as "next".
+        let nextHigh = extrema.highs.first { $0.time >= now }
+        let nextLow = extrema.lows.first { $0.time >= now }
 
         return List {
             Section("Current Tide") {

@@ -66,8 +66,8 @@ let project = Project(
                     "UIColorName": "AccentColor",
                     "UIImageRespectsSafeAreaInsets": true
                 ],
-                // SwiftData + CloudKit is pushed changes from the other devices
-                // as silent remote notifications.
+                // SwiftData + CloudKit receives changes pushed from the other
+                // devices as silent remote notifications.
                 "UIBackgroundModes": .array([.string("remote-notification")]),
                 "API_HOST": .string("api.tides.ngs.io"),
                 "NSLocationWhenInUseUsageDescription": .string(

@@ -390,7 +390,7 @@ struct TideCalendarViewModelTests {
 
     /// Recomputing the grid (e.g. switching the datum) keeps the selected day.
     @Test
-    func reloadKeepsTheSelectedDay() throws {
+    func reloadKeepsTheSelectedDay() async throws {
         let now = Date(timeIntervalSince1970: 1_767_225_600)
         let viewModel = TideCalendarViewModel(
             parameters: makeParameters(),
@@ -402,6 +402,7 @@ struct TideCalendarViewModelTests {
         viewModel.selectedDay = target
 
         viewModel.setDatum(.meanSeaLevel)
+        await viewModel.reloadTask?.value
 
         let selected = try #require(viewModel.selectedDay)
         #expect(calendar.isDate(selected.date, inSameDayAs: target.date))
