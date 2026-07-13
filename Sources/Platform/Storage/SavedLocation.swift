@@ -4,16 +4,23 @@ import TidesCore
 
 /// A tide location saved by the user. The harmonic parameters downloaded from
 /// tides-api are persisted as JSON so all tide predictions work fully offline.
+///
+/// The model is mirrored to CloudKit (see `TidesCloudKit`), which imposes two
+/// rules on the schema: every persisted property must be optional or carry a
+/// default value, and neither `@Attribute(.unique)` nor required relationships
+/// are allowed. Every property below therefore has a default; the real values
+/// always come from the initializers, the defaults only exist so CloudKit can
+/// materialize a record whose fields have not arrived yet.
 @Model
 public final class SavedLocation {
-    public var name: String
-    public var latitude: Double
-    public var longitude: Double
+    public var name: String = ""
+    public var latitude: Double = 0
+    public var longitude: Double = 0
     /// Raw JSON of `HarmonicParameters` as returned by the API.
-    public var parametersJSON: Data
+    public var parametersJSON = Data()
     /// When the parameters were downloaded.
-    public var fetchedAt: Date
-    public var createdAt: Date
+    public var fetchedAt = Date.distantPast
+    public var createdAt = Date.distantPast
     /// Position in the user-ordered list. Has a default so stores written
     /// before reordering existed migrate without a version bump; ties are
     /// broken by `createdAt`.
@@ -65,13 +72,23 @@ public final class SavedLocation {
     ///
     /// `locations` must already be in display order, and `destination` is the
     /// index the rows are dropped *before*, as SwiftUI's `onMove` reports it.
+    ///
+    /// The reordering is spelled out rather than using SwiftUI's
+    /// `move(fromOffsets:toOffset:)` so that `TidesPlatform` keeps building on
+    /// watchOS, where that extension is not visible without importing SwiftUI.
     public static func move(
         _ locations: [SavedLocation],
         fromOffsets source: IndexSet,
         toOffset destination: Int
     ) {
+        let moving = source.map { locations[$0] }
         var reordered = locations
-        reordered.move(fromOffsets: source, toOffset: destination)
+        for index in source.sorted(by: >) {
+            reordered.remove(at: index)
+        }
+        // Removing the moved rows shifts everything before `destination` down.
+        let insertionIndex = destination - source.count(in: 0 ..< destination)
+        reordered.insert(contentsOf: moving, at: insertionIndex)
         renumber(reordered)
     }
 

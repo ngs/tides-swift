@@ -1,3 +1,7 @@
+// MapKit's search APIs (MKLocalSearch) are unavailable on watchOS, and the
+// watch app never adds locations: it only reads the ones synced from the
+// phone. Excluding the file keeps TidesPlatform buildable for watchOS.
+#if !os(watchOS)
 import CoreLocation
 import Foundation
 import MapKit
@@ -81,3 +85,4 @@ public struct MKPlaceSearchService: PlaceSearching {
         return parts.isEmpty ? (placemark.title ?? "") : parts.joined(separator: ", ")
     }
 }
+#endif

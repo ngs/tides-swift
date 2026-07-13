@@ -10,7 +10,8 @@ let entitlementFiles: [Path] = [
     "Resources/Tides.entitlements",
     "Resources/Tides-iOS.entitlements",
     "Resources/TidesWidget.entitlements",
-    "Resources/TidesWidget-macOS.entitlements"
+    "Resources/TidesWidget-macOS.entitlements",
+    "Resources/TidesWatch.entitlements"
 ]
 
 /// iOS-style entitlements (bare App Group identifier) also apply to visionOS;
@@ -39,6 +40,9 @@ let project = Project(
             "CURRENT_PROJECT_VERSION": .string(buildNumber),
             "MARKETING_VERSION": .string(version),
             "DEVELOPMENT_TEAM": .string("3Y8APYUG2G"),
+            // Development builds provision themselves; the release lanes switch
+            // the Release configuration to the match profiles.
+            "CODE_SIGN_STYLE": .string("Automatic"),
             "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO"
         ]),
     targets: [
@@ -62,6 +66,9 @@ let project = Project(
                     "UIColorName": "AccentColor",
                     "UIImageRespectsSafeAreaInsets": true
                 ],
+                // SwiftData + CloudKit is pushed changes from the other devices
+                // as silent remote notifications.
+                "UIBackgroundModes": .array([.string("remote-notification")]),
                 "API_HOST": .string("api.tides.ngs.io"),
                 "NSLocationWhenInUseUsageDescription": .string(
                     "Your location is used to show nearby tide points on the map.")
@@ -147,8 +154,12 @@ let project = Project(
             ]),
             sources: ["Sources/Watch/**"],
             resources: ["WatchResources/**"],
+            // No App Group on the watch: it reads the saved locations from the
+            // CloudKit-mirrored SwiftData store instead.
+            entitlements: .file(path: "Resources/TidesWatch.entitlements"),
             dependencies: [
-                .package(product: "TidesCore")
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform")
             ]
         ),
         .target(

@@ -41,6 +41,13 @@ Tuist(`Project.swift`)のアプリターゲットがそれらに依存する。
 - entitlements: macOS = `Resources/Tides.entitlements`(sandbox + team-prefixed group)/ iOS・visionOS = `Resources/Tides-iOS.entitlements`(`CODE_SIGN_ENTITLEMENTS[sdk=iphone*|xr*]` で切替)。ウィジェットは `TidesWidget-macOS.entitlements`(base)と `TidesWidget.entitlements`(iOS)。
 - App Group が使えない環境ではローカルストアへ自動フォールバックする(アプリは動くがウィジェットにデータが見えない)。
 
+保存地点(`SavedLocation`)は CloudKit プライベート DB(`iCloud.io.ngs.Tides` / `TidesCloudKit.containerIdentifier`)経由で全プラットフォームに同期される。
+- **CloudKit ミラーリングの制約**: 永続プロパティは全て optional かデフォルト値必須、`@Attribute(.unique)` / リレーションシップ不可。`Tests/TidesUITests/CloudKitSyncTests.swift` がスキーマを検証する。
+- フォールバック階段(`TidesModelContainer.configurations(cloudKit:)`): CloudKit+App Group → CloudKit のみ(watch)→ App Group のみ → ローカル → インメモリ。entitlement 無し / iCloud 未サインイン / プレビュー / テストでは自動的に CloudKit 無しの構成になる(`TidesCloudKit.isAvailable`)。
+- watch アプリは App Group を持たず、CloudKit 同期された SwiftData ストアから地点を読む(`@Query`)。地点が複数あればリストで選択できる。
+- entitlements: 各ターゲットに `com.apple.developer.icloud-container-identifiers` / `icloud-services`(CloudKit)、アプリと watch には push 用の `aps-environment`(macOS は `com.apple.developer.aps-environment`)。watch は `Resources/TidesWatch.entitlements`。アプリの Info.plist には `UIBackgroundModes: [remote-notification]`。
+- `TidesPlatform` の MapKit 依存(`PlaceSearchService` / `ReverseGeocoder`)は watchOS で `#if !os(watchOS)` により除外される。
+
 SPM テストターゲット: `Tests/TidesCoreTests/`(ゴールデンフィクスチャ)、`Tests/TidesUITests/`(ViewModel テスト)。`swift test` で実行できる。
 
 ### TidesCore(潮汐計算エンジン)の要点

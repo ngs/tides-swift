@@ -1,13 +1,14 @@
 import SwiftUI
+import TidesPlatform
 
 @main
 struct TidesWatchApp: App {
-    @State private var store = WatchTideStore()
-
     var body: some Scene {
         WindowGroup {
             WatchContentView()
-                .environment(store)
         }
+        // The same SwiftData store as the phone and the Mac, kept in sync
+        // through the private CloudKit database.
+        .modelContainer(TidesModelContainer.shared)
     }
 }
