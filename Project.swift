@@ -204,6 +204,66 @@ let project = Project(
                 .package(product: "TidesPlatform"),
                 .package(product: "TidesUI")
             ]
+        ),
+        // Captures the App Store screenshots. Driven by Scripts/screenshots.sh,
+        // never by CI's test run: it is a photo shoot, not a test.
+        .target(
+            name: "TidesScreenshots",
+            destinations: [.iPhone, .iPad, .mac],
+            product: .uiTests,
+            bundleId: "io.ngs.TidesScreenshots",
+            deploymentTargets: .multiplatform(
+                iOS: "18.0",
+                macOS: "15.0"
+            ),
+            sources: ["Tests/Screenshots/*.swift"],
+            dependencies: [
+                .target(name: "Tides"),
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform"),
+                .package(product: "TidesUI")
+            ]
+        ),
+        // The same capture test, on visionOS.
+        //
+        // A second target rather than another destination on the one above,
+        // because Tuist refuses to *link* a UI test target to an app on
+        // visionOS — the combination is missing from its lint table, and the
+        // fix is still an open pull request (tuist/tuist#11513). Naming the
+        // app under test in a build setting sidesteps the dependency edge the
+        // linter objects to; Xcode itself has supported visionOS UI tests since
+        // Xcode 15, and `xcodebuild test` runs this exactly like the others.
+        .target(
+            name: "TidesScreenshotsVision",
+            destinations: [.appleVision],
+            product: .uiTests,
+            bundleId: "io.ngs.TidesScreenshotsVision",
+            deploymentTargets: .visionOS("2.0"),
+            sources: ["Tests/Screenshots/*.swift"],
+            dependencies: [
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform"),
+                .package(product: "TidesUI")
+            ],
+            settings: .settings(base: ["TEST_TARGET_NAME": "Tides"])
+        ),
+        // And on the watch, whose app is a separate target with its own UI.
+        .target(
+            name: "TidesWatchScreenshots",
+            destinations: [.appleWatch],
+            product: .uiTests,
+            bundleId: "io.ngs.TidesWatchScreenshots",
+            deploymentTargets: .watchOS("11.0"),
+            // Shares the config/work-directory plumbing with the phone's run.
+            sources: [
+                "Tests/WatchScreenshots/*.swift",
+                "Tests/Screenshots/ScreenshotEnvironment.swift"
+            ],
+            dependencies: [
+                .target(name: "TidesWatch"),
+                .package(product: "TidesCore"),
+                .package(product: "TidesPlatform")
+            ]
         )
     ],
     schemes: [
@@ -220,6 +280,24 @@ let project = Project(
         .scheme(
             name: "TidesWatch",
             buildAction: .buildAction(targets: ["TidesWatch"]),
+            runAction: .runAction(configuration: .debug)
+        ),
+        .scheme(
+            name: "TidesScreenshots",
+            buildAction: .buildAction(targets: ["Tides", "TidesScreenshots"]),
+            testAction: .targets(["TidesScreenshots"], configuration: .debug),
+            runAction: .runAction(configuration: .debug)
+        ),
+        .scheme(
+            name: "TidesScreenshotsVision",
+            buildAction: .buildAction(targets: ["Tides", "TidesScreenshotsVision"]),
+            testAction: .targets(["TidesScreenshotsVision"], configuration: .debug),
+            runAction: .runAction(configuration: .debug)
+        ),
+        .scheme(
+            name: "TidesWatchScreenshots",
+            buildAction: .buildAction(targets: ["TidesWatch", "TidesWatchScreenshots"]),
+            testAction: .targets(["TidesWatchScreenshots"], configuration: .debug),
             runAction: .runAction(configuration: .debug)
         )
     ]

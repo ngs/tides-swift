@@ -84,6 +84,8 @@ Update App Store metadata
 
 Update App Store screenshots
 
+Capture them first with Scripts/screenshots.sh.
+
 ----
 
 

@@ -48,6 +48,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # The screenshots themselves live in ngs/tides-screenshots, mounted at
+          # fastlane/screenshots. Without them deliver would upload nothing.
+          submodules: true
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

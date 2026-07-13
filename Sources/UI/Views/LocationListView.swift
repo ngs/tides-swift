@@ -45,12 +45,14 @@ struct LocationListView: View {
                 Button("Settings", systemImage: "gearshape") {
                     isShowingSettings = true
                 }
+                .accessibilityIdentifier(TideAccessibilityID.settings)
             }
             #endif
             ToolbarItem {
                 Button("Add Location", systemImage: "plus") {
                     isAddingLocation = true
                 }
+                .accessibilityIdentifier(TideAccessibilityID.addLocation)
             }
         }
         .sheet(isPresented: $isAddingLocation) {
@@ -101,6 +103,9 @@ struct LocationListView: View {
                 NavigationLink(value: location) {
                     row(for: location)
                 }
+                .accessibilityIdentifier(
+                    TideAccessibilityID.locationRow(locations.firstIndex(of: location) ?? 0)
+                )
                 .swipeActions(edge: .trailing) {
                     Button("Delete", systemImage: "trash", role: .destructive) {
                         locationToDelete = location

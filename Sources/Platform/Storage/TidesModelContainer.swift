@@ -36,6 +36,16 @@ public enum TidesModelContainer {
     /// - Parameter cloudKit: Whether to attempt CloudKit mirroring. Defaults to
     ///   `TidesCloudKit.isAvailable`; tests pass an explicit value.
     public static func make(cloudKit: Bool = TidesCloudKit.isAvailable) -> ModelContainer {
+        // A screenshot run replaces the store outright: neither the user's
+        // locations nor CloudKit have any business in a reproducible shot.
+        if let seed = ScreenshotSeed.current {
+            do {
+                return try ScreenshotSeed.container(seed, schema: schema)
+            } catch {
+                fatalError("Unable to seed the screenshot store: \(error)")
+            }
+        }
+
         for configuration in configurations(cloudKit: cloudKit) {
             if let container = try? ModelContainer(for: schema, configurations: configuration) {
                 return container

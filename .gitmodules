@@ -1,0 +1,3 @@
+[submodule "fastlane/screenshots"]
+	path = fastlane/screenshots
+	url = git@github.com:ngs/tides-screenshots.git

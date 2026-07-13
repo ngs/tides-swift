@@ -88,7 +88,64 @@ xcodebuild test -workspace Tides.xcworkspace -scheme Tides \
 Scripts/lint.sh strict     # SwiftLint (CI runs --strict)
 periphery scan --strict    # unused code
 bundle exec rubocop        # Ruby (Fastfile and friends)
+Scripts/screenshots.sh     # App Store screenshots, every platform and locale
 ```
+
+## App Store screenshots
+
+`Scripts/screenshots.sh` captures the whole set — iPhone, iPad, Mac, Vision Pro
+and Watch, in seven locales — straight into `fastlane/screenshots/`, which is
+where the `deliver_screenshots` lanes upload from. Nothing about it is manual,
+and nothing about it depends on the machine it runs on.
+
+```bash
+git submodule update --init                  # first time: fetch the screenshots
+Scripts/screenshots.sh                       # everything (~40 min)
+Scripts/screenshots.sh --platform ios        # ios | mac | visionos | watchos
+Scripts/screenshots.sh --locales en-US,ja    # a subset; --locales all for every one
+bundle exec fastlane ios deliver_screenshots # then upload (also mac / visionos)
+```
+
+**`fastlane/screenshots` is a submodule** ([ngs/tides-screenshots]) — the images
+are ~220 MB, most of it visionOS at 3840x2160, and they are rewritten wholesale
+on every release; keeping them out of this history keeps a clone of the app
+cheap. After a shoot, commit them there and then record the pointer here:
+
+```bash
+git -C fastlane/screenshots add -A && git -C fastlane/screenshots commit -m "…"
+git -C fastlane/screenshots push origin main
+git add fastlane/screenshots     # the parent records which shots go with this code
+```
+
+[ngs/tides-screenshots]: https://github.com/ngs/tides-screenshots
+
+**Determinism.** The app is launched with an in-memory store seeded from
+`Tests/Screenshots/Fixtures` (`ScreenshotSeed`) and its clock pinned to a fixed
+instant (`TideClock`), so the same tide curve comes out of every run, offline,
+with no iCloud account and no API call. The shots are taken on simulators the
+script creates for itself (named `Shiomi Shot …`), because a simulator you have
+developed on is signed into iCloud and interrupts the run with an Apple Account
+prompt — with your email address in the frame.
+
+**Sizes.** Simulator screenshots already come out at exactly the pixel sizes App
+Store Connect demands (1320x2868 iPhone 6.9", 2064x2752 iPad 13", 3840x2160
+Vision Pro, 416x496 Watch), so nothing is resized. `deliver` sorts the files into
+store display types by pixel size, not by name — which is why the watch shots sit
+in `screenshots/ios/` (the watch app is part of the iOS app) and why the visionOS
+path must keep the word "vision" in it (3840x2160 is also an Apple TV size).
+
+**The awkward platforms.** A UI test cannot photograph a visionOS screen at all
+("Manual screenshots are not supported"), and on macOS it flattens the window —
+black corners, no shadow. Both are captured from the host instead (`simctl io`
+and `screencapture` respectively) while the test holds the app still; they
+rendezvous through the work directory. The Mac window is then composed onto a
+backdrop by `Scripts/compose_mac_screenshot.swift` — drop a
+`fastlane/screenshots/mac/backdrop.png` to replace the default gradient. The
+watch keeps the simulator's real clock: `simctl status_bar override` is rejected
+on watchOS, so the 9:41 the other platforms show cannot be set there.
+
+**fastlane must be 2.230.0 or newer.** Earlier versions reject the 6.9" iPhone,
+13" iPad and Vision Pro sizes outright.
 
 ## Conventions
 - Write commit messages in English, in the imperative. Never put an AI tool's name in a PR title.

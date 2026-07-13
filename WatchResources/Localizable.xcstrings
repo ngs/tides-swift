@@ -3,12 +3,6 @@
   "strings" : {
     "Add a location from the iPhone app." : {
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iPhoneアプリから地点を追加してください。"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -111,6 +105,12 @@
             "value" : "Aggiungi una località dall’app per iPhone."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhoneアプリから地点を追加してください。"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -123,16 +123,16 @@
             "value" : "Tambah lokasi daripada app iPhone."
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legg til et sted fra iPhone-appen."
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voeg een locatie toe via de iPhone-app."
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Legg til et sted fra iPhone-appen."
           }
         },
         "pl" : {
@@ -218,12 +218,6 @@
     "Add a location from the map to see tide predictions." : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マップから地点を追加すると潮汐予測を表示できます。"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -326,6 +320,12 @@
             "value" : "Aggiungi una località dalla mappa per vedere le previsioni di marea."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップから地点を追加すると潮汐予測を表示できます。"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -338,16 +338,16 @@
             "value" : "Tambah lokasi daripada peta untuk melihat ramalan pasang surut."
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legg til et sted fra kartet for å se tidevannsprognoser."
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voeg een locatie toe via de kaart om getijvoorspellingen te zien."
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Legg til et sted fra kartet for å se tidevannsprognoser."
           }
         },
         "pl" : {
@@ -433,12 +433,6 @@
     "Add Location" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "地点を追加"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -541,6 +535,12 @@
             "value" : "Aggiungi località"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地点を追加"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -553,16 +553,16 @@
             "value" : "Tambah Lokasi"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legg til sted"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voeg locatie toe"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Legg til sted"
           }
         },
         "pl" : {
@@ -648,12 +648,6 @@
     "Available Offline" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "オフラインで利用可能"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -756,6 +750,12 @@
             "value" : "Disponibile offline"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフラインで利用可能"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -768,16 +768,16 @@
             "value" : "Tersedia Luar Talian"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilgjengelig frakoblet"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Offline beschikbaar"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tilgjengelig frakoblet"
           }
         },
         "pl" : {
@@ -863,12 +863,6 @@
     "Cancel" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "キャンセル"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -971,6 +965,12 @@
             "value" : "Annulla"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -983,16 +983,16 @@
             "value" : "Batal"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avbryt"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuleer"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avbryt"
           }
         },
         "pl" : {
@@ -1078,12 +1078,6 @@
     "Choose a saved location, or add one from the map." : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存済みの地点を選択するか、マップから追加してください。"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1186,6 +1180,12 @@
             "value" : "Scegli una località salvata oppure aggiungine una dalla mappa."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの地点を選択するか、マップから追加してください。"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1198,16 +1198,16 @@
             "value" : "Pilih lokasi yang disimpan, atau tambah daripada peta."
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velg et lagret sted, eller legg til et fra kartet."
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kies een bewaarde locatie of voeg er een toe via de kaart."
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Velg et lagret sted, eller legg til et fra kartet."
           }
         },
         "pl" : {
@@ -1293,12 +1293,6 @@
     "Coordinates" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "座標"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1401,6 +1395,12 @@
             "value" : "Coordinate"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "座標"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1413,16 +1413,16 @@
             "value" : "Koordinat"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koordinater"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coördinaten"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Koordinater"
           }
         },
         "pl" : {
@@ -1508,12 +1508,6 @@
     "Current Tide" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "現在の潮位"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1616,6 +1610,12 @@
             "value" : "Marea attuale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の潮位"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1628,16 +1628,16 @@
             "value" : "Pasang Surut Semasa"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gjeldende tidevann"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Huidig getij"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gjeldende tidevann"
           }
         },
         "pl" : {
@@ -1723,12 +1723,6 @@
     "Date" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日付"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1831,6 +1825,12 @@
             "value" : "Data"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1843,16 +1843,16 @@
             "value" : "Tarikh"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dato"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Datum"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dato"
           }
         },
         "pl" : {
@@ -1938,12 +1938,6 @@
     "Error" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "エラー"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2046,6 +2040,12 @@
             "value" : "Errore"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エラー"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2058,16 +2058,16 @@
             "value" : "Ralat"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feil"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fout"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feil"
           }
         },
         "pl" : {
@@ -2153,12 +2153,6 @@
     "Fetch Parameters for This Location" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この地点のパラメータを取得"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2261,6 +2255,12 @@
             "value" : "Scarica i parametri per questa località"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この地点のパラメータを取得"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2273,16 +2273,16 @@
             "value" : "Ambil Parameter untuk Lokasi Ini"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hent parametere for dette stedet"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Haal parameters op voor deze locatie"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hent parametere for dette stedet"
           }
         },
         "pl" : {
@@ -2368,12 +2368,6 @@
     "Fetched" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取得日時"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2476,6 +2470,12 @@
             "value" : "Scaricati il"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得日時"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2488,16 +2488,16 @@
             "value" : "Diambil"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hentet"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Opgehaald"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hentet"
           }
         },
         "pl" : {
@@ -2583,12 +2583,6 @@
     "Fetching parameters…" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "パラメータを取得中…"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2691,6 +2685,12 @@
             "value" : "Recupero dei parametri…"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パラメータを取得中…"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2703,16 +2703,16 @@
             "value" : "Mengambil parameter…"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henter parametere…"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Parameters ophalen…"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Henter parametere…"
           }
         },
         "pl" : {
@@ -2798,12 +2798,6 @@
     "High and Low Tides" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "満潮・干潮"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2906,6 +2900,12 @@
             "value" : "Alte e basse maree"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "満潮・干潮"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2918,16 +2918,16 @@
             "value" : "Pasang dan Surut"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Høy- og lavvann"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hoog- en laagwater"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Høy- og lavvann"
           }
         },
         "pl" : {
@@ -3013,12 +3013,6 @@
     "High Tide" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "満潮"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3121,6 +3115,12 @@
             "value" : "Alta marea"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "満潮"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3133,16 +3133,16 @@
             "value" : "Air Pasang"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Høyvann"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hoogwater"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Høyvann"
           }
         },
         "pl" : {
@@ -3228,12 +3228,6 @@
     "Location Name" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "地点名"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3336,6 +3330,12 @@
             "value" : "Nome della località"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地点名"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3348,16 +3348,16 @@
             "value" : "Nama Lokasi"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stedsnavn"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Locatienaam"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stedsnavn"
           }
         },
         "pl" : {
@@ -3443,12 +3443,6 @@
     "Locations" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "地点"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3551,6 +3545,12 @@
             "value" : "Località"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地点"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3563,16 +3563,16 @@
             "value" : "Lokasi"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steder"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Locaties"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Steder"
           }
         },
         "pl" : {
@@ -3658,12 +3658,6 @@
     "Low Tide" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "干潮"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3766,6 +3760,12 @@
             "value" : "Bassa marea"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "干潮"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3778,16 +3778,16 @@
             "value" : "Air Surut"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lavvann"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Laagwater"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lavvann"
           }
         },
         "pl" : {
@@ -3873,12 +3873,6 @@
     "New Location" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい地点"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3981,6 +3975,12 @@
             "value" : "Nuova località"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい地点"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3993,16 +3993,16 @@
             "value" : "Lokasi Baharu"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nytt sted"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nieuwe locatie"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nytt sted"
           }
         },
         "pl" : {
@@ -4088,12 +4088,6 @@
     "Next Day" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "翌日"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4196,6 +4190,12 @@
             "value" : "Giorno successivo"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "翌日"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4208,16 +4208,16 @@
             "value" : "Hari Seterusnya"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neste dag"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volgende dag"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neste dag"
           }
         },
         "pl" : {
@@ -4303,12 +4303,6 @@
     "Next High Tide" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の満潮"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4411,6 +4405,12 @@
             "value" : "Prossima alta marea"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の満潮"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4423,16 +4423,16 @@
             "value" : "Air Pasang Seterusnya"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neste høyvann"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volgend hoogwater"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neste høyvann"
           }
         },
         "pl" : {
@@ -4518,12 +4518,6 @@
     "Next Low Tide" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の干潮"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4626,6 +4620,12 @@
             "value" : "Prossima bassa marea"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の干潮"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4638,16 +4638,16 @@
             "value" : "Air Surut Seterusnya"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neste lavvann"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volgend laagwater"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neste lavvann"
           }
         },
         "pl" : {
@@ -4733,12 +4733,6 @@
     "No high or low tides in this period." : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この期間に満潮・干潮はありません。"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4841,6 +4835,12 @@
             "value" : "Nessuna alta o bassa marea in questo periodo."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この期間に満潮・干潮はありません。"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4853,16 +4853,16 @@
             "value" : "Tiada air pasang atau air surut dalam tempoh ini."
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingen høy- eller lavvann i denne perioden."
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geen hoog- of laagwater in deze periode."
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingen høy- eller lavvann i denne perioden."
           }
         },
         "pl" : {
@@ -4948,12 +4948,6 @@
     "No Location Set" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "地点未設定"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5056,6 +5050,12 @@
             "value" : "Nessuna località impostata"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地点未設定"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5068,16 +5068,16 @@
             "value" : "Tiada Lokasi Ditetapkan"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sted ikke angitt"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geen locatie ingesteld"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sted ikke angitt"
           }
         },
         "pl" : {
@@ -5163,12 +5163,6 @@
     "No Saved Locations" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存済みの地点がありません"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5271,6 +5265,12 @@
             "value" : "Nessuna località salvata"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みの地点がありません"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5283,16 +5283,16 @@
             "value" : "Tiada Lokasi Disimpan"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingen lagrede steder"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geen bewaarde locaties"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingen lagrede steder"
           }
         },
         "pl" : {
@@ -5378,12 +5378,6 @@
     "Now" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "現在"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5486,6 +5480,12 @@
             "value" : "Adesso"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5498,16 +5498,16 @@
             "value" : "Sekarang"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nå"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nu"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nå"
           }
         },
         "pl" : {
@@ -5593,12 +5593,6 @@
     "OK" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5701,6 +5695,12 @@
             "value" : "OK"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5713,13 +5713,13 @@
             "value" : "OK"
           }
         },
-        "nl-NL" : {
+        "nb" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
           }
         },
-        "no" : {
+        "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
@@ -5808,12 +5808,6 @@
     "Previous Day" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前日"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5916,6 +5910,12 @@
             "value" : "Giorno precedente"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前日"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5928,16 +5928,16 @@
             "value" : "Hari Sebelumnya"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forrige dag"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vorige dag"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Forrige dag"
           }
         },
         "pl" : {
@@ -6023,12 +6023,6 @@
     "Save" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6131,6 +6125,12 @@
             "value" : "Salva"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6143,16 +6143,16 @@
             "value" : "Simpan"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lagre"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bewaar"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagre"
           }
         },
         "pl" : {
@@ -6238,12 +6238,6 @@
     "Select a Location" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "地点を選択"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6346,6 +6340,12 @@
             "value" : "Seleziona una località"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地点を選択"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6358,16 +6358,16 @@
             "value" : "Pilih Lokasi"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velg et sted"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selecteer een locatie"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Velg et sted"
           }
         },
         "pl" : {
@@ -6453,12 +6453,6 @@
     "Selected Point" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選択した地点"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6561,6 +6555,12 @@
             "value" : "Punto selezionato"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択した地点"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6573,16 +6573,16 @@
             "value" : "Titik Dipilih"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valgt punkt"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geselecteerd punt"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Valgt punkt"
           }
         },
         "pl" : {
@@ -6666,13 +6666,8 @@
       }
     },
     "Shiomi" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "潮見表"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6775,6 +6770,12 @@
             "value" : "Shiomi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "潮見表"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6787,13 +6788,13 @@
             "value" : "Shiomi"
           }
         },
-        "nl-NL" : {
+        "nb" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shiomi"
           }
         },
-        "no" : {
+        "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shiomi"
@@ -6882,12 +6883,6 @@
     "Sunrise" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日の出"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6990,6 +6985,12 @@
             "value" : "Alba"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日の出"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7002,16 +7003,16 @@
             "value" : "Matahari Terbit"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soloppgang"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zonsopkomst"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soloppgang"
           }
         },
         "pl" : {
@@ -7097,12 +7098,6 @@
     "Sunset" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日の入り"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7205,6 +7200,12 @@
             "value" : "Tramonto"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日の入り"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7217,16 +7218,16 @@
             "value" : "Matahari Terbenam"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solnedgang"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zonsondergang"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solnedgang"
           }
         },
         "pl" : {
@@ -7312,12 +7313,6 @@
     "Tap the map to select a location." : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マップをタップして地点を選択してください。"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7420,6 +7415,12 @@
             "value" : "Tocca la mappa per selezionare una località."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップをタップして地点を選択してください。"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7432,16 +7433,16 @@
             "value" : "Ketik peta untuk memilih lokasi."
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trykk på kartet for å velge et sted."
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tik op de kaart om een locatie te selecteren."
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trykk på kartet for å velge et sted."
           }
         },
         "pl" : {
@@ -7526,12 +7527,6 @@
     },
     "The saved parameters for this location could not be read." : {
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この地点の保存済みパラメータを読み込めませんでした。"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7634,6 +7629,12 @@
             "value" : "Impossibile leggere i parametri salvati per questa località."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この地点の保存済みパラメータを読み込めませんでした。"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7646,16 +7647,16 @@
             "value" : "Parameter yang disimpan untuk lokasi ini tidak dapat dibaca."
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De lagrede parameterne for dette stedet kunne ikke leses."
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "De bewaarde parameters voor deze locatie konden niet worden gelezen."
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De lagrede parameterne for dette stedet kunne ikke leses."
           }
         },
         "pl" : {
@@ -7741,12 +7742,6 @@
     "The server returned an invalid response." : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サーバーから不正な応答が返されました。"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7849,6 +7844,12 @@
             "value" : "Il server ha restituito una risposta non valida."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サーバーから不正な応答が返されました。"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7861,16 +7862,16 @@
             "value" : "Pelayan mengembalikan respons yang tidak sah."
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serveren returnerte et ugyldig svar."
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "De server gaf een ongeldig antwoord."
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Serveren returnerte et ugyldig svar."
           }
         },
         "pl" : {
@@ -7956,12 +7957,6 @@
     "Tide Chart" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "潮位グラフ"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8064,6 +8059,12 @@
             "value" : "Grafico di marea"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "潮位グラフ"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8076,16 +8077,16 @@
             "value" : "Carta Pasang Surut"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tidevannskurve"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Getijgrafiek"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tidevannskurve"
           }
         },
         "pl" : {
@@ -8171,12 +8172,6 @@
     "Tide Data Unavailable" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "潮汐データを利用できません"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8279,6 +8274,12 @@
             "value" : "Dati di marea non disponibili"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "潮汐データを利用できません"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8291,16 +8292,16 @@
             "value" : "Data Pasang Surut Tidak Tersedia"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tidevannsdata utilgjengelig"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Getijdegegevens niet beschikbaar"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tidevannsdata utilgjengelig"
           }
         },
         "pl" : {
@@ -8386,12 +8387,6 @@
     "Tide Height (m)" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "潮位 (m)"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8494,6 +8489,12 @@
             "value" : "Altezza di marea (m)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "潮位 (m)"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8506,16 +8507,16 @@
             "value" : "Ketinggian Air (m)"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tidevannshøyde (m)"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Getijhoogte (m)"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tidevannshøyde (m)"
           }
         },
         "pl" : {
@@ -8601,12 +8602,6 @@
     "Today" : {
       "extractionState" : "stale",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日"
-          }
-        },
         "ar-SA" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8709,6 +8704,12 @@
             "value" : "Oggi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8721,16 +8722,16 @@
             "value" : "Hari Ini"
           }
         },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I dag"
+          }
+        },
         "nl-NL" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vandaag"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I dag"
           }
         },
         "pl" : {

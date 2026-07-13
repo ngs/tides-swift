@@ -18,6 +18,11 @@ struct TidesApp: App {
         }
         // Shared with the widget extension through the App Group container.
         .modelContainer(TidesModelContainer.shared)
+        #if os(macOS)
+        // Wide enough for the sidebar and a day of the chart side by side, and
+        // 16:10 — the aspect ratio the Mac App Store wants its screenshots in.
+        .defaultSize(width: 1_440, height: 900)
+        #endif
 
         #if os(macOS)
         // The Mac convention: Tides > Settings… (⌘,).

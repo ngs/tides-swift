@@ -128,6 +128,7 @@ private struct LocationDetailContentView: View {
                 Button("Calendar", systemImage: "calendar") {
                     isShowingCalendar = true
                 }
+                .accessibilityIdentifier(TideAccessibilityID.calendar)
             }
             ToolbarItem {
                 Menu("Location Options", systemImage: "ellipsis.circle") {
@@ -143,6 +144,7 @@ private struct LocationDetailContentView: View {
                         DatumPicker()
                     }
                 }
+                .accessibilityIdentifier(TideAccessibilityID.locationOptions)
             }
         }
         .sheet(isPresented: $isEditing) {
@@ -451,7 +453,7 @@ private struct TideChartPane: View {
             .symbolSize(60)
 
             if isNowVisible {
-                RuleMark(x: .value("Now", Date.now))
+                RuleMark(x: .value("Now", TideClock.now))
                     .foregroundStyle(.red.opacity(0.7))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                     .annotation(position: .top, alignment: .leading) {
@@ -461,7 +463,7 @@ private struct TideChartPane: View {
                     }
                 if let height = viewModel.currentHeightMeters {
                     PointMark(
-                        x: .value("Now", Date.now),
+                        x: .value("Now", TideClock.now),
                         y: .value("Height", height)
                     )
                     .foregroundStyle(.red)
@@ -637,7 +639,7 @@ private struct TideChartPane: View {
     private static let daylightFill = Color(red: 1, green: 0.95, blue: 0.8).opacity(0.08)
 
     private var isNowVisible: Bool {
-        chartDomain.contains(.now)
+        chartDomain.contains(TideClock.now)
     }
 }
 

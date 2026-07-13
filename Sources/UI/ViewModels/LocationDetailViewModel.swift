@@ -119,7 +119,7 @@ final class LocationDetailViewModel {
         longitude: Double,
         datum: TideDatum = TideDatumSettings.current,
         calendar: Calendar = .current,
-        now: Date = .now
+        now: Date = TideClock.now
     ) {
         self.parameters = parameters
         self.latitude = latitude
@@ -164,7 +164,7 @@ final class LocationDetailViewModel {
     /// Recomputes only when the last computation is old enough for "now" to
     /// have moved visibly. Keeps `onAppear` from repeating the work the
     /// initializer (or a datum switch) just did.
-    func reloadIfStale(now: Date = .now) {
+    func reloadIfStale(now: Date = TideClock.now) {
         guard now.timeIntervalSince(reloadedAt) >= 60 else { return }
         reload(now: now)
     }
@@ -173,7 +173,7 @@ final class LocationDetailViewModel {
     /// location (or switching the datum) never blocks the UI. The cursor
     /// readout works immediately — single heights are computed on demand —
     /// while the curve and extrema swap in when ready.
-    func reload(now: Date = .now) {
+    func reload(now: Date = TideClock.now) {
         generation += 1
         let expected = generation
         currentHeightMeters = predictor.height(at: now)
@@ -227,7 +227,7 @@ final class LocationDetailViewModel {
     }
 
     /// Recenters on the present moment.
-    func goToNow(now: Date = .now) {
+    func goToNow(now: Date = TideClock.now) {
         centerDate = now
         currentHeightMeters = predictor.height(at: now)
         extendRangeIfNeeded()
@@ -236,7 +236,7 @@ final class LocationDetailViewModel {
     /// Centers on noon of the given day (a calendar selection). A jump that
     /// leaves the computed range rebuilds the range around the new center
     /// instead of growing towards it, so the data stays bounded.
-    func center(onDay date: Date, now: Date = .now) {
+    func center(onDay date: Date, now: Date = TideClock.now) {
         let dayStart = calendar.startOfDay(for: date)
         centerDate = calendar.date(byAdding: .hour, value: 12, to: dayStart) ?? dayStart
         if windowStart < rangeStart || windowEnd > rangeEnd {
@@ -379,6 +379,6 @@ final class LocationDetailViewModel {
     /// True when the chart is centered on the present moment, within a
     /// minute (used to disable the Now button).
     var isCenteredOnNow: Bool {
-        abs(centerDate.timeIntervalSinceNow) < 60
+        abs(centerDate.timeIntervalSince(TideClock.now)) < 60
     }
 }

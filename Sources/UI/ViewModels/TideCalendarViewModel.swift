@@ -51,7 +51,7 @@ public final class TideCalendarViewModel {
         longitude: Double,
         datum: TideDatum = TideDatumSettings.current,
         calendar: Calendar = .current,
-        now: Date = .now,
+        now: Date = TideClock.now,
         initialDate: Date? = nil
     ) {
         self.parameters = parameters
@@ -113,13 +113,13 @@ public final class TideCalendarViewModel {
         step(months: 1)
     }
 
-    public func goToToday(now: Date = .now) {
+    public func goToToday(now: Date = TideClock.now) {
         monthStart = calendar.startOfMonth(for: now)
         reload(now: now)
     }
 
     public var isShowingCurrentMonth: Bool {
-        calendar.isDate(monthStart, equalTo: .now, toGranularity: .month)
+        calendar.isDate(monthStart, equalTo: TideClock.now, toGranularity: .month)
     }
 
     private func step(months: Int) {
@@ -133,7 +133,7 @@ public final class TideCalendarViewModel {
     /// Rebuilds the grid off the main actor: a month of extrema is a lot of
     /// harmonic evaluations, too heavy to run synchronously on the main
     /// thread when paging months or switching the datum.
-    private func reload(now: Date = .now) {
+    private func reload(now: Date = TideClock.now) {
         reloadTask?.cancel()
         let request = GridRequest(
             monthStart: monthStart,
