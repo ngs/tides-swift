@@ -64,7 +64,7 @@ struct WatchTideView: View {
     }
 
     private func tideList(predictor: TidePredictor) -> some View {
-        let now = Date.now
+        let now = TideClock.now
         let extrema = predictor.extrema(from: now, to: now.addingTimeInterval(24 * 60 * 60))
         // Parabolic refinement can nudge the first extremum slightly before
         // `now`; only events still ahead count as "next".
@@ -88,6 +88,16 @@ struct WatchTideView: View {
                     Image(systemName: MoonPhase(date: now).phase.systemImageName)
                         .foregroundStyle(.secondary)
                 }
+            }
+            Section("Tide Chart") {
+                WatchTideChartView(
+                    predictor: predictor,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    now: now
+                )
+                .frame(height: 100)
+                .padding(.vertical, 4)
             }
             Section {
                 if let nextHigh {
