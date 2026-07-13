@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 0
           # The screenshots themselves live in ngs/tides-screenshots, mounted at
@@ -53,16 +53,15 @@ jobs:
           submodules: true
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1.316.0
         with:
-          ruby-version: "3.3"
           bundler-cache: true
 
       - run: bundle exec fastlane ${{ matrix.platform }} deliver_screenshots
 
       - name: Upload report.xml
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: fastlane-report-${{ matrix.platform }}-${{ github.sha }}
           path: |

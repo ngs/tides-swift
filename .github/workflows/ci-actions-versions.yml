@@ -1,0 +1,38 @@
+name: Check Actions Versions
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - ".github/workflows/**"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - ".github/workflows/**"
+  schedule:
+    # Run weekly on Monday at 10:00 JST (01:00 UTC)
+    - cron: "0 1 * * 1"
+  workflow_dispatch:
+
+jobs:
+  check-versions:
+    name: Check Outdated Actions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.0
+
+      # With skip_pull_request, the action reports rather than opens a PR: it
+      # writes the diff to the job summary and exits 1 when something is behind,
+      # and says "Everything is up-to-date" and exits 0 when nothing is. That
+      # exit code is the whole signal — it declares no outputs to branch on
+      # (the only one it ever sets is GHA_UPDATE_PR_NUMBER, and only when it
+      # opens a PR), so there is nothing to add after it.
+      #
+      # Dependabot (.github/dependabot.yml) is what actually raises the updates;
+      # this job is the thing that notices when they have not been merged.
+      - name: Check for outdated actions
+        uses: saadmk11/github-actions-version-updater@v0.9.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          skip_pull_request: "true"
