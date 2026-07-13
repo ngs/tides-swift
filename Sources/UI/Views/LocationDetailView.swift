@@ -584,8 +584,12 @@ private struct TideChartPane: View {
         .clipped()
     }
 
-    private var visibleSunEvents: [LocationDetailViewModel.SunEvent] {
-        viewModel.sunEvents.filter { chartDomain.contains($0.time) }
+    /// The sunrises and sunsets inside the visible window. `sunEvents` is
+    /// chronological (built day by day in `rangeData`), so this takes the same
+    /// binary-searched slice as the curve rather than filtering the whole
+    /// array on every pan frame.
+    private var visibleSunEvents: ArraySlice<LocationDetailViewModel.SunEvent> {
+        viewModel.sunEvents.slice(in: chartDomain, by: \.time)
     }
 
     private func sunEventLabel(_ event: LocationDetailViewModel.SunEvent) -> some View {
