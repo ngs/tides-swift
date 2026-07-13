@@ -620,6 +620,16 @@
         }
       }
     },
+    "No tide data is available for this location. It may be on land." : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この地点の潮汐データはありません。陸地の可能性があります。"
+          }
+        }
+      }
+    },
     "No places found for this search." : {
       "extractionState" : "stale",
       "localizations" : {
