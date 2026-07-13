@@ -18,9 +18,11 @@ public final class SavedLocation {
     public var longitude: Double = 0
     /// Raw JSON of `HarmonicParameters` as returned by the API.
     public var parametersJSON = Data()
-    /// When the parameters were downloaded.
-    public var fetchedAt = Date.distantPast
-    public var createdAt = Date.distantPast
+    /// When the parameters were downloaded. The Unix-epoch sentinel (rather
+    /// than `.distantPast`, year 1) stays within the date range CloudKit
+    /// accepts when a record is materialized before its fields arrive.
+    public var fetchedAt = Date(timeIntervalSince1970: 0)
+    public var createdAt = Date(timeIntervalSince1970: 0)
     /// Position in the user-ordered list. Has a default so stores written
     /// before reordering existed migrate without a version bump; ties are
     /// broken by `createdAt`.

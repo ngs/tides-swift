@@ -35,6 +35,10 @@ final class LocationDetailViewModel {
     var windowStart: Date { dayStart }
     var windowEnd: Date { calendar.date(byAdding: .day, value: 2, to: dayStart) ?? dayStart }
 
+    /// When `reload` last ran, so a re-appearing view can refresh "now"
+    /// without duplicating the load the initializer already did.
+    private var reloadedAt: Date = .distantPast
+
     init(
         parameters: HarmonicParameters,
         datum: TideDatum = TideDatumSettings.current,
@@ -66,6 +70,14 @@ final class LocationDetailViewModel {
         reload()
     }
 
+    /// Recomputes only when the last computation is old enough for "now" to
+    /// have moved visibly. Keeps `onAppear` from repeating the work the
+    /// initializer (or a datum switch) just did.
+    func reloadIfStale(now: Date = .now) {
+        guard now.timeIntervalSince(reloadedAt) >= 60 else { return }
+        reload(now: now)
+    }
+
     func reload(now: Date = .now) {
         levels = predictor.predictions(from: windowStart, to: windowEnd, interval: 30 * 60)
         let result = predictor.extrema(from: windowStart, to: windowEnd)
@@ -75,6 +87,7 @@ final class LocationDetailViewModel {
         )
         .sorted { $0.time < $1.time }
         currentHeightMeters = predictor.height(at: now)
+        reloadedAt = now
     }
 
     /// True when the displayed day is today (used to disable the Today button).

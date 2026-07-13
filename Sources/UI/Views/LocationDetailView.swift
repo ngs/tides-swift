@@ -143,7 +143,7 @@ private struct LocationDetailContentView: View {
         }
         .onAppear {
             viewModel.setDatum(datum)
-            viewModel.reload()
+            viewModel.reloadIfStale()
         }
         .onChange(of: datum) { _, newDatum in
             viewModel.setDatum(newDatum)
