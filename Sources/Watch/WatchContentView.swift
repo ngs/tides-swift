@@ -11,10 +11,9 @@ import TidesPlatform
 struct WatchContentView: View {
     @Query(sort: [SortDescriptor(\SavedLocation.sortOrder), SortDescriptor(\SavedLocation.createdAt)])
     private var locations: [SavedLocation]
-    /// Displayed datum. The preference is per device — App Groups do not span
-    /// devices, so the phone's selection is not visible here and the watch
-    /// stays on the default (chart datum) until it gets its own setting or a
-    /// WatchConnectivity sync.
+    /// Displayed datum. The phone's selection arrives through iCloud's
+    /// key-value store (`TideDatumSync`), which mirrors it into this suite;
+    /// App Groups alone would not span devices.
     @AppStorage(TideDatumSettings.storageKey, store: TideDatumSettings.defaults)
     private var datum: TideDatum = TideDatumSettings.defaultDatum
 
