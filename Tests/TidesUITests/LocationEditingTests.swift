@@ -367,6 +367,8 @@ struct TideCalendarViewModelTests {
     private func makeViewModel(now: Date) -> TideCalendarViewModel {
         TideCalendarViewModel(
             parameters: makeParameters(),
+            latitude: 35.6762,
+            longitude: 139.6503,
             calendar: calendar,
             now: now
         )
@@ -389,18 +391,22 @@ struct TideCalendarViewModelTests {
 
     /// Every day carries its Moon phase and that day's tides.
     @Test
-    func daysCarryMoonPhaseAndTides() {
+    func daysCarryMoonPhaseAndTides() throws {
         let now = Date(timeIntervalSince1970: 1_767_225_600)
         let viewModel = makeViewModel(now: now)
 
-        let day = try? #require(viewModel.days.first { $0.isInDisplayedMonth })
-        guard let day else { return }
+        let day = try #require(viewModel.days.first { $0.isInDisplayedMonth })
 
         #expect((0...1).contains(day.moon.illuminatedFraction))
         // A semidiurnal M2-only location has roughly two highs and two lows a day.
         #expect(day.highs.count >= 1)
         #expect(day.lows.count >= 1)
         #expect(day.highs.allSatisfy { $0.time >= day.date })
+        // Tokyo has a sunrise and a sunset on every day of the year.
+        let sunrise = try #require(day.sunrise)
+        let sunset = try #require(day.sunset)
+        #expect(sunrise < sunset)
+        #expect(calendar.isDate(sunrise, inSameDayAs: day.date))
     }
 
     /// Recomputing the grid (e.g. switching the datum) keeps the selected day.
@@ -409,6 +415,8 @@ struct TideCalendarViewModelTests {
         let now = Date(timeIntervalSince1970: 1_767_225_600)
         let viewModel = TideCalendarViewModel(
             parameters: makeParameters(),
+            latitude: 35.6762,
+            longitude: 139.6503,
             datum: .chartDatum,
             calendar: calendar,
             now: now

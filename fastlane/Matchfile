@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-git_url(ENV['MATCH_GIT_URL'] || 'git@github.com:ngs/littleapps-fastlane-certificates.git')
+# An empty env var (an unset Actions secret) must also fall through: '' is
+# truthy in Ruby and would otherwise be passed to git verbatim.
+custom_git_url = ENV['MATCH_GIT_URL']
+git_url(
+  custom_git_url.nil? || custom_git_url.empty? ? 'git@github.com:ngs/littleapps-fastlane-certificates.git' : custom_git_url
+)
 storage_mode('git')
 
 type('appstore')

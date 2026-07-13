@@ -47,6 +47,8 @@ Saved locations (`SavedLocation`) sync across every platform through the CloudKi
 - Entitlements: every target carries `com.apple.developer.icloud-container-identifiers` and `icloud-services` (CloudKit); the app and the watch also carry `aps-environment` for push (`com.apple.developer.aps-environment` on macOS, `Resources/TidesWatch.entitlements` for the watch). The app's Info.plist declares `UIBackgroundModes: [remote-notification]`.
 - `TidesPlatform`'s MapKit-backed types (`PlaceSearchService`, `ReverseGeocoder`) are excluded on watchOS with `#if !os(watchOS)`.
 
+The datum preference syncs across devices through iCloud's key-value store: `TideDatumSync` (TidesCore) mirrors it with the App Group defaults suite, started once at launch by the app and the watch app. `@AppStorage` bindings and the widget keep reading the local suite unchanged. Requires the `com.apple.developer.ubiquity-kvstore-identifier` entitlement (`$(TeamIdentifierPrefix)io.ngs.Tides` on every app target — one shared store); the widget extension cannot use the key-value store and is deliberately left out.
+
 SPM test targets: `Tests/TidesCoreTests/` (golden fixtures) and `Tests/TidesUITests/` (view models). Both run under `swift test`.
 
 ### TidesCore (the tide engine)
@@ -65,7 +67,7 @@ SPM test targets: `Tests/TidesCoreTests/` (golden fixtures) and `Tests/TidesUITe
 
 ### SunCalculator
 - Sunrise/sunset per civil day from the NOAA solar position algorithm (Meeus ch. 25); handles polar day/night (`SolarDay.alwaysUp` / `.alwaysDown`). Foundation only.
-- The detail chart shades the night intervals so the fill reads as day vs night, and shows the displayed day's sunrise/sunset under the chart.
+- The detail chart shades the night intervals so the fill reads as day vs night, and shows the displayed day's sunrise/sunset under the chart. The medium widget, the watch app and the calendar's selected-day detail list the times too.
 - `Tests/TidesCoreTests/SunCalculatorTests.swift` pins the times against NAOJ (Tokyo) and NOAA (Sydney, Svalbard) references.
 
 ### API

@@ -24,12 +24,19 @@ env:
   APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
   APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
   APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: "true"
+  # Must be the SSH URL (git@github.com:…): the runner authenticates with
+  # the deploy key, and HTTPS would prompt for a username. The Matchfile
+  # falls back to the certificates repo's SSH URL when the secret is unset.
   MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
   MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-  MATCH_CLONE_BRANCH_DIRECTLY: "true"
+  # No CLONE_BRANCH_DIRECTLY / SHALLOW_CLONE: both break the first run,
+  # where match still has to create the branch in the certificates repo.
   MATCH_KEYCHAIN_NAME: tmp.keychain
+  CERT_KEYCHAIN_NAME: tmp.keychain
+  KEYCHAIN_NAME: tmp.keychain
   MATCH_KEYCHAIN_PASSWORD: tmp
-  MATCH_SHALLOW_CLONE: "true"
+  CERT_KEYCHAIN_PASSWORD: tmp
+  KEYCHAIN_PASSWORD: tmp
   # Writing new profiles is the whole point of this workflow.
   MATCH_READONLY: "false"
 

@@ -121,8 +121,31 @@ struct TidesWidgetView: View {
                     color: .orange
                 )
             }
+            // The medium family has room for a third row; the small one is
+            // full with the two tide events.
+            if family == .systemMedium, let sunrise = entry.sunrise, let sunset = entry.sunset {
+                sunTimesRow(sunrise: sunrise, sunset: sunset)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func sunTimesRow(sunrise: Date, sunset: Date) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: "sunrise.fill")
+                .foregroundStyle(.orange)
+                .accessibilityLabel(Text("Sunrise"))
+            Text(sunrise, format: .dateTime.hour().minute())
+            Spacer()
+            Image(systemName: "sunset.fill")
+                .foregroundStyle(.indigo)
+                .accessibilityLabel(Text("Sunset"))
+            Text(sunset, format: .dateTime.hour().minute())
+        }
+        .font(.caption2)
+        .monospacedDigit()
+        .lineLimit(1)
+        .accessibilityElement(children: .combine)
     }
 
     private func eventRow(
