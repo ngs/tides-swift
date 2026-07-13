@@ -154,9 +154,14 @@ private struct LocationDetailContentView: View {
             viewModel.setDatum(newDatum)
         }
         .onChange(of: location.parametersJSON) { _, _ in
-            // The location was moved: recompute from the new parameters.
+            // The location was moved: recompute from the new parameters and
+            // coordinate (sun times depend on the latter).
             if let parameters = location.parameters {
-                viewModel.replace(parameters: parameters)
+                viewModel.replace(
+                    parameters: parameters,
+                    latitude: location.latitude,
+                    longitude: location.longitude
+                )
             }
         }
     }

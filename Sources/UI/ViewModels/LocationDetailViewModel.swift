@@ -21,9 +21,10 @@ final class LocationDetailViewModel {
     private(set) var datum: TideDatum
     private var predictor: TidePredictor
     private let calendar: Calendar
-    /// Coordinate the sun times are computed for.
-    private let latitude: Double
-    private let longitude: Double
+    /// Coordinate the sun times are computed for. Updated by `replace` when
+    /// the location is moved.
+    private var latitude: Double
+    private var longitude: Double
 
     /// Start of the currently displayed day.
     private(set) var dayStart: Date
@@ -68,10 +69,20 @@ final class LocationDetailViewModel {
     }
 
     /// Swaps in parameters downloaded for a new coordinate (the location was
-    /// moved) and recomputes the displayed window.
-    func replace(parameters newParameters: HarmonicParameters) {
-        guard newParameters != parameters else { return }
+    /// moved) and recomputes the displayed window, sun times included.
+    func replace(
+        parameters newParameters: HarmonicParameters,
+        latitude newLatitude: Double,
+        longitude newLongitude: Double
+    ) {
+        guard
+            newParameters != parameters
+                || newLatitude != latitude
+                || newLongitude != longitude
+        else { return }
         parameters = newParameters
+        latitude = newLatitude
+        longitude = newLongitude
         predictor = TidePredictor(parameters: newParameters, datum: datum)
         reload()
     }
