@@ -23,6 +23,13 @@ let iOSEntitlementOverrides: SettingsDictionary = [
     "CODE_SIGN_ENTITLEMENTS[sdk=xrsimulator*]": "Resources/Tides-iOS.entitlements"
 ]
 
+/// visionOS requires the layered app icon (a solid image stack); the flat
+/// AppIcon set serves iOS and macOS.
+let appTargetOverrides: SettingsDictionary = iOSEntitlementOverrides.merging([
+    "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xros*]": "AppIconVision",
+    "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xrsimulator*]": "AppIconVision"
+]) { _, new in new }
+
 let project = Project(
     name: "Tides",
     organizationName: "Atsushi Nagase",
@@ -96,7 +103,7 @@ let project = Project(
                 .target(name: "TidesWatch", condition: .when([.ios])),
                 .target(name: "TidesWidget", condition: .when([.ios, .macos]))
             ],
-            settings: .settings(base: iOSEntitlementOverrides)
+            settings: .settings(base: appTargetOverrides)
         ),
         // Home screen / lock screen widget: current tide and next high and low
         // water for a saved location, computed offline from the shared store.
