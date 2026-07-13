@@ -367,9 +367,11 @@ final class LocationDetailViewModel {
     /// does not twitch vertically while panning (an automatic domain would
     /// follow the min/max of just the drawn slice, frame by frame).
     var heightDomain: ClosedRange<Double> {
-        let heights = levels.map(\.heightMeters)
-        guard let minHeight = heights.min(), let maxHeight = heights.max() else {
-            return 0...1
+        guard var minHeight = levels.first?.heightMeters else { return 0...1 }
+        var maxHeight = minHeight
+        for level in levels.dropFirst() {
+            minHeight = min(minHeight, level.heightMeters)
+            maxHeight = max(maxHeight, level.heightMeters)
         }
         let lower = min(0, floor(minHeight))
         let upper = max(ceil(maxHeight), lower + 1)

@@ -74,6 +74,14 @@ private enum LastViewedLocation {
     private static let latitudeKey = "lastViewedLocationLatitude"
     private static let longitudeKey = "lastViewedLocationLongitude"
 
+    /// Degrees of slack allowed when matching a remembered coordinate against
+    /// a saved one. A stored `Double` is not guaranteed to survive a round
+    /// trip through SwiftData and CloudKit bit for bit, and an exact
+    /// comparison would silently drop the restore. 1e-5° is about a metre —
+    /// far below the spacing of any two locations a user would save, and far
+    /// above any rounding a round trip can introduce.
+    private static let coordinateTolerance = 1e-5
+
     static func save(_ coordinate: Coordinate?) {
         let defaults = UserDefaults.standard
         guard let coordinate else {
@@ -92,7 +100,8 @@ private enum LastViewedLocation {
         let latitude = defaults.double(forKey: latitudeKey)
         let longitude = defaults.double(forKey: longitudeKey)
         return locations.first {
-            $0.latitude == latitude && $0.longitude == longitude
+            abs($0.latitude - latitude) < coordinateTolerance
+                && abs($0.longitude - longitude) < coordinateTolerance
         }
     }
 }

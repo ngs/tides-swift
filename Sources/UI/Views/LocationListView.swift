@@ -99,13 +99,11 @@ struct LocationListView: View {
 
     private var list: some View {
         List(selection: $selection) {
-            ForEach(locations) { location in
+            ForEach(Array(locations.enumerated()), id: \.element.id) { index, location in
                 NavigationLink(value: location) {
                     row(for: location)
                 }
-                .accessibilityIdentifier(
-                    TideAccessibilityID.locationRow(locations.firstIndex(of: location) ?? 0)
-                )
+                .accessibilityIdentifier(TideAccessibilityID.locationRow(index))
                 .swipeActions(edge: .trailing) {
                     Button("Delete", systemImage: "trash", role: .destructive) {
                         locationToDelete = location
