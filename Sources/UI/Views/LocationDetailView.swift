@@ -51,6 +51,7 @@ private struct LocationDetailContentView: View {
     @State private var pan = ChartPanState()
     @State private var isEditing = false
     @State private var isConfirmingDelete = false
+    @State private var isShowingCalendar = false
 
     init(
         location: SavedLocation,
@@ -78,7 +79,9 @@ private struct LocationDetailContentView: View {
             }
 
             Section {
-                DayNavigator(viewModel: viewModel, pan: pan)
+                DayNavigator(viewModel: viewModel, pan: pan) {
+                    isShowingCalendar = true
+                }
                 TideChartPane(viewModel: viewModel, pan: pan)
             } header: {
                 Text("Tide Chart")
@@ -120,10 +123,8 @@ private struct LocationDetailContentView: View {
         .navigationTitle(location.name)
         .toolbar {
             ToolbarItem {
-                NavigationLink {
-                    TideCalendarView(location: location, parameters: viewModel.parameters)
-                } label: {
-                    Label("Calendar", systemImage: "calendar")
+                Button("Calendar", systemImage: "calendar") {
+                    isShowingCalendar = true
                 }
             }
             ToolbarItem {
@@ -142,6 +143,9 @@ private struct LocationDetailContentView: View {
         }
         .sheet(isPresented: $isEditing) {
             EditLocationView(location: location)
+        }
+        .sheet(isPresented: $isShowingCalendar) {
+            calendarSheet
         }
         .confirmationDialog(
             "Delete Location",
@@ -178,6 +182,32 @@ private struct LocationDetailContentView: View {
     private func delete() {
         selection = nil
         modelContext.delete(location)
+    }
+
+    /// The month calendar doubles as a date picker: tapping a day recenters
+    /// the chart behind the sheet, and Done closes it.
+    private var calendarSheet: some View {
+        NavigationStack {
+            TideCalendarView(
+                location: location,
+                parameters: viewModel.parameters,
+                initialDate: viewModel.centerDate
+            ) { day in
+                withAnimation {
+                    viewModel.center(onDay: day)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        isShowingCalendar = false
+                    }
+                }
+            }
+        }
+        #if os(macOS)
+        .frame(minWidth: 520, minHeight: 620)
+        #endif
     }
 
     private func extremumRow(_ extremum: LocationDetailViewModel.ExtremumItem) -> some View {
@@ -242,10 +272,12 @@ private struct CurrentTideRow: View {
     }
 }
 
-/// Date readout and the day-step / recenter buttons.
+/// Date readout and the day-step / recenter buttons. The date itself is a
+/// button that opens the month calendar to pick a day visually.
 private struct DayNavigator: View {
     let viewModel: LocationDetailViewModel
     let pan: ChartPanState
+    let openCalendar: () -> Void
 
     private var centerTime: Date {
         viewModel.centerDate.addingTimeInterval(pan.offsetSeconds)
@@ -261,9 +293,15 @@ private struct DayNavigator: View {
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
 
-            Text(centerTime, format: .dateTime.year().month().day().weekday())
-                .monospacedDigit()
-                .frame(maxWidth: .infinity, alignment: .center)
+            Button {
+                openCalendar()
+            } label: {
+                Text(centerTime, format: .dateTime.year().month().day().weekday())
+                    .monospacedDigit()
+            }
+            .buttonStyle(.borderless)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .accessibilityLabel(Text("Calendar"))
 
             Button("Next Day", systemImage: "chevron.forward") {
                 withAnimation {

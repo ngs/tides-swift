@@ -207,6 +207,17 @@
         }
       }
     },
+    "Done" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
     "Edit Location" : {
       "extractionState" : "stale",
       "localizations" : {

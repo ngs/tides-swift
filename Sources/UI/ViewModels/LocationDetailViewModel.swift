@@ -194,6 +194,21 @@ final class LocationDetailViewModel {
         extendRangeIfNeeded()
     }
 
+    /// Centers on noon of the given day (a calendar selection). A jump that
+    /// leaves the computed range rebuilds the range around the new center
+    /// instead of growing towards it, so the data stays bounded.
+    func center(onDay date: Date, now: Date = .now) {
+        let dayStart = calendar.startOfDay(for: date)
+        centerDate = calendar.date(byAdding: .hour, value: 12, to: dayStart) ?? dayStart
+        if windowStart < rangeStart || windowEnd > rangeEnd {
+            rangeStart = calendar.date(byAdding: .day, value: -Self.bufferDays, to: dayStart) ?? dayStart
+            rangeEnd = calendar.date(byAdding: .day, value: Self.bufferDays + 1, to: dayStart) ?? dayStart
+            reload(now: now)
+        } else {
+            extendRangeIfNeeded()
+        }
+    }
+
     /// Grows the computed range when the visible window gets within two days
     /// of an edge, so panning never runs out of data. The recomputation runs
     /// off the main actor: a pan settles without a hitch, and the wider data
