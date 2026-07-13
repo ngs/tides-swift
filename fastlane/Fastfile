@@ -52,14 +52,20 @@ platform :ios do
       )
     end
 
-    # Build the app and create the archive
+    # Let gym detect iOS from the destination instead of forcing the SDK.
+    require_relative 'patches/gym_module_patch'
+
+    # Build the app and create the archive. No `sdk:`: `xcodebuild -sdk`
+    # applies to every target in the build, which compiled the embedded
+    # watchOS app against the iOS SDK (wrong architectures, DTPlatformName
+    # and UIDeviceFamily). The destination alone picks the right SDK per
+    # target.
     build_app(
       export_method: 'app-store',
       scheme: 'Tides',
       destination: 'generic/platform=iOS',
       output_directory: './build/release/ios',
-      output_name: 'Tides-iOS',
-      sdk: 'iphoneos'
+      output_name: 'Tides-iOS'
     )
   end
 
