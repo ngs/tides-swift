@@ -290,8 +290,14 @@ final class LocationDetailViewModel {
     }
 
     /// Off-main-actor wrapper around `rangeData` for background extension.
+    /// The work is handed to a detached task rather than left to the
+    /// isolation of a `nonisolated async` function: the callers await it from
+    /// a `@MainActor` task, and under `NonisolatedNonsendingByDefault` such a
+    /// function would run on the caller's actor and hitch the pan.
     nonisolated private static func computeRangeData(for request: RangeRequest) async -> RangeData {
-        rangeData(for: request)
+        await Task.detached(priority: .userInitiated) {
+            Self.rangeData(for: request)
+        }.value
     }
 
     /// Predictions, extrema, daylight and sun events for a range. Pure —

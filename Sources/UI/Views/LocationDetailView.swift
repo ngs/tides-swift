@@ -317,6 +317,9 @@ private struct DayNavigator: View {
             .buttonStyle(.borderless)
             .frame(maxWidth: .infinity, alignment: .center)
             .accessibilityLabel(Text("Calendar"))
+            // The visible label is the centered date, which the label above
+            // would otherwise hide from VoiceOver.
+            .accessibilityValue(Text(centerTime, format: .dateTime.year().month().day().weekday()))
 
             Button("Next Day", systemImage: "chevron.forward") {
                 withAnimation {
@@ -427,7 +430,7 @@ private struct TideChartPane: View {
                 ))
             }
 
-            ForEach(viewModel.extrema) { extremum in
+            ForEach(chartExtrema) { extremum in
                 PointMark(
                     x: .value("Time", extremum.time),
                     y: .value("Height", extremum.heightMeters)
@@ -497,15 +500,27 @@ private struct TideChartPane: View {
         }
     }
 
-    /// The curve points the chart actually draws: the visible window plus a
-    /// day of margin on each side, so panning and the settle animation never
-    /// reveal a gap while keeping the mark count small enough to redraw
-    /// every frame.
-    private var chartLevels: [TideLevel] {
+    /// The visible window plus a day of margin on each side: what the chart
+    /// draws, so panning and the settle animation never reveal a gap while
+    /// the mark count stays small enough to redraw every frame.
+    private var drawnRange: ClosedRange<Date> {
         let margin: TimeInterval = 24 * 60 * 60
         let start = chartDomain.lowerBound.addingTimeInterval(-margin)
         let end = chartDomain.upperBound.addingTimeInterval(margin)
-        return viewModel.levels.filter { $0.time >= start && $0.time <= end }
+        return start...end
+    }
+
+    /// The curve points the chart actually draws. Both arrays are in
+    /// chronological order, so the window is taken by binary search: the
+    /// per-frame cost stays O(log n + k) even as the computed range grows
+    /// with panning.
+    private var chartLevels: ArraySlice<TideLevel> {
+        viewModel.levels.slice(in: drawnRange, by: \.time)
+    }
+
+    /// The highs and lows within the drawn window.
+    private var chartExtrema: ArraySlice<LocationDetailViewModel.ExtremumItem> {
+        viewModel.extrema.slice(in: drawnRange, by: \.time)
     }
 
     /// Pans the chart through time: the domain follows the finger while the
@@ -623,6 +638,33 @@ private struct TideChartPane: View {
 
     private var isNowVisible: Bool {
         chartDomain.contains(.now)
+    }
+}
+
+private extension Array {
+    /// The elements whose time falls inside `range`, for an array already in
+    /// chronological order. Binary search, so a pan frame costs
+    /// O(log n + k) no matter how far the computed range has grown.
+    func slice(in range: ClosedRange<Date>, by time: (Element) -> Date) -> ArraySlice<Element> {
+        let start = partitionPoint { time($0) >= range.lowerBound }
+        let end = partitionPoint { time($0) > range.upperBound }
+        return self[start..<Swift.max(start, end)]
+    }
+
+    /// The first index whose element satisfies `predicate`, for an array
+    /// partitioned so that every later element satisfies it too.
+    private func partitionPoint(_ predicate: (Element) -> Bool) -> Int {
+        var low = startIndex
+        var high = endIndex
+        while low < high {
+            let mid = low + (high - low) / 2
+            if predicate(self[mid]) {
+                high = mid
+            } else {
+                low = mid + 1
+            }
+        }
+        return low
     }
 }
 

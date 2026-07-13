@@ -39,12 +39,19 @@ public struct ContentView: View {
             // The store may fill in after launch (first CloudKit sync).
             restoreSelection()
         }
-        .onChange(of: selection) { _, newValue in
+        .onChange(of: selectedCoordinate) { _, newValue in
             if newValue != nil {
                 hasRestoredSelection = true
             }
             LastViewedLocation.save(newValue)
         }
+    }
+
+    /// The coordinate to remember. Tracked instead of the selection itself
+    /// because moving the pin in Edit Location changes the coordinate without
+    /// changing the selected object, and the coordinate is the restore key.
+    private var selectedCoordinate: LastViewedLocation.Coordinate? {
+        selection.map { LastViewedLocation.Coordinate(latitude: $0.latitude, longitude: $0.longitude) }
     }
 
     private func restoreSelection() {
@@ -59,18 +66,23 @@ public struct ContentView: View {
 /// reopen it. `SavedLocation` cannot carry a unique identifier (CloudKit
 /// forbids `@Attribute(.unique)`), so the coordinate is the key.
 private enum LastViewedLocation {
+    struct Coordinate: Equatable {
+        var latitude: Double
+        var longitude: Double
+    }
+
     private static let latitudeKey = "lastViewedLocationLatitude"
     private static let longitudeKey = "lastViewedLocationLongitude"
 
-    static func save(_ location: SavedLocation?) {
+    static func save(_ coordinate: Coordinate?) {
         let defaults = UserDefaults.standard
-        guard let location else {
+        guard let coordinate else {
             defaults.removeObject(forKey: latitudeKey)
             defaults.removeObject(forKey: longitudeKey)
             return
         }
-        defaults.set(location.latitude, forKey: latitudeKey)
-        defaults.set(location.longitude, forKey: longitudeKey)
+        defaults.set(coordinate.latitude, forKey: latitudeKey)
+        defaults.set(coordinate.longitude, forKey: longitudeKey)
     }
 
     static func match(in locations: [SavedLocation]) -> SavedLocation? {
