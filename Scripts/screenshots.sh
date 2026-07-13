@@ -125,6 +125,13 @@ done
 
 # --- helpers -----------------------------------------------------------------
 
+# Everything below writes into the derived-data directory — logs, the scratch
+# files `device_udid` reads its answer back from, the compiled compositor. Make
+# it once, here, before any of them runs: on a clean checkout it does not exist
+# yet, and a redirection into a missing directory fails before the command it
+# was meant to capture ever starts.
+mkdir -p "$DERIVED_DATA"
+
 # Prints the udid of the simulator to shoot on, creating it if this is the
 # first run.
 #
@@ -237,7 +244,6 @@ collect() {
 build_compositor() {
   local source="$ROOT/Scripts/compose_mac_screenshot.swift"
   local binary="$DERIVED_DATA/compose_mac_screenshot"
-  mkdir -p "$DERIVED_DATA"
   if [[ ! -x "$binary" || "$source" -nt "$binary" ]]; then
     swiftc -O -o "$binary" "$source" >/dev/null
   fi
@@ -341,7 +347,6 @@ shoot_simulator() {
     write_config "$dir" "$language" "$region" "$external" "$locale"
 
     local log_file="$DERIVED_DATA/$platform-$locale.log"
-    mkdir -p "$DERIVED_DATA"
     if [[ "$external" == "true" ]]; then
       run_test "$scheme" "id=$udid" "$log_file" &
       local test_pid=$!
@@ -372,7 +377,6 @@ shoot_mac() {
     write_config "$dir" "$language" "$region" "true" "$locale"
 
     local log_file="$DERIVED_DATA/mac-$locale.log"
-    mkdir -p "$DERIVED_DATA"
     run_test "TidesScreenshots" "platform=macOS" "$log_file" &
     local test_pid=$!
     watch_for_captures "$dir" "" "$test_pid"
