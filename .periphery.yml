@@ -26,4 +26,4 @@ index_exclude:
   - "**/GeneratedAssetSymbols.swift"
 
 build_arguments:
-  - -destination 'platform=iOS Simulator,OS=26.0.1,name=iPhone 17 Pro'
+  - -destination 'generic/platform=iOS Simulator'

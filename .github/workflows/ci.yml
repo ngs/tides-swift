@@ -14,36 +14,63 @@ jobs:
       matrix:
         include:
           - platform: iOS
-            destination: "platform=iOS Simulator,OS=26.0.1,name=iPhone 17 Pro"
+            simulatorName: iPhone
             buildNumberSuffix: ".1"
           - platform: macOS
-            destination: "platform=macOS"
+            simulatorName: ""
             buildNumberSuffix: ".2"
           - platform: visionOS
-            destination: "platform=visionOS Simulator,name=Apple Vision Pro,OS=26.0"
+            simulatorName: Apple Vision Pro
             buildNumberSuffix: ".3"
 
     steps:
       - uses: actions/checkout@v5
 
-      - name: Select Xcode
-        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.0.app
-
-      - name: Install tuist
+      - name: Select Xcode 26
         run: |
-          brew tap tuist/tuist
-          brew install --formula tuist
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE_PATH" ]; then
+            echo "Available Xcode versions:"
+            ls -la /Applications | grep Xcode
+            echo "Error: Xcode 26.x not found"
+            exit 1
+          fi
+          echo "Using $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
+
+      - name: Install tuist (mise)
+        uses: jdx/mise-action@v2
 
       - name: Generate Xcode project and workspace
         run: tuist generate --no-open
         env:
           TUIST_BUILD_NUMBER: ${{ github.run_id }}${{ matrix.buildNumberSuffix }}
 
+      # Resolve the destination from the simulators the runner actually has,
+      # so a runner image update to a new OS point release cannot break CI.
+      - name: Resolve destination
+        id: destination
+        run: |
+          if [ -z "${{ matrix.simulatorName }}" ]; then
+            echo "destination=platform=macOS" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          DEVICE_ID=$(xcrun simctl list devices available \
+            | grep "${{ matrix.simulatorName }}" \
+            | grep -oE '[0-9A-F-]{36}' | head -1 || true)
+          if [ -z "$DEVICE_ID" ]; then
+            echo "No available simulator matching '${{ matrix.simulatorName }}'"
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "Using simulator $DEVICE_ID"
+          echo "destination=id=$DEVICE_ID" >> "$GITHUB_OUTPUT"
+
       - name: Build and Test (${{ matrix.platform }})
         run: |
           xcodebuild test \
             -scheme Tides \
-            -destination '${{ matrix.destination }}' \
+            -destination '${{ steps.destination.outputs.destination }}' \
             -derivedDataPath .build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -64,23 +91,33 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Select Xcode
-        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.0.app
+      - name: Select Xcode 26
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE_PATH" ]; then
+            echo "Error: Xcode 26.x not found"; ls -la /Applications | grep Xcode; exit 1
+          fi
+          echo "Using $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
 
       - name: Run Swift Tests
         run: swift test
 
   lint:
     name: SwiftLint
-    runs-on: ubuntu-latest
+    # The action-swiftlint image pins an old SwiftLint that cannot parse
+    # modern Swift (it misreads `nonisolated(unsafe)`), so run the current
+    # release from Homebrew instead - the same version developers have.
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v5
 
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
       - name: SwiftLint
-        uses: norio-nomura/action-swiftlint@3.2.1
-        with:
-          args: --strict
+        run: swiftlint lint --strict
 
   periphery:
     name: Periphery Scan
@@ -88,13 +125,19 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Select Xcode
-        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.0.app
-
-      - name: Install tuist and periphery
+      - name: Select Xcode 26
         run: |
-          brew tap tuist/tuist
-          brew install --formula tuist periphery
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE_PATH" ]; then
+            echo "Error: Xcode 26.x not found"; ls -la /Applications | grep Xcode; exit 1
+          fi
+          echo "Using $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
+
+      - name: Install tuist (mise)
+        uses: jdx/mise-action@v2
+      - name: Install periphery
+        run: brew install --formula periphery
 
       - name: Generate Xcode project and workspace
         run: tuist generate --no-open
@@ -129,23 +172,34 @@ jobs:
           - platform: iOS
             destination: "generic/platform=iOS Simulator"
             buildNumberSuffix: ".1"
+            scheme: Tides
           - platform: macOS
             destination: "platform=macOS"
             buildNumberSuffix: ".2"
+            scheme: Tides
           - platform: visionOS
             destination: "generic/platform=visionOS Simulator"
             buildNumberSuffix: ".3"
+            scheme: Tides
+          - platform: watchOS
+            destination: "generic/platform=watchOS Simulator"
+            buildNumberSuffix: ".4"
+            scheme: TidesWatch
 
     steps:
       - uses: actions/checkout@v5
 
-      - name: Select Xcode
-        run: ls -l /Applications && sudo xcode-select -s /Applications/Xcode_26.0.app
-
-      - name: Install tuist
+      - name: Select Xcode 26
         run: |
-          brew tap tuist/tuist
-          brew install --formula tuist
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE_PATH" ]; then
+            echo "Error: Xcode 26.x not found"; ls -la /Applications | grep Xcode; exit 1
+          fi
+          echo "Using $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
+
+      - name: Install tuist (mise)
+        uses: jdx/mise-action@v2
 
       - name: Generate Xcode project and workspace
         run: tuist generate --no-open
@@ -155,7 +209,7 @@ jobs:
       - name: Build ${{ matrix.platform }}
         run: |
           xcodebuild build \
-            -scheme Tides \
+            -scheme '${{ matrix.scheme }}' \
             -destination '${{ matrix.destination }}' \
             -derivedDataPath .build \
             CODE_SIGNING_ALLOWED=NO \

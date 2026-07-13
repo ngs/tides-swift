@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+git_url(ENV['MATCH_GIT_URL'] || 'git@github.com:ngs/littleapps-fastlane-certificates.git')
+storage_mode('git')
+
+type('appstore')
+
+# The app plus the extensions embedded in it. The widget shares the
+# group.io.ngs.Tides App Group with the app, so its profile must carry that
+# entitlement - regenerate with MATCH_READONLY=false after changing it.
+app_identifier(['io.ngs.Tides', 'io.ngs.Tides.watchkitapp', 'io.ngs.Tides.widget'])
+
+team_id('3Y8APYUG2G')

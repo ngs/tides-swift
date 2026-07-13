@@ -1,1 +1,1 @@
-README.md を実態に即した内容に更新してください。
+Update README.md so it describes what the project actually does now.

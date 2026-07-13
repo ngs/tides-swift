@@ -13,6 +13,16 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### register_bundle_ids
+
+```sh
+[bundle exec] fastlane register_bundle_ids
+```
+
+Create the App IDs for the embedded targets in the Developer Portal
+
+Only needed once; match refuses to issue a profile for an unknown bundle ID.
+
 ### setup_app_store_connect_api_key
 
 ```sh
