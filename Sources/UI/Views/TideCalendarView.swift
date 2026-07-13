@@ -12,7 +12,11 @@ struct TideCalendarView: View {
 
     init(location: SavedLocation, parameters: HarmonicParameters) {
         self.location = location
-        _viewModel = State(initialValue: TideCalendarViewModel(parameters: parameters))
+        _viewModel = State(initialValue: TideCalendarViewModel(
+            parameters: parameters,
+            latitude: location.latitude,
+            longitude: location.longitude
+        ))
     }
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
@@ -169,6 +173,31 @@ struct TideCalendarView: View {
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
                 }
+            }
+
+            // Hidden on polar days, which have no rise or set.
+            if let sunrise = day.sunrise, let sunset = day.sunset {
+                HStack(spacing: 12) {
+                    Label {
+                        Text(sunrise, format: .dateTime.hour().minute())
+                    } icon: {
+                        Image(systemName: "sunrise.fill")
+                            .foregroundStyle(.orange)
+                    }
+                    .accessibilityLabel(Text("Sunrise"))
+                    .accessibilityValue(Text(sunrise, format: .dateTime.hour().minute()))
+                    Label {
+                        Text(sunset, format: .dateTime.hour().minute())
+                    } icon: {
+                        Image(systemName: "sunset.fill")
+                            .foregroundStyle(.indigo)
+                    }
+                    .accessibilityLabel(Text("Sunset"))
+                    .accessibilityValue(Text(sunset, format: .dateTime.hour().minute()))
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
             }
 
             if day.highs.isEmpty && day.lows.isEmpty {

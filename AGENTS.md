@@ -67,7 +67,7 @@ SPM test targets: `Tests/TidesCoreTests/` (golden fixtures) and `Tests/TidesUITe
 
 ### SunCalculator
 - Sunrise/sunset per civil day from the NOAA solar position algorithm (Meeus ch. 25); handles polar day/night (`SolarDay.alwaysUp` / `.alwaysDown`). Foundation only.
-- The detail chart shades the night intervals so the fill reads as day vs night, and shows the displayed day's sunrise/sunset under the chart.
+- The detail chart shades the night intervals so the fill reads as day vs night, and shows the displayed day's sunrise/sunset under the chart. The medium widget, the watch app and the calendar's selected-day detail list the times too.
 - `Tests/TidesCoreTests/SunCalculatorTests.swift` pins the times against NAOJ (Tokyo) and NOAA (Sydney, Svalbard) references.
 
 ### API

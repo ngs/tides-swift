@@ -367,6 +367,8 @@ struct TideCalendarViewModelTests {
     private func makeViewModel(now: Date) -> TideCalendarViewModel {
         TideCalendarViewModel(
             parameters: makeParameters(),
+            latitude: 35.6762,
+            longitude: 139.6503,
             calendar: calendar,
             now: now
         )
@@ -401,6 +403,13 @@ struct TideCalendarViewModelTests {
         #expect(day.highs.count >= 1)
         #expect(day.lows.count >= 1)
         #expect(day.highs.allSatisfy { $0.time >= day.date })
+        // Tokyo has a sunrise and a sunset on every day of the year.
+        let sunrise = try? #require(day.sunrise)
+        let sunset = try? #require(day.sunset)
+        if let sunrise, let sunset {
+            #expect(sunrise < sunset)
+            #expect(calendar.isDate(sunrise, inSameDayAs: day.date))
+        }
     }
 
     /// Recomputing the grid (e.g. switching the datum) keeps the selected day.
@@ -409,6 +418,8 @@ struct TideCalendarViewModelTests {
         let now = Date(timeIntervalSince1970: 1_767_225_600)
         let viewModel = TideCalendarViewModel(
             parameters: makeParameters(),
+            latitude: 35.6762,
+            longitude: 139.6503,
             datum: .chartDatum,
             calendar: calendar,
             now: now
