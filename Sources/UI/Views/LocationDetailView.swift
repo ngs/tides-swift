@@ -137,7 +137,9 @@ private struct LocationDetailContentView: View {
                     Button("Delete", systemImage: "trash", role: .destructive) {
                         isConfirmingDelete = true
                     }
-                    Section("Datum") {
+                    // The inline picker renders its own "Datum" header, so
+                    // an untitled section just draws the divider above it.
+                    Section {
                         DatumPicker()
                     }
                 }
