@@ -76,9 +76,13 @@ struct EditLocationView: View {
         #else
         NavigationStack {
             VStack(spacing: 0) {
+                // Cap the form at its content's height so the map, not the
+                // form's trailing whitespace, absorbs the tall screen. With
+                // oversized dynamic type the form scrolls within the cap.
                 form
+                    .frame(maxHeight: 380)
                 map
-                    .frame(height: 220)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .navigationTitle("Edit Location")
             .navigationBarTitleDisplayMode(.inline)
