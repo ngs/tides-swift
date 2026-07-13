@@ -362,10 +362,16 @@ private struct TideChartPane: View {
         return centerTime.addingTimeInterval(-half)...centerTime.addingTimeInterval(half)
     }
 
+    /// Fixed plot height, and the chart's total height with the label zone
+    /// reserved. Both constant, so axis labels appearing or disappearing
+    /// mid-pan can never resize or shift the plot.
+    private static let plotHeight: CGFloat = 220
+    private static let chartHeight: CGFloat = 244
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             chart
-                .frame(minHeight: 220)
+                .frame(height: Self.chartHeight, alignment: .top)
                 .padding(.vertical, 8)
             sunEventsStrip
         }
@@ -441,11 +447,15 @@ private struct TideChartPane: View {
             }
         }
         .chartXScale(domain: chartDomain)
+        .chartYScale(domain: viewModel.heightDomain)
         .chartXAxis {
             AxisMarks(values: .stride(by: .day)) { _ in
                 AxisGridLine()
                 AxisValueLabel(format: .dateTime.day().month(), centered: true)
             }
+        }
+        .chartPlotStyle { plot in
+            plot.frame(height: Self.plotHeight)
         }
         .chartYAxisLabel(String(localized: "Tide Height (m)"))
         .chartBackground { proxy in

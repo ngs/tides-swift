@@ -330,6 +330,20 @@ final class LocationDetailViewModel {
         extrema.filter { (windowStart...windowEnd).contains($0.time) }
     }
 
+    /// Fixed Y domain covering everything the loaded range can show, on
+    /// whole-meter bounds. The chart pins its scale to this so the curve
+    /// does not twitch vertically while panning (an automatic domain would
+    /// follow the min/max of just the drawn slice, frame by frame).
+    var heightDomain: ClosedRange<Double> {
+        let heights = levels.map(\.heightMeters)
+        guard let minHeight = heights.min(), let maxHeight = heights.max() else {
+            return 0...1
+        }
+        let lower = min(0, floor(minHeight))
+        let upper = max(ceil(maxHeight), lower + 1)
+        return lower...upper
+    }
+
     /// True when the chart is centered on the present moment, within a
     /// minute (used to disable the Now button).
     var isCenteredOnNow: Bool {
