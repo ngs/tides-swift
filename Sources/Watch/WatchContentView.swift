@@ -70,6 +70,11 @@ struct WatchTideView: View {
         // `now`; only events still ahead count as "next".
         let nextHigh = extrema.highs.first { $0.time >= now }
         let nextLow = extrema.lows.first { $0.time >= now }
+        let solar = SunCalculator.day(
+            containing: now,
+            latitude: location.latitude,
+            longitude: location.longitude
+        )
 
         return List {
             Section("Current Tide") {
@@ -92,6 +97,33 @@ struct WatchTideView: View {
                     row(title: "Next Low Tide", level: nextLow, systemImage: "arrow.down.circle.fill", color: .orange)
                 }
             }
+            // Hidden on polar days, which have no rise or set.
+            if case let .risesAndSets(sunrise, sunset) = solar {
+                Section {
+                    sunRow(title: "Sunrise", time: sunrise, systemImage: "sunrise.fill", color: .orange)
+                    sunRow(title: "Sunset", time: sunset, systemImage: "sunset.fill", color: .indigo)
+                }
+            }
+        }
+    }
+
+    private func sunRow(
+        title: LocalizedStringKey,
+        time: Date,
+        systemImage: String,
+        color: Color
+    ) -> some View {
+        HStack {
+            Label {
+                Text(title)
+            } icon: {
+                Image(systemName: systemImage)
+                    .foregroundStyle(color)
+            }
+            .font(.caption)
+            Spacer()
+            Text(time, format: .dateTime.hour().minute())
+                .monospacedDigit()
         }
     }
 

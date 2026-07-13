@@ -13,6 +13,10 @@ struct TideEntry: TimelineEntry {
     var currentHeightMeters: Double?
     var nextHigh: TideLevel?
     var nextLow: TideLevel?
+    /// Sunrise/sunset of the entry's civil day; `nil` on polar days and in
+    /// the empty state.
+    var sunrise: Date?
+    var sunset: Date?
 
     /// The Moon at the entry's date; tides and the Moon are read together.
     var moon: MoonPhase {
@@ -26,7 +30,9 @@ struct TideEntry: TimelineEntry {
             locationName: String(localized: "Tokyo Bay"),
             currentHeightMeters: 0.82,
             nextHigh: TideLevel(time: date.addingTimeInterval(3 * 3_600), heightMeters: 1.42),
-            nextLow: TideLevel(time: date.addingTimeInterval(9 * 3_600), heightMeters: 0.11)
+            nextLow: TideLevel(time: date.addingTimeInterval(9 * 3_600), heightMeters: 0.11),
+            sunrise: date.addingTimeInterval(-4 * 3_600),
+            sunset: date.addingTimeInterval(7 * 3_600)
         )
     }
 
@@ -80,14 +86,34 @@ struct TideTimelineProvider: AppIntentTimelineProvider {
         // then takes the first high/low at or after its own date.
         let lastEntryDate = start.addingTimeInterval(Double(Self.entryCount - 1) * Self.entryInterval)
         let extrema = predictor.extrema(from: start, to: lastEntryDate.addingTimeInterval(24 * 3_600))
+
+        // The timeline spans at most two civil days; compute the sun once per day.
+        let calendar = Calendar.current
+        var solarDays: [Date: SolarDay] = [:]
+        func solarDay(containing date: Date) -> SolarDay {
+            let dayStart = calendar.startOfDay(for: date)
+            if let cached = solarDays[dayStart] { return cached }
+            let computed = SunCalculator.day(
+                containing: date,
+                latitude: location.latitude,
+                longitude: location.longitude,
+                calendar: calendar
+            )
+            solarDays[dayStart] = computed
+            return computed
+        }
+
         return (0..<Self.entryCount).map { index in
             let date = start.addingTimeInterval(Double(index) * Self.entryInterval)
+            let solar = solarDay(containing: date)
             return TideEntry(
                 date: date,
                 locationName: location.name,
                 currentHeightMeters: predictor.height(at: date),
                 nextHigh: extrema.highs.first { $0.time >= date },
-                nextLow: extrema.lows.first { $0.time >= date }
+                nextLow: extrema.lows.first { $0.time >= date },
+                sunrise: solar.sunrise,
+                sunset: solar.sunset
             )
         }
     }
