@@ -4,9 +4,10 @@ import SwiftUI
 import TidesCore
 import TidesPlatform
 
-/// Tide detail screen: two-day tide curve, current level, high/low water list
-/// and day navigation. Works fully offline from the saved parameters, and lets
-/// the location be renamed, moved or deleted.
+/// Tide detail screen: two-day tide curve panned continuously around a
+/// center cursor, the tide at the cursor, and the high/low water list.
+/// Works fully offline from the saved parameters, and lets the location be
+/// renamed, moved or deleted.
 struct LocationDetailView: View {
     let location: SavedLocation
     /// Cleared by the parent when this location is deleted.
@@ -29,6 +30,16 @@ struct LocationDetailView: View {
     }
 }
 
+/// Live pan offset of the chart, in seconds of chart time. A separate
+/// observable (rather than state on the screen's root view) so the per-frame
+/// updates while dragging only invalidate the views that follow the cursor —
+/// not the whole list.
+@MainActor
+@Observable
+private final class ChartPanState {
+    var offsetSeconds: TimeInterval = 0
+}
+
 private struct LocationDetailContentView: View {
     let location: SavedLocation
     @Binding var selection: SavedLocation?
@@ -37,6 +48,7 @@ private struct LocationDetailContentView: View {
     @AppStorage(TideDatumSettings.storageKey, store: TideDatumSettings.defaults)
     private var datum: TideDatum = TideDatumSettings.defaultDatum
     @State private var viewModel: LocationDetailViewModel
+    @State private var pan = ChartPanState()
     @State private var isEditing = false
     @State private var isConfirmingDelete = false
 
@@ -57,7 +69,7 @@ private struct LocationDetailContentView: View {
     var body: some View {
         List {
             Section {
-                currentTideRow
+                CurrentTideRow(viewModel: viewModel, pan: pan)
             } header: {
                 Text("Current Tide")
             } footer: {
@@ -66,21 +78,18 @@ private struct LocationDetailContentView: View {
             }
 
             Section {
-                dayNavigator
-                chart
-                    .frame(minHeight: 220)
-                    .padding(.vertical, 8)
-                sunTimesRow
+                DayNavigator(viewModel: viewModel, pan: pan)
+                TideChartPane(viewModel: viewModel, pan: pan)
             } header: {
                 Text("Tide Chart")
             }
 
             Section("High and Low Tides") {
-                if viewModel.extrema.isEmpty {
+                if viewModel.visibleExtrema.isEmpty {
                     Text("No high or low tides in this period.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(viewModel.extrema) { extremum in
+                    ForEach(viewModel.visibleExtrema) { extremum in
                         extremumRow(extremum)
                     }
                 }
@@ -171,27 +180,56 @@ private struct LocationDetailContentView: View {
         modelContext.delete(location)
     }
 
-    private var currentTideRow: some View {
+    private func extremumRow(_ extremum: LocationDetailViewModel.ExtremumItem) -> some View {
+        HStack {
+            Label {
+                Text(extremum.kind == .high ? "High Tide" : "Low Tide")
+            } icon: {
+                Image(systemName: extremum.kind == .high ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                    .foregroundStyle(extremum.kind == .high ? Color.blue : Color.orange)
+            }
+            Spacer()
+            VStack(alignment: .trailing) {
+                Text(extremum.time, format: .dateTime.weekday().hour().minute())
+                Text(heightText(extremum.heightMeters))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .monospacedDigit()
+        }
+    }
+}
+
+/// The tide at the center cursor: height, time and the Moon that day.
+/// Shows the present moment until the chart is panned.
+private struct CurrentTideRow: View {
+    let viewModel: LocationDetailViewModel
+    let pan: ChartPanState
+
+    private var centerTime: Date {
+        viewModel.centerDate.addingTimeInterval(pan.offsetSeconds)
+    }
+
+    var body: some View {
         HStack(alignment: .center) {
             Image(systemName: "water.waves")
                 .foregroundStyle(.tint)
-            if let height = viewModel.currentHeightMeters {
-                Text(heightText(height))
-                    .font(.system(.largeTitle, design: .rounded, weight: .semibold))
-                    .monospacedDigit()
-            }
+            Text(heightText(viewModel.height(at: centerTime)))
+                .font(.system(.largeTitle, design: .rounded, weight: .semibold))
+                .monospacedDigit()
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
-                Text(Date.now, format: .dateTime.hour().minute())
+                Text(centerTime, format: .dateTime.hour().minute())
                     .foregroundStyle(.secondary)
                 moonSummary
             }
         }
     }
 
-    /// The Moon today: icon plus lunar age, the other half of a tide table.
+    /// The Moon on the centered day: icon plus lunar age, the other half of
+    /// a tide table.
     private var moonSummary: some View {
-        let moon = MoonPhase(date: .now)
+        let moon = MoonPhase(date: centerTime)
         return HStack(spacing: 4) {
             Image(systemName: moon.phase.systemImageName)
             Text(
@@ -202,81 +240,96 @@ private struct LocationDetailContentView: View {
         .foregroundStyle(.secondary)
         .monospacedDigit()
     }
+}
 
-    private var dayNavigator: some View {
-        HStack(spacing: 12) {
-            Button("Previous Day", systemImage: "chevron.backward") {
-                viewModel.goToPreviousDay()
-            }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
+/// Date readout and the day-step / recenter buttons.
+private struct DayNavigator: View {
+    let viewModel: LocationDetailViewModel
+    let pan: ChartPanState
 
-            DatePicker(
-                "Date",
-                selection: Binding(
-                    get: { viewModel.dayStart },
-                    set: { viewModel.setDay($0) }
-                ),
-                displayedComponents: .date
-            )
-            .labelsHidden()
-            .frame(maxWidth: .infinity, alignment: .center)
-
-            Button("Next Day", systemImage: "chevron.forward") {
-                viewModel.goToNextDay()
-            }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
-
-            Button("Today") {
-                viewModel.goToToday()
-            }
-            .buttonStyle(.bordered)
-            .disabled(viewModel.isShowingToday)
-        }
-        .lineLimit(1)
+    private var centerTime: Date {
+        viewModel.centerDate.addingTimeInterval(pan.offsetSeconds)
     }
 
-    /// Sunrise and sunset of the displayed day. Hidden on polar days, where
-    /// the chart shading alone tells the story.
-    @ViewBuilder private var sunTimesRow: some View {
-        if let sunrise = viewModel.sunrise, let sunset = viewModel.sunset {
-            HStack {
-                Label {
-                    Text(sunrise, format: .dateTime.hour().minute())
-                } icon: {
-                    Image(systemName: "sunrise.fill")
-                        .foregroundStyle(.orange)
+    var body: some View {
+        HStack(spacing: 12) {
+            Button("Previous Day", systemImage: "chevron.backward") {
+                withAnimation {
+                    viewModel.step(byDays: -1)
                 }
-                .accessibilityLabel(Text("Sunrise"))
-                .accessibilityValue(Text(sunrise, format: .dateTime.hour().minute()))
-                Spacer()
-                Label {
-                    Text(sunset, format: .dateTime.hour().minute())
-                } icon: {
-                    Image(systemName: "sunset.fill")
-                        .foregroundStyle(.indigo)
-                }
-                .accessibilityLabel(Text("Sunset"))
-                .accessibilityValue(Text(sunset, format: .dateTime.hour().minute()))
             }
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+
+            Text(centerTime, format: .dateTime.year().month().day().weekday())
+                .monospacedDigit()
+                .frame(maxWidth: .infinity, alignment: .center)
+
+            Button("Next Day", systemImage: "chevron.forward") {
+                withAnimation {
+                    viewModel.step(byDays: 1)
+                }
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+
+            Button("Now") {
+                withAnimation {
+                    viewModel.goToNow()
+                }
+            }
+            .buttonStyle(.bordered)
+            .disabled(viewModel.isCenteredOnNow)
         }
+        .lineLimit(1)
+        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+    }
+}
+
+/// The pannable tide chart plus the sun events strip aligned under its time
+/// axis.
+private struct TideChartPane: View {
+    let viewModel: LocationDetailViewModel
+    let pan: ChartPanState
+    @Environment(\.colorScheme)
+    private var colorScheme
+    /// Horizontal insets of the chart's plot area, so the sun events strip
+    /// below the chart lines up with the time axis.
+    @State private var plotLeadingInset: CGFloat = 0
+    @State private var plotTrailingInset: CGFloat = 0
+
+    /// The instant at the chart's center, following the finger mid-pan.
+    private var centerTime: Date {
+        viewModel.centerDate.addingTimeInterval(pan.offsetSeconds)
+    }
+
+    /// The visible two-day window around the (possibly mid-pan) center.
+    private var chartDomain: ClosedRange<Date> {
+        centerTime.addingTimeInterval(-86_400)...centerTime.addingTimeInterval(86_400)
+    }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            chart
+                .frame(minHeight: 220)
+                .padding(.vertical, 8)
+            sunEventsStrip
+        }
+        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
     }
 
     private var chart: some View {
         Chart {
-            // Night bands go first so every other mark draws above them.
-            ForEach(viewModel.nightIntervals, id: \.start) { interval in
+            // Day/night bands go first so every other mark draws above them.
+            ForEach(shadedIntervals, id: \.start) { interval in
                 RectangleMark(
                     xStart: .value("Time", interval.start),
                     xEnd: .value("Time", interval.end)
                 )
-                .foregroundStyle(Self.nightFill)
+                .foregroundStyle(shadeFill)
             }
 
-            ForEach(viewModel.levels, id: \.time) { level in
+            ForEach(chartLevels, id: \.time) { level in
                 LineMark(
                     x: .value("Time", level.time),
                     y: .value("Height", level.heightMeters)
@@ -303,6 +356,17 @@ private struct LocationDetailContentView: View {
                 .symbolSize(40)
             }
 
+            // The center cursor the Current Tide section reads out.
+            RuleMark(x: .value("Time", centerTime))
+                .foregroundStyle(.secondary.opacity(0.5))
+                .lineStyle(StrokeStyle(lineWidth: 1))
+            PointMark(
+                x: .value("Time", centerTime),
+                y: .value("Height", viewModel.height(at: centerTime))
+            )
+            .foregroundStyle(.tint)
+            .symbolSize(60)
+
             if isNowVisible {
                 RuleMark(x: .value("Now", Date.now))
                     .foregroundStyle(.red.opacity(0.7))
@@ -322,39 +386,161 @@ private struct LocationDetailContentView: View {
                 }
             }
         }
-        .chartXScale(domain: viewModel.windowStart...viewModel.windowEnd)
+        .chartXScale(domain: chartDomain)
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day)) { _ in
+                AxisGridLine()
+                AxisValueLabel(format: .dateTime.day().month(), centered: true)
+            }
+        }
         .chartYAxisLabel(String(localized: "Tide Height (m)"))
-    }
-
-    /// Shade the night lies under: dark and bluish so daylight reads bright
-    /// in both color schemes without drowning the tide curve.
-    private static let nightFill = Color.indigo.opacity(0.14)
-
-    private var isNowVisible: Bool {
-        (viewModel.windowStart...viewModel.windowEnd).contains(.now)
-    }
-
-    private func extremumRow(_ extremum: LocationDetailViewModel.ExtremumItem) -> some View {
-        HStack {
-            Label {
-                Text(extremum.kind == .high ? "High Tide" : "Low Tide")
-            } icon: {
-                Image(systemName: extremum.kind == .high ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                    .foregroundStyle(extremum.kind == .high ? Color.blue : Color.orange)
+        .chartBackground { proxy in
+            GeometryReader { geometry in
+                Color.clear
+                    .onAppear {
+                        updatePlotInsets(proxy: proxy, geometry: geometry)
+                    }
+                    .onChange(of: geometry.size) { _, _ in
+                        updatePlotInsets(proxy: proxy, geometry: geometry)
+                    }
             }
-            Spacer()
-            VStack(alignment: .trailing) {
-                Text(extremum.time, format: .dateTime.weekday().hour().minute())
-                Text(heightText(extremum.heightMeters))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .monospacedDigit()
+        }
+        .chartOverlay { proxy in
+            Rectangle()
+                .fill(.clear)
+                .contentShape(Rectangle())
+                .gesture(panGesture(plotWidth: proxy.plotSize.width))
         }
     }
 
-    private func heightText(_ meters: Double) -> String {
-        Measurement(value: meters, unit: UnitLength.meters)
-            .formatted(.measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(2))))
+    /// The curve points the chart actually draws: the visible window plus a
+    /// day of margin on each side, so panning and the settle animation never
+    /// reveal a gap while keeping the mark count small enough to redraw
+    /// every frame.
+    private var chartLevels: [TideLevel] {
+        let margin: TimeInterval = 24 * 60 * 60
+        let start = chartDomain.lowerBound.addingTimeInterval(-margin)
+        let end = chartDomain.upperBound.addingTimeInterval(margin)
+        return viewModel.levels.filter { $0.time >= start && $0.time <= end }
     }
+
+    /// Pans the chart through time: the domain follows the finger while the
+    /// gesture is active and stays exactly where it is released — no
+    /// momentum, no snapping. The cursor is continuous.
+    private func panGesture(plotWidth: CGFloat) -> some Gesture {
+        let visibleSeconds = chartDomain.upperBound.timeIntervalSince(chartDomain.lowerBound)
+        return DragGesture(minimumDistance: 10)
+            .onChanged { value in
+                guard plotWidth > 0 else { return }
+                pan.offsetSeconds = clampedPanOffset(
+                    -Double(value.translation.width) / Double(plotWidth) * visibleSeconds
+                )
+            }
+            .onEnded { _ in
+                settlePan()
+            }
+    }
+
+    /// Keeps the panned domain inside the computed prediction range.
+    private func clampedPanOffset(_ seconds: TimeInterval) -> TimeInterval {
+        let minOffset = viewModel.rangeStart.timeIntervalSince(viewModel.windowStart)
+        let maxOffset = viewModel.rangeEnd.timeIntervalSince(viewModel.windowEnd)
+        return min(max(seconds, minOffset), maxOffset)
+    }
+
+    /// Commits the cursor where the pan was released, rounded to the whole
+    /// minute so the readout is clean. Committing the center and
+    /// compensating the offset in the same update keeps the domain
+    /// continuous; only the sub-minute rounding is animated.
+    private func settlePan() {
+        let landing = viewModel.centerDate.addingTimeInterval(pan.offsetSeconds)
+        let roundedLanding = Date(
+            timeIntervalSinceReferenceDate: (landing.timeIntervalSinceReferenceDate / 60).rounded() * 60
+        )
+        let committed = pan.offsetSeconds + roundedLanding.timeIntervalSince(landing)
+        viewModel.pan(bySeconds: committed)
+        pan.offsetSeconds -= committed
+        withAnimation(.snappy) {
+            pan.offsetSeconds = 0
+        }
+    }
+
+    /// Sunrises and sunsets of the visible window, laid out under the chart
+    /// at the horizontal position of their time.
+    private var sunEventsStrip: some View {
+        GeometryReader { geometry in
+            ForEach(visibleSunEvents) { event in
+                sunEventLabel(event)
+                    .position(
+                        x: geometry.size.width * xFraction(of: event.time),
+                        y: geometry.size.height / 2
+                    )
+            }
+        }
+        .frame(height: 24)
+        .padding(.leading, plotLeadingInset)
+        .padding(.trailing, plotTrailingInset)
+        .clipped()
+    }
+
+    private var visibleSunEvents: [LocationDetailViewModel.SunEvent] {
+        viewModel.sunEvents.filter { chartDomain.contains($0.time) }
+    }
+
+    private func sunEventLabel(_ event: LocationDetailViewModel.SunEvent) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: event.kind == .sunrise ? "sunrise.fill" : "sunset.fill")
+                .foregroundStyle(event.kind == .sunrise ? Color.orange : Color.indigo)
+            Text(event.time, format: .dateTime.hour().minute())
+                .foregroundStyle(.secondary)
+        }
+        .font(.caption)
+        .monospacedDigit()
+        .fixedSize()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(event.kind == .sunrise ? "Sunrise" : "Sunset"))
+        .accessibilityValue(Text(event.time, format: .dateTime.hour().minute()))
+    }
+
+    /// Horizontal position of a time within the visible window, 0...1.
+    private func xFraction(of date: Date) -> CGFloat {
+        let total = chartDomain.upperBound.timeIntervalSince(chartDomain.lowerBound)
+        guard total > 0 else { return 0 }
+        return CGFloat(date.timeIntervalSince(chartDomain.lowerBound) / total)
+    }
+
+    /// Records where the plot area sits inside the chart, so views below the
+    /// chart can align with the time axis.
+    private func updatePlotInsets(proxy: ChartProxy, geometry: GeometryProxy) {
+        guard let anchor = proxy.plotFrame else { return }
+        let frame = geometry[anchor]
+        plotLeadingInset = frame.minX
+        plotTrailingInset = geometry.size.width - frame.maxX
+    }
+
+    /// Day always reads brighter than night: on a light background the
+    /// night intervals are darkened, but on a dark background any overlay
+    /// lightens, so there the *daylight* intervals get a warm wash instead.
+    private var shadedIntervals: [DateInterval] {
+        colorScheme == .dark ? viewModel.daylight : viewModel.nightIntervals
+    }
+
+    private var shadeFill: Color {
+        colorScheme == .dark ? Self.daylightFill : Self.nightFill
+    }
+
+    /// Dark, bluish night for light backgrounds.
+    private static let nightFill = Color.indigo.opacity(0.14)
+    /// Warm sunlit wash for dark backgrounds.
+    private static let daylightFill = Color(red: 1, green: 0.95, blue: 0.8).opacity(0.08)
+
+    private var isNowVisible: Bool {
+        chartDomain.contains(.now)
+    }
+}
+
+/// Meters with two decimals, e.g. "2.20 m".
+private func heightText(_ meters: Double) -> String {
+    Measurement(value: meters, unit: UnitLength.meters)
+        .formatted(.measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(2))))
 }

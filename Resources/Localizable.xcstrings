@@ -89,6 +89,7 @@
       }
     },
     "Chart Datum (Z0)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -295,6 +296,7 @@
       }
     },
     "Heights are measured from chart datum (Z0), the level used by Japanese tide tables. It lies below mean sea level by the combined amplitude of the four principal constituents, so heights are almost always positive." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -465,6 +467,7 @@
       }
     },
     "Mean Sea Level (MSL)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
