@@ -6,11 +6,14 @@ import TidesCore
 struct WatchContentView: View {
     @Environment(WatchTideStore.self)
     private var store
+    /// Datum chosen in the iPhone app, shared through the App Group defaults.
+    @AppStorage(TideDatumSettings.storageKey, store: TideDatumSettings.defaults)
+    private var datum: TideDatum = TideDatumSettings.defaultDatum
 
     var body: some View {
         NavigationStack {
             if let location = store.location {
-                WatchTideView(location: location)
+                WatchTideView(location: location, datum: datum)
             } else {
                 ContentUnavailableView(
                     "No Location Set",
@@ -26,9 +29,10 @@ struct WatchContentView: View {
 /// Current tide height and the next high/low water for the stored location.
 struct WatchTideView: View {
     let location: WatchTideStore.StoredLocation
+    let datum: TideDatum
 
     private var predictor: TidePredictor {
-        TidePredictor(parameters: location.parameters)
+        TidePredictor(parameters: location.parameters, datum: datum)
     }
 
     var body: some View {

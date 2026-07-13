@@ -22,7 +22,10 @@ public final class TideCalendarViewModel {
         public var id: Date { date }
     }
 
-    private let predictor: TidePredictor
+    private var predictor: TidePredictor
+    private let parameters: HarmonicParameters
+    /// Datum the displayed heights are measured from.
+    private var datum: TideDatum
     private let calendar: Calendar
 
     /// First day of the displayed month.
@@ -33,13 +36,24 @@ public final class TideCalendarViewModel {
 
     public init(
         parameters: HarmonicParameters,
+        datum: TideDatum = TideDatumSettings.current,
         calendar: Calendar = .current,
         now: Date = .now
     ) {
-        self.predictor = TidePredictor(parameters: parameters)
+        self.parameters = parameters
+        self.datum = datum
+        self.predictor = TidePredictor(parameters: parameters, datum: datum)
         self.calendar = calendar
         self.monthStart = calendar.startOfMonth(for: now)
         reload(now: now)
+    }
+
+    /// Switches the datum the heights are displayed against and recomputes.
+    public func setDatum(_ newDatum: TideDatum) {
+        guard newDatum != datum else { return }
+        datum = newDatum
+        predictor = TidePredictor(parameters: parameters, datum: newDatum)
+        reload()
     }
 
     /// Localized one-letter/short weekday symbols in the calendar's first-weekday

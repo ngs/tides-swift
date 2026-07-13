@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import TidesCore
 
 /// The SwiftData stack shared by the app and its widget extension.
 ///
@@ -8,18 +9,10 @@ import SwiftData
 /// entitlement (e.g. macOS, previews) fall back to the target's private store,
 /// which keeps the app usable even though the widget then sees no data.
 public enum TidesModelContainer {
-    /// App Group shared by the app and the widget extension.
-    ///
-    /// macOS requires the identifier to carry the Team ID prefix, while iOS,
-    /// visionOS and watchOS use the bare identifier. Both forms refer to the
-    /// same App Group registered in the developer portal.
-    public static let appGroupID: String = {
-        #if os(macOS)
-        return "3Y8APYUG2G.group.io.ngs.Tides"
-        #else
-        return "group.io.ngs.Tides"
-        #endif
-    }()
+    /// App Group shared by the app, the widget extension and the watch app.
+    /// Defined in `TidesCore` (`TidesAppGroup`) because the preferences suite
+    /// used by the tide engine lives in the same container.
+    public static let appGroupID = TidesAppGroup.identifier
 
     /// Models persisted by the app.
     public static let schema = Schema([SavedLocation.self])

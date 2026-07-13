@@ -94,7 +94,10 @@ struct PredictionFixtureTests {
                 )
             }
         )
-        return TidePredictor(parameters: parameters)
+        // The Go implementation returns MSL-referenced heights; the datum is
+        // pinned explicitly so a change of the Swift default can never relax
+        // this comparison.
+        return TidePredictor(parameters: parameters, datum: .meanSeaLevel)
     }
 
     @Test

@@ -99,6 +99,26 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
         case constituents
     }
 
+    /// Constituents that define chart datum: the four principal semi-diurnal
+    /// and diurnal tides.
+    public static let chartDatumConstituents: Set<String> = ["M2", "S2", "K1", "O1"]
+
+    /// How far chart datum (Z0) lies *below* mean sea level, in meters
+    /// (non-negative).
+    ///
+    /// The Japanese convention (JMA / Japan Coast Guard) defines
+    /// `Z0 = MSL − (H_M2 + H_S2 + H_K1 + H_O1)`, so this returns the amplitude
+    /// sum of those four constituents. Constituents missing from the parameters
+    /// simply contribute nothing to the sum.
+    ///
+    /// A height measured from Z0 is therefore the MSL-referenced height *plus*
+    /// this offset.
+    public var chartDatumOffsetMeters: Double {
+        constituents
+            .filter { Self.chartDatumConstituents.contains($0.name.uppercased()) }
+            .reduce(0) { $0 + abs($1.amplitudeMeters) }
+    }
+
     /// A `JSONDecoder` configured for the tides-api response format
     /// (`reference_time` is an RFC 3339 / ISO 8601 string).
     public static func decoder() -> JSONDecoder {

@@ -73,7 +73,9 @@ struct TideTimelineProvider: AppIntentTimelineProvider {
             return [.empty(date: start)]
         }
 
-        let predictor = TidePredictor(parameters: parameters)
+        // Same App Group preference the app writes: heights match what the
+        // detail screen shows.
+        let predictor = TidePredictor(parameters: parameters, datum: TideDatumSettings.current)
         return (0..<Self.entryCount).map { index in
             let date = start.addingTimeInterval(Double(index) * Self.entryInterval)
             let extrema = predictor.extrema(from: date, to: date.addingTimeInterval(24 * 3_600))

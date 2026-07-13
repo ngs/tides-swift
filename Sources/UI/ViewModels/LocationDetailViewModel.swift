@@ -17,6 +17,8 @@ final class LocationDetailViewModel {
     }
 
     private(set) var parameters: HarmonicParameters
+    /// Datum the displayed heights are measured from.
+    private(set) var datum: TideDatum
     private var predictor: TidePredictor
     private let calendar: Calendar
 
@@ -33,9 +35,15 @@ final class LocationDetailViewModel {
     var windowStart: Date { dayStart }
     var windowEnd: Date { calendar.date(byAdding: .day, value: 2, to: dayStart) ?? dayStart }
 
-    init(parameters: HarmonicParameters, calendar: Calendar = .current, now: Date = .now) {
+    init(
+        parameters: HarmonicParameters,
+        datum: TideDatum = TideDatumSettings.current,
+        calendar: Calendar = .current,
+        now: Date = .now
+    ) {
         self.parameters = parameters
-        self.predictor = TidePredictor(parameters: parameters)
+        self.datum = datum
+        self.predictor = TidePredictor(parameters: parameters, datum: datum)
         self.calendar = calendar
         self.dayStart = calendar.startOfDay(for: now)
         reload()
@@ -46,7 +54,15 @@ final class LocationDetailViewModel {
     func replace(parameters newParameters: HarmonicParameters) {
         guard newParameters != parameters else { return }
         parameters = newParameters
-        predictor = TidePredictor(parameters: newParameters)
+        predictor = TidePredictor(parameters: newParameters, datum: datum)
+        reload()
+    }
+
+    /// Switches the datum the heights are displayed against and recomputes.
+    func setDatum(_ newDatum: TideDatum) {
+        guard newDatum != datum else { return }
+        datum = newDatum
+        predictor = TidePredictor(parameters: parameters, datum: newDatum)
         reload()
     }
 

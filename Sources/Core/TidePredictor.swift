@@ -35,14 +35,32 @@ public struct TideExtrema: Equatable, Sendable {
 /// fixtures generated from it (see Tests/TidesCoreTests/Fixtures).
 public struct TidePredictor: Sendable {
     public let parameters: HarmonicParameters
+    /// Datum every returned height is expressed against.
+    public let datum: TideDatum
 
-    public init(parameters: HarmonicParameters) {
+    /// Constant added to the MSL-referenced harmonic sum so the result is
+    /// measured from `datum`. Chart datum sits *below* mean sea level, so a
+    /// height measured from it is larger by `chartDatumOffsetMeters`.
+    private let datumOffsetMeters: Double
+
+    /// - Parameter datum: defaults to `.meanSeaLevel`, which is the datum of
+    ///   the parameters as served by tides-api and the one the golden fixtures
+    ///   are generated against. Callers that display heights the way Japanese
+    ///   tide tables do pass `.chartDatum` explicitly.
+    public init(parameters: HarmonicParameters, datum: TideDatum = .meanSeaLevel) {
         self.parameters = parameters
+        self.datum = datum
+        switch datum {
+        case .meanSeaLevel:
+            datumOffsetMeters = 0
+        case .chartDatum:
+            datumOffsetMeters = parameters.chartDatumOffsetMeters
+        }
     }
 
     /// Tide height at an instant, in meters relative to the datum.
     ///
-    /// Port of Go `domain.CalculateTideHeight`.
+    /// Port of Go `domain.CalculateTideHeight`, plus the constant datum shift.
     public func height(at time: Date) -> Double {
         // Δt: hours since the phase reference epoch.
         let deltaHours = time.timeIntervalSince(parameters.referenceTime) / 3_600.0
@@ -50,7 +68,7 @@ public struct TidePredictor: Sendable {
         // (e.g. the 18.6-year lunar node cycle), not on the reference epoch.
         let absHours = time.timeIntervalSince1970 / 3_600.0
 
-        var height = parameters.mslMeters
+        var height = parameters.mslMeters + datumOffsetMeters
         for constituent in parameters.constituents {
             let correction = AstronomicalNodalCorrection.factors(
                 constituent: constituent.name,

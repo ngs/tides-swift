@@ -6,6 +6,8 @@ import TidesPlatform
 /// that day's high and low waters. Selecting a day lists all of its tides.
 struct TideCalendarView: View {
     let location: SavedLocation
+    @AppStorage(TideDatumSettings.storageKey, store: TideDatumSettings.defaults)
+    private var datum: TideDatum = TideDatumSettings.defaultDatum
     @State private var viewModel: TideCalendarViewModel
 
     init(location: SavedLocation, parameters: HarmonicParameters) {
@@ -31,6 +33,9 @@ struct TideCalendarView: View {
         #if os(iOS) || os(visionOS)
             .navigationBarTitleDisplayMode(.inline)
         #endif
+            .onChange(of: datum) { _, newDatum in
+                viewModel.setDatum(newDatum)
+            }
     }
 
     // MARK: - Header

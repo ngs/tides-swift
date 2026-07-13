@@ -34,6 +34,8 @@ private struct LocationDetailContentView: View {
     @Binding var selection: SavedLocation?
     @Environment(\.modelContext)
     private var modelContext
+    @AppStorage(TideDatumSettings.storageKey, store: TideDatumSettings.defaults)
+    private var datum: TideDatum = TideDatumSettings.defaultDatum
     @State private var viewModel: LocationDetailViewModel
     @State private var isEditing = false
     @State private var isConfirmingDelete = false
@@ -85,7 +87,7 @@ private struct LocationDetailContentView: View {
                         .monospacedDigit()
                 }
                 LabeledContent("Datum") {
-                    Text(viewModel.parameters.datum)
+                    Text(viewModel.datum.displayName)
                 }
                 if let depth = viewModel.parameters.seabedDepthMeters {
                     LabeledContent("Seabed Depth") {
@@ -97,10 +99,8 @@ private struct LocationDetailContentView: View {
                     Text(location.fetchedAt, format: .dateTime)
                 }
             } footer: {
-                Text(
-                    "Heights are measured from mean sea level (MSL). A negative height simply means the water is below the local average — normal around low water."
-                )
-                .font(.caption)
+                Text(viewModel.datum.explanation)
+                    .font(.caption)
             }
         }
         .navigationTitle(location.name)
@@ -119,6 +119,9 @@ private struct LocationDetailContentView: View {
                     }
                     Button("Delete", systemImage: "trash", role: .destructive) {
                         isConfirmingDelete = true
+                    }
+                    Section("Datum") {
+                        DatumPicker()
                     }
                 }
             }
@@ -139,7 +142,11 @@ private struct LocationDetailContentView: View {
             Text("\(location.name) and its offline tide data will be removed.")
         }
         .onAppear {
+            viewModel.setDatum(datum)
             viewModel.reload()
+        }
+        .onChange(of: datum) { _, newDatum in
+            viewModel.setDatum(newDatum)
         }
         .onChange(of: location.parametersJSON) { _, _ in
             // The location was moved: recompute from the new parameters.
