@@ -52,17 +52,31 @@ public enum TidesModelContainer {
         }
     }
 
+    /// Whether the App Group container can be resolved by this process.
+    ///
+    /// Merely constructing a group-backed `ModelConfiguration` traps (on
+    /// visionOS at least) when the process lacks the App Group entitlement,
+    /// as unit test runners do — so unentitled processes must skip those
+    /// rungs up front instead of relying on the open to fail gracefully.
+    private static var hasAppGroupContainer: Bool {
+        FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: appGroupID
+        ) != nil
+    }
+
     /// Store configurations to try, best first.
     public static func configurations(cloudKit: Bool) -> [ModelConfiguration] {
         var configurations: [ModelConfiguration] = []
         if cloudKit {
             #if !os(watchOS)
-            configurations.append(
-                ModelConfiguration(
-                    groupContainer: .identifier(appGroupID),
-                    cloudKitDatabase: .private(TidesCloudKit.containerIdentifier)
+            if hasAppGroupContainer {
+                configurations.append(
+                    ModelConfiguration(
+                        groupContainer: .identifier(appGroupID),
+                        cloudKitDatabase: .private(TidesCloudKit.containerIdentifier)
+                    )
                 )
-            )
+            }
             #endif
             // The watch has no App Group entitlement: CloudKit is its only link
             // to the locations saved on the phone.
@@ -74,7 +88,9 @@ public enum TidesModelContainer {
             )
         }
         #if !os(watchOS)
-        configurations.append(ModelConfiguration(groupContainer: .identifier(appGroupID)))
+        if hasAppGroupContainer {
+            configurations.append(ModelConfiguration(groupContainer: .identifier(appGroupID)))
+        }
         #endif
         configurations.append(ModelConfiguration())
         return configurations
