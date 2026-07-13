@@ -357,7 +357,7 @@ lane :register_bundle_ids do
   end
 end
 
-desc 'Declare that the app uses third-party content'
+desc 'Declare that the app uses third-party content, and that we hold the rights'
 desc 'The tide data derives from the FES model, an AVISO+ Product whose IP belongs to'
 desc 'CNES/CTOH; the licence grants commercial distribution of derived products.'
 desc 'See ngs/tides-api DATA_LICENSING.md.'
@@ -381,6 +381,19 @@ desc 'Needs an Apple ID, not the API key: the action calls Spaceship::ConnectAPI
 desc 'which opens a web session and replaces the token-backed client. Run it locally,'
 desc 'where the 2FA prompt can be answered — it will not work unattended in CI.'
 lane :upload_privacy_details do
+  # A note on the JSON, because it reads like something is missing and it is not.
+  # There are exactly four data protections: DATA_USED_TO_TRACK_YOU,
+  # DATA_LINKED_TO_YOU, DATA_NOT_LINKED_TO_YOU and DATA_NOT_COLLECTED. "Not used
+  # for tracking" has no positive value — it is expressed by the *absence* of
+  # DATA_USED_TO_TRACK_YOU, which is how the action's own generator encodes it:
+  #
+  #     tracking_id = is_used_for_tracking ? DATA_USED_TO_TRACK_YOU : nil
+  #     "data_protections" => [protection_id, tracking_id].compact
+  #
+  # Inventing a "DATA_NOT_USED_FOR_TRACKING" would not merely be ignored. Upload
+  # deletes every existing declaration first, then POSTs one AppDataUsage per
+  # data protection — so an unknown id fails *after* the wipe, leaving App
+  # Privacy blank on App Store Connect.
   upload_app_privacy_details_to_app_store(
     app_identifier: 'io.ngs.Tides',
     json_path: './fastlane/app_privacy_details.json',

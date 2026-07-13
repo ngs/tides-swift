@@ -2,6 +2,6 @@
   {
     "category": "PRECISE_LOCATION",
     "purposes": ["APP_FUNCTIONALITY"],
-    "data_protections": ["DATA_NOT_LINKED_TO_YOU", "DATA_NOT_USED_FOR_TRACKING"]
+    "data_protections": ["DATA_NOT_LINKED_TO_YOU"]
   }
 ]
