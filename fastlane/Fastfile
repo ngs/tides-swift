@@ -357,12 +357,13 @@ lane :register_bundle_ids do
   end
 end
 
-desc 'Declare that the app uses third-party content, and that we hold the rights'
+desc 'Declare that the app uses third-party content'
 desc 'The tide data derives from the FES model, an AVISO+ Product whose IP belongs to'
 desc 'CNES/CTOH; the licence grants commercial distribution of derived products.'
 desc 'See ngs/tides-api DATA_LICENSING.md.'
 lane :declare_content_rights do
-  setup_app_store_connect_api_key
+  api_key = setup_app_store_connect_api_key
+  UI.user_error!('App Store Connect API key is required') if api_key.nil?
 
   # deliver only sets this on the way into a review submission — which is
   # exactly what the missing declaration blocks — so set it directly.
