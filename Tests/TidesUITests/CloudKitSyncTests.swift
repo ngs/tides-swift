@@ -11,7 +11,9 @@ import TidesPlatform
 @Suite("CloudKit compatibility")
 struct CloudKitSchemaTests {
     private var entity: Schema.Entity {
-        let schema = Schema([SavedLocation.self])
+        // The container's own schema, so the checks can't drift from what the
+        // app actually opens.
+        let schema = TidesModelContainer.schema
         guard let entity = schema.entities.first(where: { $0.name == "SavedLocation" }) else {
             Issue.record("SavedLocation is missing from the schema")
             return Schema.Entity("SavedLocation")
