@@ -76,6 +76,16 @@ public struct TidesAPIClient: TidesAPIClientProtocol {
             )
         }
 
-        return try decoder.decode(HarmonicParameters.self, from: data)
+        do {
+            return try decoder.decode(HarmonicParameters.self, from: data)
+        } catch {
+            // Callers show the error message as-is; a DecodingError reads far
+            // too technical, so surface the same message a broken error body
+            // gets above.
+            throw TidesAPIError(
+                message: String(localized: "The server returned an invalid response."),
+                statusCode: http.statusCode
+            )
+        }
     }
 }

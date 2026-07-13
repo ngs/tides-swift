@@ -36,7 +36,8 @@ struct SavedLocationEntity: AppEntity {
 /// Lists the saved locations for the widget's location picker.
 struct SavedLocationQuery: EntityQuery {
     func entities(for identifiers: [String]) async throws -> [SavedLocationEntity] {
-        try await suggestedEntities().filter { identifiers.contains($0.id) }
+        let wanted = Set(identifiers)
+        return try await suggestedEntities().filter { wanted.contains($0.id) }
     }
 
     func suggestedEntities() async throws -> [SavedLocationEntity] {
