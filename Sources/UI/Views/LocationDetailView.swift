@@ -73,9 +73,6 @@ private struct LocationDetailContentView: View {
                 CurrentTideRow(viewModel: viewModel, pan: pan)
             } header: {
                 Text("Current Tide")
-            } footer: {
-                Label("Available Offline", systemImage: "checkmark.icloud")
-                    .font(.caption)
             }
 
             Section {
