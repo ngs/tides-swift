@@ -105,6 +105,11 @@ public struct TidePredictor: Sendable {
     ) -> [TideLevel] {
         guard interval > 0 else { return [] }
         var result: [TideLevel] = []
+        let span = end.timeIntervalSince(start)
+        if span >= 0 {
+            // Both endpoints are on the grid, hence the +1.
+            result.reserveCapacity(Int(min(span / interval, 10_000_000)) + 1)
+        }
         var time = start
         while time <= end {
             result.append(TideLevel(time: time, heightMeters: height(at: time)))

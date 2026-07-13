@@ -177,6 +177,21 @@ struct AddLocationSearchTests {
 
 @MainActor
 struct EditLocationViewModelTests {
+    /// Decimal-pad keyboards insert "," in many locales; both separators parse.
+    @Test
+    func coordinateFieldsAcceptCommaDecimals() throws {
+        let viewModel = EditLocationViewModel(
+            location: try makeSavedLocation(),
+            client: StubAPIClient(result: .success(makeParameters()))
+        )
+
+        viewModel.latitudeText = "12,5"
+        viewModel.longitudeText = "-34,25"
+
+        #expect(viewModel.enteredCoordinate?.latitude == 12.5)
+        #expect(viewModel.enteredCoordinate?.longitude == -34.25)
+    }
+
     @Test
     func renamingDoesNotRefetchParameters() async throws {
         let location = try makeSavedLocation()

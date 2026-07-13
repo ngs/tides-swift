@@ -36,8 +36,8 @@ public final class EditLocationViewModel {
     /// latitude/longitude pair.
     public var enteredCoordinate: CLLocationCoordinate2D? {
         guard
-            let latitude = Double(latitudeText.trimmingCharacters(in: .whitespaces)),
-            let longitude = Double(longitudeText.trimmingCharacters(in: .whitespaces)),
+            let latitude = Self.parseCoordinate(latitudeText),
+            let longitude = Self.parseCoordinate(longitudeText),
             latitude.isFinite, longitude.isFinite,
             (-90...90).contains(latitude),
             (-180...180).contains(longitude)
@@ -45,6 +45,16 @@ public final class EditLocationViewModel {
             return nil
         }
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+
+    /// Parses a coordinate component, accepting both "." and "," as the
+    /// decimal separator: decimal-pad keyboards insert "," in many locales.
+    /// Plain `Double(_:)` runs first so a "." value can never be re-read
+    /// through a locale that treats "." as a grouping separator.
+    private static func parseCoordinate(_ text: String) -> Double? {
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        if let value = Double(trimmed) { return value }
+        return Double(trimmed.replacingOccurrences(of: ",", with: "."))
     }
 
     /// Precision the coordinate fields are displayed with (about 1 m). Changes
