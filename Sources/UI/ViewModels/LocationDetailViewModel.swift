@@ -186,6 +186,12 @@ final class LocationDetailViewModel {
         predictor.height(at: date)
     }
 
+    /// True when the tide is rising (flood) at the given instant, from the
+    /// sign of the height change over the next minute.
+    func isRising(at date: Date) -> Bool {
+        predictor.height(at: date.addingTimeInterval(60)) > predictor.height(at: date)
+    }
+
     /// Shifts the center by a settled pan and extends the range when needed.
     func pan(bySeconds seconds: TimeInterval) {
         guard seconds != 0 else { return }

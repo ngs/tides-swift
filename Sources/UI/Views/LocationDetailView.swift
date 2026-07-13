@@ -247,6 +247,7 @@ private struct CurrentTideRow: View {
             Text(heightText(viewModel.height(at: centerTime)))
                 .font(.system(.largeTitle, design: .rounded, weight: .semibold))
                 .monospacedDigit()
+            tideTrend
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
                 Text(centerTime, format: .dateTime.hour().minute())
@@ -254,6 +255,16 @@ private struct CurrentTideRow: View {
                 moonSummary
             }
         }
+    }
+
+    /// Flood or ebb at the cursor, as an oblique arrow next to the height.
+    /// Colors match the high/low marks on the chart.
+    private var tideTrend: some View {
+        let rising = viewModel.isRising(at: centerTime)
+        return Image(systemName: rising ? "arrow.up.forward" : "arrow.down.forward")
+            .font(.title3.weight(.semibold))
+            .foregroundStyle(rising ? Color.blue : Color.orange)
+            .accessibilityLabel(Text(rising ? "Rising Tide" : "Falling Tide"))
     }
 
     /// The Moon on the centered day: icon plus lunar age, the other half of

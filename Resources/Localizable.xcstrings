@@ -251,6 +251,17 @@
         }
       }
     },
+    "Falling Tide" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下げ潮"
+          }
+        }
+      }
+    },
     "Fetch Parameters for This Location" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -620,16 +631,6 @@
         }
       }
     },
-    "No tide data is available for this location. It may be on land." : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この地点の潮汐データはありません。陸地の可能性があります。"
-          }
-        }
-      }
-    },
     "No places found for this search." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -647,6 +648,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保存済みの地点がありません"
+          }
+        }
+      }
+    },
+    "No tide data is available for this location. It may be on land." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この地点の潮汐データはありません。陸地の可能性があります。"
           }
         }
       }
@@ -691,6 +703,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "前の月"
+          }
+        }
+      }
+    },
+    "Rising Tide" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上げ潮"
           }
         }
       }
