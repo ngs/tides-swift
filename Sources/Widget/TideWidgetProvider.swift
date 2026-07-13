@@ -76,15 +76,18 @@ struct TideTimelineProvider: AppIntentTimelineProvider {
         // Same App Group preference the app writes: heights match what the
         // detail screen shows.
         let predictor = TidePredictor(parameters: parameters, datum: TideDatumSettings.current)
+        // One extrema pass covering the last entry's 24h lookahead; each entry
+        // then takes the first high/low at or after its own date.
+        let lastEntryDate = start.addingTimeInterval(Double(Self.entryCount - 1) * Self.entryInterval)
+        let extrema = predictor.extrema(from: start, to: lastEntryDate.addingTimeInterval(24 * 3_600))
         return (0..<Self.entryCount).map { index in
             let date = start.addingTimeInterval(Double(index) * Self.entryInterval)
-            let extrema = predictor.extrema(from: date, to: date.addingTimeInterval(24 * 3_600))
             return TideEntry(
                 date: date,
                 locationName: location.name,
                 currentHeightMeters: predictor.height(at: date),
-                nextHigh: extrema.highs.first,
-                nextLow: extrema.lows.first
+                nextHigh: extrema.highs.first { $0.time >= date },
+                nextLow: extrema.lows.first { $0.time >= date }
             )
         }
     }
@@ -94,7 +97,7 @@ struct TideTimelineProvider: AppIntentTimelineProvider {
     private func resolveLocation(id: String?) -> SavedLocation? {
         let context = ModelContext(TidesModelContainer.shared)
         let descriptor = FetchDescriptor<SavedLocation>(
-            sortBy: [SortDescriptor(\.createdAt)]
+            sortBy: SavedLocation.listSortDescriptors
         )
         guard let locations = try? context.fetch(descriptor), !locations.isEmpty else {
             return nil

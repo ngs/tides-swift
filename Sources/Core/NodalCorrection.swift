@@ -116,7 +116,9 @@ enum AstronomicalNodalCorrection {
         let args = arguments(hoursSinceUnixEpoch: hours)
 
         // Built-in nonlinear coefficients (pyTMD-derived), if available.
-        guard let coeff = builtInNonlinearCoeffs[constituent] else {
+        // Constituent names are matched case-insensitively, like the
+        // chart-datum lookup in `HarmonicParameters`.
+        guard let coeff = builtInNonlinearCoeffs[constituent.uppercased()] else {
             // Constituents without coefficients: identity (no correction).
             return (1.0, 0.0)
         }

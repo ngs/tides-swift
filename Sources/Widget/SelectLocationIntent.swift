@@ -41,7 +41,7 @@ struct SavedLocationQuery: EntityQuery {
 
     func suggestedEntities() async throws -> [SavedLocationEntity] {
         let context = ModelContext(TidesModelContainer.shared)
-        let descriptor = FetchDescriptor<SavedLocation>(sortBy: [SortDescriptor(\.createdAt)])
+        let descriptor = FetchDescriptor<SavedLocation>(sortBy: SavedLocation.listSortDescriptors)
         let locations = try context.fetch(descriptor)
         return locations.map(SavedLocationEntity.init(location:))
     }
