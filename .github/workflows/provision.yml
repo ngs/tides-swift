@@ -1,0 +1,66 @@
+name: Provision
+
+# Regenerates the signing assets after an entitlement change. The widget and
+# the app share the group.io.ngs.Tides App Group, so their provisioning
+# profiles have to be reissued with that entitlement; run this once after the
+# entitlement lands. Certificates live in ngs/littleapps-fastlane-certificates.
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform whose profiles to regenerate"
+        required: true
+        type: choice
+        options:
+          - all
+          - ios
+          - mac
+        default: all
+
+env:
+  FASTLANE_SKIP_UPDATE_CHECK: "1"
+  APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+  APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+  APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
+  APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: "true"
+  MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+  MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+  MATCH_CLONE_BRANCH_DIRECTLY: "true"
+  MATCH_KEYCHAIN_NAME: tmp.keychain
+  MATCH_KEYCHAIN_PASSWORD: tmp
+  MATCH_SHALLOW_CLONE: "true"
+  # Writing new profiles is the whole point of this workflow.
+  MATCH_READONLY: "false"
+
+jobs:
+  profiles:
+    name: Regenerate profiles
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup SSH for the match repository
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MATCH_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Create keychain
+        run: bundle exec fastlane create_ci_keychain
+
+      - name: Regenerate iOS profiles
+        if: inputs.platform == 'all' || inputs.platform == 'ios'
+        run: bundle exec fastlane ios release_match
+
+      - name: Regenerate macOS profiles
+        if: inputs.platform == 'all' || inputs.platform == 'mac'
+        run: bundle exec fastlane mac release_match
