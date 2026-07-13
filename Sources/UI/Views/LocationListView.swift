@@ -2,14 +2,14 @@ import SwiftData
 import SwiftUI
 import TidesPlatform
 
-/// Sidebar list of saved locations. Locations can be edited (renamed / moved)
-/// or deleted from the swipe actions, the context menu (which also works on
-/// macOS), or the edit mode on iOS.
+/// Sidebar list of saved locations. Rows can be dragged to reorder them, and
+/// edited (renamed / moved) or deleted from the swipe actions, the context menu
+/// (which also works on macOS), or the edit mode on iOS.
 struct LocationListView: View {
     @Binding var selection: SavedLocation?
     @Environment(\.modelContext)
     private var modelContext
-    @Query(sort: \SavedLocation.createdAt)
+    @Query(sort: [SortDescriptor(\SavedLocation.sortOrder), SortDescriptor(\SavedLocation.createdAt)])
     private var locations: [SavedLocation]
     @State private var isAddingLocation = false
     @State private var locationToEdit: SavedLocation?
@@ -95,6 +95,7 @@ struct LocationListView: View {
                 }
             }
             .onDelete(perform: deleteAll)
+            .onMove(perform: move)
         }
     }
 
@@ -120,6 +121,11 @@ struct LocationListView: View {
         for index in offsets {
             delete(locations[index])
         }
+    }
+
+    /// Drag-and-drop reordering: renumbers `sortOrder` so the order persists.
+    private func move(from source: IndexSet, to destination: Int) {
+        SavedLocation.move(locations, fromOffsets: source, toOffset: destination)
     }
 
     private func delete(_ location: SavedLocation) {

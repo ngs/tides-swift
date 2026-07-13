@@ -370,3 +370,77 @@ struct TideCalendarViewModelTests {
         #expect(viewModel.monthStart == january)
     }
 }
+
+// MARK: - Reordering
+
+@MainActor
+struct SavedLocationOrderingTests {
+    private func makeLocations(_ names: [String]) throws -> [SavedLocation] {
+        try names.enumerated().map { index, name in
+            try SavedLocation(
+                name: name,
+                latitude: 35.0 + Double(index),
+                longitude: 139.0,
+                parameters: makeParameters(),
+                sortOrder: index
+            )
+        }
+    }
+
+    /// Dragging a row down renumbers every affected row, so the order survives
+    /// a relaunch (the list is queried by sortOrder).
+    @Test
+    func movingARowDownRenumbersTheList() throws {
+        let locations = try makeLocations(["A", "B", "C", "D"])
+
+        SavedLocation.move(locations, fromOffsets: IndexSet(integer: 0), toOffset: 3)
+
+        let ordered = locations.sorted { $0.sortOrder < $1.sortOrder }
+        #expect(ordered.map(\.name) == ["B", "C", "A", "D"])
+        #expect(ordered.map(\.sortOrder) == [0, 1, 2, 3])
+    }
+
+    @Test
+    func movingARowUpRenumbersTheList() throws {
+        let locations = try makeLocations(["A", "B", "C", "D"])
+
+        SavedLocation.move(locations, fromOffsets: IndexSet(integer: 3), toOffset: 1)
+
+        let ordered = locations.sorted { $0.sortOrder < $1.sortOrder }
+        #expect(ordered.map(\.name) == ["A", "D", "B", "C"])
+        #expect(ordered.map(\.sortOrder) == [0, 1, 2, 3])
+    }
+
+    @Test
+    func movingMultipleRowsKeepsTheirRelativeOrder() throws {
+        let locations = try makeLocations(["A", "B", "C", "D"])
+
+        SavedLocation.move(locations, fromOffsets: IndexSet([0, 2]), toOffset: 4)
+
+        let ordered = locations.sorted { $0.sortOrder < $1.sortOrder }
+        #expect(ordered.map(\.name) == ["B", "D", "A", "C"])
+    }
+
+    /// Stores written before reordering existed have every sortOrder at the
+    /// default 0; the first drag must still produce a contiguous order.
+    @Test
+    func renumberingRepairsALegacyStoreWhereEveryOrderIsZero() throws {
+        let locations = try makeLocations(["A", "B", "C"])
+        for location in locations {
+            location.sortOrder = 0
+        }
+
+        SavedLocation.renumber(locations)
+
+        #expect(locations.map(\.sortOrder) == [0, 1, 2])
+    }
+
+    /// A new location is appended, never dropped into the middle of the order.
+    @Test
+    func newLocationsAreAppended() throws {
+        let locations = try makeLocations(["A", "B", "C"])
+
+        #expect(SavedLocation.nextSortOrder(after: locations) == 3)
+        #expect(SavedLocation.nextSortOrder(after: []) == 0)
+    }
+}

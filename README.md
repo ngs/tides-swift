@@ -12,7 +12,7 @@ A native iOS, iPadOS, macOS, visionOS, and watchOS application for offline tide 
 - **High/Low Water Times**: Extrema located on a 1-minute grid and refined by parabolic interpolation
 - **Moon Phase Calendar**: Month grid with a moon-phase icon and that day's high/low water times per day; selecting a day lists all of its tides with the lunar age and illuminated fraction (Moon–Sun elongation computed offline from Meeus' algorithms)
 - **Place Search**: Find a spot by name or address (MKLocalSearch), or tap the map; zoom controls and an automatic zoom on selection make placing the point precise
-- **Saved Locations**: Multiple locations persisted with SwiftData, shown in a sidebar (NavigationSplitView); rename, move (re-downloading the parameters for the new coordinate) or delete them
+- **Saved Locations**: Multiple locations persisted with SwiftData, shown in a sidebar (NavigationSplitView); drag to reorder, rename, move (re-downloading the parameters for the new coordinate) or delete them
 - **Apple Watch App**: Companion watchOS app showing the current tide and next high/low water
 - **Widgets (iOS and macOS)**: WidgetKit extension showing the current tide and next high/low water for a chosen location, computed offline from the App Group shared store (iOS also supports lock screen accessory widgets)
 

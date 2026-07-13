@@ -297,6 +297,9 @@ struct AddLocationView: View {
 
     private func save() {
         guard let location = viewModel.makeSavedLocation() else { return }
+        // Append rather than land in the middle of the user's order.
+        let existing = (try? modelContext.fetch(FetchDescriptor<SavedLocation>())) ?? []
+        location.sortOrder = SavedLocation.nextSortOrder(after: existing)
         modelContext.insert(location)
         dismiss()
     }
