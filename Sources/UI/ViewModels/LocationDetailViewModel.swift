@@ -21,6 +21,9 @@ final class LocationDetailViewModel {
     private(set) var datum: TideDatum
     private var predictor: TidePredictor
     private let calendar: Calendar
+    /// Coordinate the sun times are computed for.
+    private let latitude: Double
+    private let longitude: Double
 
     /// Start of the currently displayed day.
     private(set) var dayStart: Date
@@ -30,6 +33,13 @@ final class LocationDetailViewModel {
     private(set) var extrema: [ExtremumItem] = []
     /// Tide height right now.
     private(set) var currentHeightMeters: Double?
+    /// Daylight periods within the displayed window, in chronological order.
+    /// The chart darkens everything outside them.
+    private(set) var daylight: [DateInterval] = []
+    /// Sunrise of the displayed day, or `nil` on polar days.
+    private(set) var sunrise: Date?
+    /// Sunset of the displayed day, or `nil` on polar days.
+    private(set) var sunset: Date?
 
     /// Chart interval: the displayed day plus the following day.
     var windowStart: Date { dayStart }
@@ -41,11 +51,15 @@ final class LocationDetailViewModel {
 
     init(
         parameters: HarmonicParameters,
+        latitude: Double,
+        longitude: Double,
         datum: TideDatum = TideDatumSettings.current,
         calendar: Calendar = .current,
         now: Date = .now
     ) {
         self.parameters = parameters
+        self.latitude = latitude
+        self.longitude = longitude
         self.datum = datum
         self.predictor = TidePredictor(parameters: parameters, datum: datum)
         self.calendar = calendar
@@ -87,7 +101,55 @@ final class LocationDetailViewModel {
         )
         .sorted { $0.time < $1.time }
         currentHeightMeters = predictor.height(at: now)
+        reloadSun()
         reloadedAt = now
+    }
+
+    /// Recomputes the daylight periods and the displayed day's sun times.
+    private func reloadSun() {
+        var daylight: [DateInterval] = []
+        sunrise = nil
+        sunset = nil
+        var day = windowStart
+        while day < windowEnd {
+            let dayEnd = calendar.date(byAdding: .day, value: 1, to: day) ?? windowEnd
+            switch SunCalculator.day(
+                containing: day,
+                latitude: latitude,
+                longitude: longitude,
+                calendar: calendar
+            ) {
+            case let .risesAndSets(rise, set):
+                daylight.append(DateInterval(start: rise, end: set))
+                if day == windowStart {
+                    sunrise = rise
+                    sunset = set
+                }
+            case .alwaysUp:
+                daylight.append(DateInterval(start: day, end: dayEnd))
+            case .alwaysDown:
+                break
+            }
+            day = dayEnd
+        }
+        self.daylight = daylight
+    }
+
+    /// Night periods within the displayed window — the complement of
+    /// `daylight`, which the chart shades dark.
+    var nightIntervals: [DateInterval] {
+        var night: [DateInterval] = []
+        var cursor = windowStart
+        for interval in daylight where interval.end > cursor {
+            if interval.start > cursor {
+                night.append(DateInterval(start: cursor, end: min(interval.start, windowEnd)))
+            }
+            cursor = interval.end
+        }
+        if cursor < windowEnd {
+            night.append(DateInterval(start: cursor, end: windowEnd))
+        }
+        return night
     }
 
     /// True when the displayed day is today (used to disable the Today button).

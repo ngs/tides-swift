@@ -47,7 +47,11 @@ private struct LocationDetailContentView: View {
     ) {
         self.location = location
         _selection = selection
-        _viewModel = State(initialValue: LocationDetailViewModel(parameters: parameters))
+        _viewModel = State(initialValue: LocationDetailViewModel(
+            parameters: parameters,
+            latitude: location.latitude,
+            longitude: location.longitude
+        ))
     }
 
     var body: some View {
@@ -66,6 +70,7 @@ private struct LocationDetailContentView: View {
                 chart
                     .frame(minHeight: 220)
                     .padding(.vertical, 8)
+                sunTimesRow
             } header: {
                 Text("Tide Chart")
             }
@@ -227,8 +232,43 @@ private struct LocationDetailContentView: View {
         .lineLimit(1)
     }
 
+    /// Sunrise and sunset of the displayed day. Hidden on polar days, where
+    /// the chart shading alone tells the story.
+    @ViewBuilder private var sunTimesRow: some View {
+        if let sunrise = viewModel.sunrise, let sunset = viewModel.sunset {
+            HStack {
+                Label {
+                    Text(sunrise, format: .dateTime.hour().minute())
+                } icon: {
+                    Image(systemName: "sunrise.fill")
+                        .foregroundStyle(.orange)
+                }
+                .accessibilityLabel(Text("Sunrise"))
+                Spacer()
+                Label {
+                    Text(sunset, format: .dateTime.hour().minute())
+                } icon: {
+                    Image(systemName: "sunset.fill")
+                        .foregroundStyle(.indigo)
+                }
+                .accessibilityLabel(Text("Sunset"))
+            }
+            .monospacedDigit()
+            .foregroundStyle(.secondary)
+        }
+    }
+
     private var chart: some View {
         Chart {
+            // Night bands go first so every other mark draws above them.
+            ForEach(viewModel.nightIntervals, id: \.start) { interval in
+                RectangleMark(
+                    xStart: .value("Time", interval.start),
+                    xEnd: .value("Time", interval.end)
+                )
+                .foregroundStyle(Self.nightFill)
+            }
+
             ForEach(viewModel.levels, id: \.time) { level in
                 LineMark(
                     x: .value("Time", level.time),
@@ -278,6 +318,10 @@ private struct LocationDetailContentView: View {
         .chartXScale(domain: viewModel.windowStart...viewModel.windowEnd)
         .chartYAxisLabel(String(localized: "Tide Height (m)"))
     }
+
+    /// Shade the night lies under: dark and bluish so daylight reads bright
+    /// in both color schemes without drowning the tide curve.
+    private static let nightFill = Color.indigo.opacity(0.14)
 
     private var isNowVisible: Bool {
         (viewModel.windowStart...viewModel.windowEnd).contains(.now)
