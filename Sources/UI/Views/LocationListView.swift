@@ -12,6 +12,7 @@ struct LocationListView: View {
     @Query(sort: [SortDescriptor(\SavedLocation.sortOrder), SortDescriptor(\SavedLocation.createdAt)])
     private var locations: [SavedLocation]
     @State private var isAddingLocation = false
+    @State private var isShowingSettings = false
     @State private var locationToEdit: SavedLocation?
     @State private var locationToDelete: SavedLocation?
 
@@ -38,6 +39,14 @@ struct LocationListView: View {
                 EditButton()
             }
             #endif
+            // On macOS the standard Settings scene (⌘,) is the entry point.
+            #if !os(macOS)
+            ToolbarItem {
+                Button("Settings", systemImage: "gearshape") {
+                    isShowingSettings = true
+                }
+            }
+            #endif
             ToolbarItem {
                 Button("Add Location", systemImage: "plus") {
                     isAddingLocation = true
@@ -47,6 +56,22 @@ struct LocationListView: View {
         .sheet(isPresented: $isAddingLocation) {
             AddLocationView()
         }
+        #if !os(macOS)
+        .sheet(isPresented: $isShowingSettings) {
+            NavigationStack {
+                SettingsView()
+                    .navigationTitle("Settings")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") {
+                                isShowingSettings = false
+                            }
+                        }
+                    }
+            }
+        }
+        #endif
         .sheet(item: $locationToEdit) { location in
             EditLocationView(location: location)
         }

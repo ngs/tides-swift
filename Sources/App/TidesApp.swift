@@ -18,5 +18,12 @@ struct TidesApp: App {
         }
         // Shared with the widget extension through the App Group container.
         .modelContainer(TidesModelContainer.shared)
+
+        #if os(macOS)
+        // The Mac convention: Tides > Settings… (⌘,).
+        Settings {
+            SettingsView()
+        }
+        #endif
     }
 }

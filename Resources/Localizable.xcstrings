@@ -22,6 +22,17 @@
         }
       }
     },
+    "About" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアプリについて"
+          }
+        }
+      }
+    },
     "Add a location from the iPhone app." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -51,6 +62,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "地点を追加"
+          }
+        }
+      }
+    },
+    "API Source Code" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API のソースコード"
+          }
+        }
+      }
+    },
+    "App Source Code" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリのソースコード"
           }
         }
       }
@@ -207,6 +240,17 @@
         }
       }
     },
+    "Developer's Website" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開発者のウェブサイト"
+          }
+        }
+      }
+    },
     "Done" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -258,6 +302,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下げ潮"
+          }
+        }
+      }
+    },
+    "FES2014/2022 Tidal Model (AVISO+)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FES2014/2022 潮汐モデル (AVISO+)"
           }
         }
       }
@@ -399,6 +454,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "緯度"
+          }
+        }
+      }
+    },
+    "License (MIT)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライセンス (MIT)"
           }
         }
       }
@@ -707,6 +773,17 @@
         }
       }
     },
+    "Report an Issue" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題を報告"
+          }
+        }
+      }
+    },
     "Rising Tide" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -805,6 +882,17 @@
         }
       }
     },
+    "Settings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定"
+          }
+        }
+      }
+    },
     "Sunrise" : {
       "localizations" : {
         "ja" : {
@@ -821,6 +909,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "日の入り"
+          }
+        }
+      }
+    },
+    "Support" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サポート"
+          }
+        }
+      }
+    },
+    "Support the Developer" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開発者を支援"
           }
         }
       }
@@ -902,6 +1012,17 @@
         }
       }
     },
+    "Tide predictions are computed offline from the FES2014/2022 tidal model." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "潮汐予測は FES2014/2022 潮汐モデルからオフラインで計算されています。"
+          }
+        }
+      }
+    },
     "Tides" : {
       "localizations" : {
         "ja" : {
@@ -929,6 +1050,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "東京湾"
+          }
+        }
+      }
+    },
+    "Version" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バージョン"
           }
         }
       }
