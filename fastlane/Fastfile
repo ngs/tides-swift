@@ -6,6 +6,8 @@ platform :ios do
   desc 'Match App Store Provisioning Profiles'
   lane :release_match do
     xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
+    # Authenticates match against the Developer Portal without an Apple ID.
+    setup_app_store_connect_api_key
     # Includes the embedded watchOS app and the widget extension.
     match type: 'appstore',
           app_identifier: ['io.ngs.Tides', 'io.ngs.Tides.watchkitapp', 'io.ngs.Tides.widget'],
@@ -116,6 +118,7 @@ platform :mac do
   desc 'Match App Store Provisioning Profiles for macOS'
   lane :release_match do
     xcode_select ENV['XCODE_PATH'] if ENV['XCODE_PATH']
+    setup_app_store_connect_api_key
     # Get Application Distribution certificate and provisioning profiles
     # (the app and the widget extension embedded in it).
     match(
@@ -302,6 +305,30 @@ platform :visionos do
     #   screenshots_path: './fastlane/screenshots/visionos',
     #   app_identifier: 'io.ngs.Tides'
     # )
+  end
+end
+
+desc 'Create the App IDs for the embedded targets in the Developer Portal'
+desc 'Only needed once; match refuses to issue a profile for an unknown bundle ID.'
+lane :register_bundle_ids do
+  api_key = setup_app_store_connect_api_key
+  UI.user_error!('App Store Connect API key is required') if api_key.nil?
+
+  {
+    'io.ngs.Tides.watchkitapp' => 'Tides Watch App',
+    'io.ngs.Tides.widget' => 'Tides Widget'
+  }.each do |identifier, name|
+    existing = Spaceship::ConnectAPI::BundleId.find(identifier)
+    if existing
+      UI.success("#{identifier} already registered")
+      next
+    end
+    Spaceship::ConnectAPI::BundleId.create(
+      name: name,
+      identifier: identifier,
+      platform: Spaceship::ConnectAPI::BundleIdPlatform::IOS
+    )
+    UI.success("Registered #{identifier}")
   end
 end
 

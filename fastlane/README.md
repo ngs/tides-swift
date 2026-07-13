@@ -13,17 +13,15 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
-### register_app_group
+### register_bundle_ids
 
 ```sh
-[bundle exec] fastlane register_app_group
+[bundle exec] fastlane register_bundle_ids
 ```
 
-Register group.io.ngs.Tides and associate the app and widget with it
+Create the App IDs for the embedded targets in the Developer Portal
 
-Requires an Apple ID login (FASTLANE_USER + 2FA): the App Store Connect API
-
-has no App Groups endpoint, so this goes through the Developer Portal.
+Only needed once; match refuses to issue a profile for an unknown bundle ID.
 
 ### setup_app_store_connect_api_key
 
