@@ -90,6 +90,10 @@ platform :ios do
       skip_binary_upload: true,
       run_precheck_before_submit: false,
       metadata_path: './fastlane/metadata',
+      # App Review will not let the app be added for review until the age
+      # rating questionnaire is answered. It is an app-level declaration, so
+      # whichever platform lane runs sets it for all of them.
+      app_rating_config_path: './fastlane/metadata/app_store_rating_config.json',
       app_identifier: 'io.ngs.Tides'
     )
   end
@@ -215,6 +219,10 @@ platform :mac do
       skip_binary_upload: true,
       run_precheck_before_submit: false,
       metadata_path: './fastlane/metadata',
+      # App Review will not let the app be added for review until the age
+      # rating questionnaire is answered. It is an app-level declaration, so
+      # whichever platform lane runs sets it for all of them.
+      app_rating_config_path: './fastlane/metadata/app_store_rating_config.json',
       app_identifier: 'io.ngs.Tides'
     )
   end
@@ -296,6 +304,10 @@ platform :visionos do
       skip_binary_upload: true,
       run_precheck_before_submit: false,
       metadata_path: './fastlane/metadata',
+      # App Review will not let the app be added for review until the age
+      # rating questionnaire is answered. It is an app-level declaration, so
+      # whichever platform lane runs sets it for all of them.
+      app_rating_config_path: './fastlane/metadata/app_store_rating_config.json',
       app_identifier: 'io.ngs.Tides'
     )
   end
@@ -343,6 +355,50 @@ lane :register_bundle_ids do
     )
     UI.success("Registered #{identifier}")
   end
+end
+
+desc 'Declare that the app uses third-party content, and that we hold the rights'
+desc 'The tide data derives from the FES model, an AVISO+ Product whose IP belongs to'
+desc 'CNES/CTOH; the licence grants commercial distribution of derived products.'
+desc 'See ngs/tides-api DATA_LICENSING.md.'
+lane :declare_content_rights do
+  api_key = setup_app_store_connect_api_key
+  UI.user_error!('App Store Connect API key is required') if api_key.nil?
+
+  # deliver only sets this on the way into a review submission — which is
+  # exactly what the missing declaration blocks — so set it directly.
+  app = Spaceship::ConnectAPI::App.find('io.ngs.Tides')
+  UI.user_error!('io.ngs.Tides was not found on App Store Connect') if app.nil?
+
+  app.update(attributes: {
+               contentRightsDeclaration: Spaceship::ConnectAPI::App::ContentRightsDeclaration::USES_THIRD_PARTY_CONTENT
+             })
+  UI.success('Content rights: uses third-party content')
+end
+
+desc 'Upload the App Privacy declarations from fastlane/app_privacy_details.json'
+desc 'Needs an Apple ID, not the API key: the action calls Spaceship::ConnectAPI.login,'
+desc 'which opens a web session and replaces the token-backed client. Run it locally,'
+desc 'where the 2FA prompt can be answered — it will not work unattended in CI.'
+lane :upload_privacy_details do
+  # A note on the JSON, because it reads like something is missing and it is not.
+  # There are exactly four data protections: DATA_USED_TO_TRACK_YOU,
+  # DATA_LINKED_TO_YOU, DATA_NOT_LINKED_TO_YOU and DATA_NOT_COLLECTED. "Not used
+  # for tracking" has no positive value — it is expressed by the *absence* of
+  # DATA_USED_TO_TRACK_YOU, which is how the action's own generator encodes it:
+  #
+  #     tracking_id = is_used_for_tracking ? DATA_USED_TO_TRACK_YOU : nil
+  #     "data_protections" => [protection_id, tracking_id].compact
+  #
+  # Inventing a "DATA_NOT_USED_FOR_TRACKING" would not merely be ignored. Upload
+  # deletes every existing declaration first, then POSTs one AppDataUsage per
+  # data protection — so an unknown id fails *after* the wipe, leaving App
+  # Privacy blank on App Store Connect.
+  upload_app_privacy_details_to_app_store(
+    app_identifier: 'io.ngs.Tides',
+    json_path: './fastlane/app_privacy_details.json',
+    skip_json_file_saving: true
+  )
 end
 
 desc 'Setup AppStore Connect API Key'

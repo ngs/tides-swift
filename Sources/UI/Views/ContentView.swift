@@ -17,6 +17,13 @@ public struct ContentView: View {
     public var body: some View {
         NavigationSplitView {
             LocationListView(selection: $selection)
+                // Left to itself the sidebar opens narrow enough to hyphenate
+                // the empty state's title mid-word ("No Saved Loca-tions"). The
+                // floor is set by the longest word that cannot be broken across
+                // the languages we ship: Greek's "αποθηκευμένες", with German's
+                // "gespeicherten" close behind. CJK is not a constraint — it
+                // wraps between characters.
+                .navigationSplitViewColumnWidth(min: 240, ideal: 260)
         } detail: {
             if let location = selection {
                 // Its own stack, so pushing the calendar gets a back button.
