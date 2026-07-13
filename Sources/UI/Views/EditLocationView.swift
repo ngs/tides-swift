@@ -22,6 +22,15 @@ struct EditLocationView: View {
 
     var body: some View {
         content
+            .overlay {
+                // Moving the pin re-downloads the parameters; that network
+                // round trip deserves a visible, input-blocking indicator.
+                // A rename-only save is instant and keeps just the small
+                // spinner in the toolbar.
+                if viewModel.isSaving && viewModel.coordinateChanged {
+                    FetchingParametersOverlay()
+                }
+            }
             .alert(
                 "Error",
                 isPresented: Binding(

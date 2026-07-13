@@ -83,6 +83,11 @@ struct AddLocationView: View {
                         .padding(.horizontal, 12)
                 }
             }
+            .overlay {
+                if viewModel.phase == .fetching {
+                    FetchingParametersOverlay()
+                }
+            }
     }
 
     // MARK: - Search
