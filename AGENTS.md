@@ -35,6 +35,8 @@ The logic lives in three libraries of a local SPM package (`Package.swift`); the
 | `TidesWidget` | appExtension | `Sources/Widget/` | iOS / macOS (WidgetKit, embedded in each app build) |
 | `TidesTests` | unitTests | `Tests/TidesUITests/` | iOS / macOS / visionOS |
 
+App icons: `Resources/Assets.xcassets/AppIcon.appiconset` holds the iOS single-size icon and the full macOS set; visionOS uses the layered `AppIconVision.solidimagestack`, selected with `ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xr*]`, and the watch app has its own set in `WatchResources`. The current artwork is a provisional CoreGraphics render (night sea, waves, full moon) awaiting a real design.
+
 The app and the widget share a SwiftData store in an App Group (`TidesModelContainer`).
 - **The App Group identifier differs by platform**: `group.io.ngs.Tides` on iOS / visionOS / watchOS, but macOS requires the team prefix, so it is `3Y8APYUG2G.group.io.ngs.Tides` (written as `$(TeamIdentifierPrefix)group.io.ngs.Tides`). It is one group in the portal.
 - Entitlements: macOS uses `Resources/Tides.entitlements` (sandbox + team-prefixed group); iOS and visionOS use `Resources/Tides-iOS.entitlements`, selected with `CODE_SIGN_ENTITLEMENTS[sdk=iphone*|xr*]`. The widget has `TidesWidget-macOS.entitlements` (base) and `TidesWidget.entitlements` (iOS).
