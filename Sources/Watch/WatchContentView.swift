@@ -26,7 +26,7 @@ struct WatchContentView: View {
                     systemImage: "mappin.slash",
                     description: Text("Add a location from the iPhone app.")
                 )
-                .navigationTitle("Tides")
+                .navigationTitle("Shiomi")
             case 1:
                 // Keep the familiar single-location layout: no list to tap
                 // through when there is nothing to choose from.

@@ -44,7 +44,12 @@ let project = Project(
     name: "Tides",
     organizationName: "Atsushi Nagase",
     options: .options(
-        defaultKnownRegions: ["en", "ja"],
+        defaultKnownRegions: [
+            "en", "ar-SA", "ca", "cs", "da", "de-DE", "el", "es-ES", "es-MX",
+            "fi", "fr-CA", "fr-FR", "he", "hi", "hr", "hu", "id", "it", "ja",
+            "ko", "ms", "nl-NL", "no", "pl", "pt-BR", "pt-PT", "ro", "ru",
+            "sk", "sv", "th", "tr", "uk", "vi", "zh-Hans", "zh-Hant"
+        ],
         developmentRegion: "en"
     ),
     packages: [

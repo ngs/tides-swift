@@ -1,3 +1,1 @@
-• Nova podrška za traku izbornika macOS za brz pristup funkciji štoperice
-• Poboljšana konfiguracija prozora i izbornika macOS za bolje korisničko iskustvo
-• Povećana stabilnost aplikacije i optimizacije performansi
+Prvo izdanje.

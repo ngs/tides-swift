@@ -1,10 +1,10 @@
-Tides nabízí přesné předpovědi přílivu s elegantním nativním rozhraním navrženým pro iPhone, iPad, Mac a Apple Vision Pro.
+Shiomi nabízí přesné předpovědi přílivu s elegantním nativním rozhraním navrženým pro iPhone, iPad, Mac a Apple Vision Pro.
 
 INTERAKTIVNÍ MAPA
 Prozkoumejte stanice přílivu po celém světě pomocí Apple Maps. Klepněte na libovolné místo a okamžitě zobrazte aktuální podmínky přílivu a předpovědi. Intuitivní mapové rozhraní usnadňuje nalezení informací o přílivu pro vaše oblíbené pláže, přístavy a pobřežní oblasti.
 
 PODROBNÉ GRAFY PŘÍLIVU
-Vizualizujte vzory přílivu pomocí krásných, snadno čitelných grafů založených na Swift Charts. Vidět příliv, odliv a vše mezi tím na první pohled. Plánujte své aktivity s jistotou pomocí přesných předpovědí.
+Vizualizujte vzory přílivu pomocí krásných, snadno čitelných grafů založených na Swift Charts. Sledujte příliv, odliv a vše mezi nimi na první pohled. Plánujte své aktivity s jistotou pomocí přesných předpovědí.
 
 BEZPROBLÉMOVÝ ZÁŽITEK
 • Nativní rozhraní SwiftUI optimalizované pro všechny platformy Apple
@@ -21,4 +21,4 @@ IDEÁLNÍ PRO
 • Fotografy zachycující pobřežní scény
 • Každého, kdo miluje oceán
 
-Ať už jste profesionální námořník nebo příležitostný návštěvník pláže, Tides poskytuje informace o přílivu, které potřebujete, v krásném, snadno použitelném balení. Stáhněte si dnes a synchronizujte se s rytmem oceánu.
+Ať už jste profesionální námořník nebo příležitostný návštěvník pláže, Shiomi poskytuje informace o přílivu, které potřebujete, v krásném, snadno použitelném balení. Stáhněte si dnes a synchronizujte se s rytmem oceánu.

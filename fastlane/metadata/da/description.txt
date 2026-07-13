@@ -1,10 +1,10 @@
-Tides tilbyder præcise tidevandsprognoser med en elegant, indbygget grænseflade designet til iPhone, iPad, Mac og Apple Vision Pro.
+Shiomi tilbyder præcise tidevandsprognoser med en elegant, indbygget grænseflade designet til iPhone, iPad, Mac og Apple Vision Pro.
 
 INTERAKTIVT KORT
-Udforsk tideva ndsstationer over hele verden med Apple Maps. Tryk på en hvilken som helst placering for øjeblikkeligt at se aktuelle tidevandsforhold og prognoser. Den intuitive kortgrænseflade gør det nemt at finde tideva ndsinformation for dine yndlingsstrande, havne og kystområder.
+Udforsk tidevandsstationer over hele verden med Apple Maps. Tryk på en hvilken som helst placering for øjeblikkeligt at se aktuelle tidevandsforhold og prognoser. Den intuitive kortgrænseflade gør det nemt at finde tidevandsinformation for dine yndlingsstrande, havne og kystområder.
 
 DETALJEREDE TIDEVANDSDIAGRAMMER
-Visualiser tideva ndsmønstre med smukke, letlæselige diagrammer baseret på Swift Charts. Se højvande, lavvande og alt derimellem på et øjeblik. Planlæg dine aktiviteter med selvtillid ved hjælp af præcise prognoser.
+Visualiser tidevandsmønstre med smukke, letlæselige diagrammer baseret på Swift Charts. Se højvande, lavvande og alt derimellem på et øjeblik. Planlæg dine aktiviteter med selvtillid ved hjælp af præcise prognoser.
 
 PROBLEMFRI OPLEVELSE
 • Indbygget SwiftUI-grænseflade optimeret til alle Apple-platforme
@@ -21,4 +21,4 @@ PERFEKT TIL
 • Fotografer der fanger kystscener
 • Alle der elsker havet
 
-Uanset om du er en professionel sømand eller en lejlighedsvis strandbesøgende, leverer Tides de tideva ndsoplysninger du har brug for i en smuk, brugervenlig pakke. Download i dag og synkroniser med havets rytme.
+Uanset om du er en professionel sømand eller en lejlighedsvis strandbesøgende, leverer Shiomi de tidevandsoplysninger du har brug for i en smuk, brugervenlig pakke. Download i dag og synkroniser med havets rytme.
