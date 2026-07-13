@@ -68,6 +68,47 @@ public final class EditLocationViewModel {
         !isSaving && !trimmedName.isEmpty && enteredCoordinate != nil
     }
 
+    /// Span limits for the zoom controls, matching the add-location map.
+    public static let defaultSpanDegrees = 0.05
+    public static let minimumSpanDegrees = 0.002
+    public static let maximumSpanDegrees = 120.0
+
+    /// Region the map currently shows, kept in sync by the view.
+    public private(set) var visibleRegion: MKCoordinateRegion?
+    /// Region the map should move to, consumed by the view. `MKCoordinateRegion`
+    /// is not `Equatable`, so requests carry an identity SwiftUI can observe.
+    public private(set) var pendingCamera: CameraTarget?
+
+    /// A request to move the map camera.
+    public struct CameraTarget: Equatable, Identifiable, Sendable {
+        public let id: UUID
+        public let latitude: Double
+        public let longitude: Double
+        public let spanDegrees: Double
+
+        public init(
+            id: UUID = UUID(),
+            latitude: Double,
+            longitude: Double,
+            spanDegrees: Double
+        ) {
+            self.id = id
+            self.latitude = latitude
+            self.longitude = longitude
+            self.spanDegrees = spanDegrees
+        }
+
+        public var region: MKCoordinateRegion {
+            MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                span: MKCoordinateSpan(
+                    latitudeDelta: spanDegrees,
+                    longitudeDelta: spanDegrees
+                )
+            )
+        }
+    }
+
     /// Region to show the edited coordinate on a map.
     public var region: MKCoordinateRegion {
         let center = enteredCoordinate
@@ -77,7 +118,10 @@ public final class EditLocationViewModel {
             )
         return MKCoordinateRegion(
             center: center,
-            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            span: MKCoordinateSpan(
+                latitudeDelta: Self.defaultSpanDegrees,
+                longitudeDelta: Self.defaultSpanDegrees
+            )
         )
     }
 
@@ -85,6 +129,39 @@ public final class EditLocationViewModel {
     public func select(coordinate: CLLocationCoordinate2D) {
         latitudeText = String(format: "%.5f", coordinate.latitude)
         longitudeText = String(format: "%.5f", coordinate.longitude)
+    }
+
+    // MARK: - Camera
+
+    public func mapCameraChanged(to region: MKCoordinateRegion) {
+        visibleRegion = region
+    }
+
+    /// Consumes `pendingCamera` after the view has applied it.
+    public func consumePendingCamera() {
+        pendingCamera = nil
+    }
+
+    public func zoomIn() {
+        scaleZoom(by: 0.5)
+    }
+
+    public func zoomOut() {
+        scaleZoom(by: 2.0)
+    }
+
+    /// Multiplies the visible span, clamped to the supported zoom range.
+    private func scaleZoom(by factor: Double) {
+        let current = visibleRegion ?? pendingCamera?.region ?? region
+        let scaled = current.span.latitudeDelta * factor
+        let span = min(max(scaled, Self.minimumSpanDegrees), Self.maximumSpanDegrees)
+        let target = CameraTarget(
+            latitude: current.center.latitude,
+            longitude: current.center.longitude,
+            spanDegrees: span
+        )
+        pendingCamera = target
+        visibleRegion = target.region
     }
 
     /// Applies the edits. When the coordinate changed, new harmonic parameters

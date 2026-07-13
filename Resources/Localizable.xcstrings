@@ -151,6 +151,16 @@
         }
       }
     },
+    "Datum": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基準面"
+          }
+        }
+      }
+    },
     "Delete": {
       "localizations": {
         "ja": {
@@ -247,6 +257,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "満月"
+          }
+        }
+      }
+    },
+    "Heights are measured from mean sea level (MSL). A negative height simply means the water is below the local average — normal around low water.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "潮位は平均海面(MSL)からの高さです。マイナスは平均海面より下という意味で、干潮前後では正常な値です。"
           }
         }
       }
@@ -557,6 +577,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "保存"
+          }
+        }
+      }
+    },
+    "Seabed Depth": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水深(海底まで)"
           }
         }
       }

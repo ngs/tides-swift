@@ -291,6 +291,38 @@ struct EditLocationViewModelTests {
         #expect(viewModel.canSave)
     }
 
+    /// The edit map has the same zoom controls as the picker, clamped to the
+    /// same range.
+    @Test
+    func zoomControlsScaleTheEditMapWithinLimits() throws {
+        let location = try makeSavedLocation()
+        let viewModel = EditLocationViewModel(
+            location: location,
+            client: StubAPIClient(result: .success(makeParameters()))
+        )
+
+        // Without any camera change yet, zooming starts from the default span.
+        viewModel.zoomIn()
+        #expect(viewModel.pendingCamera?.spanDegrees == EditLocationViewModel.defaultSpanDegrees / 2)
+        viewModel.consumePendingCamera()
+
+        viewModel.mapCameraChanged(
+            to: MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: 35, longitude: 139),
+                span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0)
+            )
+        )
+        viewModel.zoomOut()
+        #expect(viewModel.pendingCamera?.spanDegrees == 2.0)
+        viewModel.consumePendingCamera()
+
+        for _ in 0..<20 {
+            viewModel.zoomIn()
+            viewModel.consumePendingCamera()
+        }
+        #expect(viewModel.visibleRegion?.span.latitudeDelta == EditLocationViewModel.minimumSpanDegrees)
+    }
+
     @Test
     func mapTapUpdatesTheCoordinateFields() throws {
         let location = try makeSavedLocation()

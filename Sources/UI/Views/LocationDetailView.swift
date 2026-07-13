@@ -84,9 +84,23 @@ private struct LocationDetailContentView: View {
                     Text(String(format: "%.4f, %.4f", location.latitude, location.longitude))
                         .monospacedDigit()
                 }
+                LabeledContent("Datum") {
+                    Text(viewModel.parameters.datum)
+                }
+                if let depth = viewModel.parameters.seabedDepthMeters {
+                    LabeledContent("Seabed Depth") {
+                        Text(heightText(depth))
+                            .monospacedDigit()
+                    }
+                }
                 LabeledContent("Fetched") {
                     Text(location.fetchedAt, format: .dateTime)
                 }
+            } footer: {
+                Text(
+                    "Heights are measured from mean sea level (MSL). A negative height simply means the water is below the local average — normal around low water."
+                )
+                .font(.caption)
             }
         }
         .navigationTitle(location.name)

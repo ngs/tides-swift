@@ -164,6 +164,40 @@ struct EditLocationView: View {
                 guard let coordinate = proxy.convert(point, from: .local) else { return }
                 viewModel.select(coordinate: coordinate)
             }
+            .onMapCameraChange(frequency: .onEnd) { context in
+                viewModel.mapCameraChanged(to: context.region)
+            }
+            .onChange(of: viewModel.pendingCamera) { _, target in
+                guard let target else { return }
+                withAnimation {
+                    cameraPosition = .region(target.region)
+                }
+                viewModel.consumePendingCamera()
+            }
+            // Bottom-leading keeps the stack clear of the system map controls.
+            .overlay(alignment: .bottomLeading) {
+                zoomControls
+                    .padding(10)
+            }
         }
+    }
+
+    private var zoomControls: some View {
+        VStack(spacing: 0) {
+            Button("Zoom In", systemImage: "plus") {
+                viewModel.zoomIn()
+            }
+            .frame(width: 30, height: 30)
+            Divider()
+                .frame(width: 30)
+            Button("Zoom Out", systemImage: "minus") {
+                viewModel.zoomOut()
+            }
+            .frame(width: 30, height: 30)
+        }
+        .labelStyle(.iconOnly)
+        .buttonStyle(.plain)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .shadow(radius: 2)
     }
 }
