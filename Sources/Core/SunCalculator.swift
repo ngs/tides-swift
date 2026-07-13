@@ -40,7 +40,13 @@ public enum SunCalculator {
         longitude: Double,
         calendar: Calendar = .current
     ) -> SolarDay {
-        let localNoon = calendar.startOfDay(for: date).addingTimeInterval(12 * 3_600)
+        // The midpoint of the civil day, not startOfDay + 12h: on daylight
+        // saving transition days the day is 23 or 25 hours long, and a fixed
+        // offset would drift the transit estimate away from local noon.
+        let dayStart = calendar.startOfDay(for: date)
+        let nextDayStart = calendar.date(byAdding: .day, value: 1, to: dayStart)
+            ?? dayStart.addingTimeInterval(86_400)
+        let localNoon = dayStart.addingTimeInterval(nextDayStart.timeIntervalSince(dayStart) / 2)
         let noon = transit(near: localNoon, longitude: longitude)
 
         func halfDaySeconds(at estimate: Date) -> Double? {

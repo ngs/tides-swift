@@ -244,6 +244,7 @@ private struct LocationDetailContentView: View {
                         .foregroundStyle(.orange)
                 }
                 .accessibilityLabel(Text("Sunrise"))
+                .accessibilityValue(Text(sunrise, format: .dateTime.hour().minute()))
                 Spacer()
                 Label {
                     Text(sunset, format: .dateTime.hour().minute())
@@ -252,6 +253,7 @@ private struct LocationDetailContentView: View {
                         .foregroundStyle(.indigo)
                 }
                 .accessibilityLabel(Text("Sunset"))
+                .accessibilityValue(Text(sunset, format: .dateTime.hour().minute()))
             }
             .monospacedDigit()
             .foregroundStyle(.secondary)
