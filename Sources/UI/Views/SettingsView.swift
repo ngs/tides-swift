@@ -70,8 +70,17 @@ public struct SettingsView: View {
             } header: {
                 Text("About")
             } footer: {
-                Text("Tide predictions are computed offline from the FES2014/2022 tidal model.")
-                    .font(.caption)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Tide predictions are computed offline from the FES2014/2022 tidal model.")
+                    // Prescribed word for word by clause 5.2 of the License to Use
+                    // AVISO+ Products, which the FES tidal model ships under: every
+                    // product derived from it must carry this exact sentence. It is
+                    // a credit line, not UI copy — a translation or a paraphrase
+                    // does not satisfy the clause — so it stays out of the String
+                    // Catalog and reads the same in every locale.
+                    Text(verbatim: "Generated using AVISO+ Products")
+                }
+                .font(.caption)
             }
         }
         #if os(macOS)
