@@ -5,7 +5,7 @@ public enum TideDatum: String, CaseIterable, Codable, Sendable {
     /// Mean sea level: the datum the harmonic parameters themselves use
     /// (`msl_m` plus the harmonic sum). Heights go negative around low water.
     case meanSeaLevel = "msl"
-    /// Chart datum (Z0, 基本水準面 / approximate lowest low water). It lies
+    /// Chart datum (Z0, approximate lowest low water). It lies
     /// `HarmonicParameters.chartDatumOffsetMeters` *below* mean sea level, so
     /// heights measured from it are almost always positive. This is the datum
     /// used by the Japanese tide tables (JMA / Japan Coast Guard).

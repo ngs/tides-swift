@@ -1,1 +1,1 @@
-使用していない資材を全て削除し、必要に応じて README.md を更新してください。
+Delete every unused asset and source file, updating README.md if that changes what it documents.
