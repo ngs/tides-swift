@@ -25,9 +25,18 @@ let iOSEntitlementOverrides: SettingsDictionary = [
 
 /// visionOS requires the layered app icon (a solid image stack); the flat
 /// AppIcon set serves iOS and macOS.
+///
+/// TIDES_BUNDLE_NAME feeds CFBundleName. On the iOS App Store the plain
+/// "Tides" is already taken by another app and App Store Connect rejects the
+/// binary during processing (ITMS-90129), so iOS uses the full App Store
+/// Connect app name. The home screen label stays "Tides" via
+/// CFBundleDisplayName; macOS keeps the short name for the app menu.
 let appTargetOverrides: SettingsDictionary = iOSEntitlementOverrides.merging([
     "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xros*]": "AppIconVision",
-    "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xrsimulator*]": "AppIconVision"
+    "ASSETCATALOG_COMPILER_APPICON_NAME[sdk=xrsimulator*]": "AppIconVision",
+    "TIDES_BUNDLE_NAME": "Tides",
+    "TIDES_BUNDLE_NAME[sdk=iphoneos*]": "Tides - Simple Tide Chart",
+    "TIDES_BUNDLE_NAME[sdk=iphonesimulator*]": "Tides - Simple Tide Chart"
 ]) { _, new in new }
 
 let project = Project(
@@ -65,6 +74,8 @@ let project = Project(
             ),
             infoPlist: .extendingDefault(with: [
                 "ITSAppUsesNonExemptEncryption": .boolean(false),
+                "CFBundleName": .string("$(TIDES_BUNDLE_NAME)"),
+                "CFBundleDisplayName": .string("Tides"),
                 "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
                 "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
                 "NSHumanReadableCopyright": .string(copyright),
