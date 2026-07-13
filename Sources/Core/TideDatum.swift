@@ -34,6 +34,9 @@ public enum TidesAppGroup {
     /// One shared instance: `@AppStorage` observes the store object it is given,
     /// so every target must bind to the same one. `UserDefaults` is thread-safe,
     /// hence `nonisolated(unsafe)`.
+    // The SwiftLint build CI runs cannot parse `nonisolated(unsafe)` and
+    // misreports the modifier order.
+    // swiftlint:disable:next modifier_order
     nonisolated(unsafe) public static let defaults = UserDefaults(suiteName: identifier) ?? .standard
 }
 
