@@ -90,11 +90,14 @@ public final class TideDatumSync {
         defaults.set(raw, forKey: key)
     }
 
-    /// Local → iCloud. Never clears the iCloud value: the local suite is
-    /// only unset before the user has ever picked a datum.
+    /// Local → iCloud, dropping values that do not decode to a datum so a
+    /// corrupted local suite cannot pollute the shared store. Never clears
+    /// the iCloud value: the local suite is only unset before the user has
+    /// ever picked a datum.
     func pushToICloud() {
         guard
             let raw = defaults.string(forKey: key),
+            TideDatum(rawValue: raw) != nil,
             raw != ubiquitous.string(forKey: key)
         else { return }
         ubiquitous.set(raw, forKey: key)

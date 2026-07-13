@@ -94,6 +94,18 @@ struct TideDatumSyncTests {
         #expect(store.storage[key] == TideDatum.chartDatum.rawValue)
     }
 
+    @Test
+    func garbageInTheLocalSuiteIsNotPushed() throws {
+        let store = FakeUbiquitousStore()
+        let defaults = try makeDefaults()
+        let sync = TideDatumSync(ubiquitous: store, defaults: defaults, key: key)
+        sync.start()
+
+        defaults.set("not-a-datum", forKey: key)
+
+        #expect(store.storage[key] == nil)
+    }
+
     /// The two observers must not feed each other: a pull writes the same
     /// value back, which the push observer sees and drops as identical.
     @Test
