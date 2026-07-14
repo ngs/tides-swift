@@ -74,6 +74,35 @@ jobs:
             echo "should_deploy=false" >> $GITHUB_OUTPUT
           fi
 
+  validate-cloudkit-schema:
+    # TestFlight/App Store builds use the Production CloudKit environment,
+    # where record types are never auto-created: shipping a model change
+    # without deploying the schema breaks sync silently. Fail the release
+    # when Production drifts from the committed snapshot.
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.0
+
+      - name: Select Xcode 26
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE_PATH" ]; then
+            echo "Error: Xcode 26.x not found"; ls -la /Applications | grep Xcode; exit 1
+          fi
+          echo "Using $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
+
+      - name: Check Production schema against CloudKit/schema.ckdb
+        env:
+          CLOUDKIT_MANAGEMENT_TOKEN: ${{ secrets.CLOUDKIT_MANAGEMENT_TOKEN }}
+        run: |
+          if [ -z "$CLOUDKIT_MANAGEMENT_TOKEN" ]; then
+            echo "::warning::CLOUDKIT_MANAGEMENT_TOKEN is not set; skipping the CloudKit schema check."
+            exit 0
+          fi
+          Scripts/cloudkit-schema.sh check
+
   determine-platforms:
     # Determine which platforms to build based on the trigger
     runs-on: ubuntu-latest
@@ -105,9 +134,10 @@ jobs:
           fi
 
   release:
-    needs: [check-ci-status, determine-platforms]
+    needs: [check-ci-status, determine-platforms, validate-cloudkit-schema]
     if: |
       always() &&
+      needs.validate-cloudkit-schema.result == 'success' &&
       (
         (github.event_name == 'workflow_dispatch') ||
         (github.event_name == 'push') ||
@@ -136,7 +166,7 @@ jobs:
           sudo xcode-select -s "$XCODE_PATH"
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.316.0
+        uses: ruby/setup-ruby@v1.317.0
         with:
           bundler-cache: true
 
