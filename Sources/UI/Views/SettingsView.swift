@@ -31,11 +31,6 @@ public struct SettingsView: View {
                     urlString: "https://github.com/ngs/tides-swift/issues"
                 )
                 link(
-                    "Support the Developer",
-                    systemImage: "heart",
-                    urlString: "https://github.com/sponsors/ngs"
-                )
-                link(
                     "Developer's Website",
                     systemImage: "globe",
                     urlString: "https://ngs.io"
