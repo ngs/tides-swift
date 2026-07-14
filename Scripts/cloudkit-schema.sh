@@ -27,6 +27,13 @@ cktool() {
   xcrun cktool "$@" --team-id "$TEAM_ID" --container-id "$CONTAINER_ID"
 }
 
+require_schema_file() {
+  if [ ! -f "$SCHEMA_FILE" ]; then
+    echo "error: $SCHEMA_FILE does not exist; run '$0 export' and commit it." >&2
+    exit 1
+  fi
+}
+
 case "${1:-}" in
   export)
     mkdir -p "$(dirname "$SCHEMA_FILE")"
@@ -34,10 +41,7 @@ case "${1:-}" in
     echo "Wrote $SCHEMA_FILE (Development environment). Review the diff and commit it."
     ;;
   check)
-    if [ ! -f "$SCHEMA_FILE" ]; then
-      echo "error: $SCHEMA_FILE does not exist; run '$0 export' and commit it." >&2
-      exit 1
-    fi
+    require_schema_file
     production="$(mktemp)"
     trap 'rm -f "$production"' EXIT
     cktool export-schema --environment production --output-file "$production"
@@ -54,6 +58,8 @@ MSG
     echo "Production schema matches CloudKit/schema.ckdb."
     ;;
   deploy)
+    require_schema_file
+    # --validate validates the file before importing; the import still runs.
     cktool import-schema --environment production --validate --file "$SCHEMA_FILE"
     echo "Deployed $SCHEMA_FILE to Production."
     ;;
