@@ -164,18 +164,26 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
 
     /// Returns parameters normalized to the current datum contract.
     ///
-    /// Non-legacy parameters are returned unchanged. For legacy data the stray
-    /// `msl_m` intercept is reinterpreted as the chart datum offset and `msl_m`
-    /// is reset to 0: near JMA stations that intercept is the published DL
-    /// basis, which is exactly what the redesigned server now returns as
-    /// `chart_datum_offset_m`, so this both removes the old double-counting
-    /// (`msl_m` + local amplitude sum) and reproduces the new value closely.
-    /// Offshore points get an approximate offset until their parameters are
-    /// re-fetched (which happens when the location is moved or re-added).
+    /// Non-legacy parameters are returned unchanged. For legacy data `msl_m` is
+    /// reset to 0 — the current contract references heights to mean sea level —
+    /// and the intercept it carried is reinterpreted by sign:
+    ///
+    /// - A *positive* intercept is the published DL basis near a JMA station,
+    ///   which is exactly what the redesigned server now returns as
+    ///   `chart_datum_offset_m`, so it becomes the chart datum offset. This
+    ///   removes the old double-counting (`msl_m` + local amplitude sum) and
+    ///   reproduces the new value closely.
+    /// - A *negative* intercept is an offshore mean-dynamic-topography term, not
+    ///   a datum: adopting it would put Z0 at (or above) mean sea level. It is
+    ///   dropped, leaving the offset to the local amplitude sum that these
+    ///   parameters used before the redesign.
+    ///
+    /// Either way the result is approximate until the parameters are re-fetched
+    /// (which happens when the location is moved or re-added).
     public func migratedToCurrentDatumContract() -> HarmonicParameters {
         guard isLegacyDatumFormat else { return self }
         var migrated = self
-        migrated.serverChartDatumOffsetMeters = max(0, mslMeters)
+        migrated.serverChartDatumOffsetMeters = mslMeters > 0 ? mslMeters : nil
         migrated.mslMeters = 0
         return migrated
     }

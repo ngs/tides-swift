@@ -148,6 +148,29 @@ struct TideDatumTests {
         #expect(migrated.migratedToCurrentDatumContract() == migrated)
     }
 
+    /// Offshore legacy data carries a negative `msl_m` (a mean-dynamic-topography
+    /// term, not a datum). Adopting it as the offset would collapse Z0 onto mean
+    /// sea level, so it is dropped and the local amplitude sum keeps defining Z0.
+    @Test
+    func legacyNegativeInterceptFallsBackToTheLocalSum() {
+        let legacy = makeParameters(
+            mslMeters: -0.079,
+            amplitudes: ["M2": 0.55, "S2": 0.24, "K1": 0.21, "O1": 0.17]
+        )
+        #expect(legacy.isLegacyDatumFormat)
+
+        let migrated = legacy.migratedToCurrentDatumContract()
+        #expect(migrated.mslMeters == 0)
+        #expect(migrated.serverChartDatumOffsetMeters == nil)
+        #expect(abs(migrated.chartDatumOffsetMeters - 1.17) < 1e-9)
+        #expect(migrated.chartDatumOffsetMeters == migrated.localChartDatumOffsetMeters)
+        #expect(migrated.isLegacyDatumFormat == false)
+        #expect(migrated.constituents == legacy.constituents)
+
+        // Migration is idempotent.
+        #expect(migrated.migratedToCurrentDatumContract() == migrated)
+    }
+
     /// Z0 lies below MSL, so switching to it raises every height by exactly the
     /// offset — the shape of the curve is untouched.
     @Test
