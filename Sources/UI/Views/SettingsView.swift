@@ -1,14 +1,22 @@
+import SwiftData
 import SwiftUI
 import TidesCore
+import TidesPlatform
 
-/// App-wide settings: the datum heights are measured from, support links and
-/// app information. Presented as a sheet from the sidebar on iOS and
-/// visionOS, and as the standard Settings scene (⌘,) on macOS.
+/// App-wide settings: the datum heights are measured from, a refresh for the
+/// offline tide parameters, support links and app information. Presented as a
+/// sheet from the sidebar on iOS and visionOS, and as the standard Settings
+/// scene (⌘,) on macOS.
 public struct SettingsView: View {
     @AppStorage(TideDatumSettings.storageKey, store: TideDatumSettings.defaults)
     private var datum: TideDatum = TideDatumSettings.defaultDatum
+    @Query(sort: [SortDescriptor(\SavedLocation.sortOrder), SortDescriptor(\SavedLocation.createdAt)])
+    private var locations: [SavedLocation]
+    @State private var refresh: ParametersRefreshViewModel
 
-    public init() {}
+    public init(client: any TidesAPIClientProtocol = TidesAPIClient()) {
+        _refresh = State(initialValue: ParametersRefreshViewModel(client: client))
+    }
 
     public var body: some View {
         Form {
@@ -21,6 +29,15 @@ public struct SettingsView: View {
                 Text("Datum")
             } footer: {
                 Text(datum.explanation)
+                    .font(.caption)
+            }
+
+            Section {
+                refreshRow
+            } header: {
+                Text("Tide Parameters")
+            } footer: {
+                Text("Downloads the harmonic parameters of every saved location again. They are fetched once when a location is added, so a refresh is what picks up a later improvement to the tidal model.")
                     .font(.caption)
             }
 
@@ -83,6 +100,41 @@ public struct SettingsView: View {
         .frame(width: 440)
         .fixedSize(horizontal: false, vertical: true)
         #endif
+        .alert(
+            "Error",
+            isPresented: Binding(
+                get: { refresh.errorMessage != nil },
+                set: { if !$0 { refresh.errorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(refresh.errorMessage ?? "")
+        }
+    }
+
+    /// The refresh button, with the count of locations already done alongside
+    /// it: the walk is serial and a slow network makes it a visible wait.
+    private var refreshRow: some View {
+        Button {
+            Task {
+                await refresh.refresh(locations)
+            }
+        } label: {
+            HStack {
+                Label("Refresh All Parameters", systemImage: "arrow.clockwise")
+                if let progress = refresh.progress {
+                    Spacer()
+                    Text("\(progress.completed) of \(progress.total)")
+                        .font(.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                    ProgressView()
+                        .controlSize(.small)
+                }
+            }
+        }
+        .disabled(locations.isEmpty || refresh.isRefreshing)
     }
 
     @ViewBuilder

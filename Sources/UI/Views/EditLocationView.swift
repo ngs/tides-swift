@@ -27,7 +27,7 @@ struct EditLocationView: View {
                 // round trip deserves a visible, input-blocking indicator.
                 // A rename-only save is instant and keeps just the small
                 // spinner in the toolbar.
-                if viewModel.isSaving && viewModel.coordinateChanged {
+                if (viewModel.isSaving && viewModel.coordinateChanged) || viewModel.isRefreshing {
                     FetchingParametersOverlay()
                 }
             }
@@ -126,9 +126,42 @@ struct EditLocationView: View {
             } footer: {
                 footer
             }
+
+            Section {
+                LabeledContent("Fetched") {
+                    Text(viewModel.location.fetchedAt, format: .dateTime)
+                        .monospacedDigit()
+                }
+                refreshButton
+            } header: {
+                Text("Tide Parameters")
+            } footer: {
+                Text("Downloads the harmonic parameters for this location again, picking up any later improvement to the tidal model.")
+                    .font(.caption)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
+    }
+
+    @ViewBuilder private var refreshButton: some View {
+        Button {
+            Task {
+                await viewModel.refreshParameters()
+            }
+        } label: {
+            HStack {
+                Label("Refresh Parameters", systemImage: "arrow.clockwise")
+                if viewModel.isRefreshing {
+                    Spacer()
+                    ProgressView()
+                        .controlSize(.small)
+                }
+            }
+        }
+        .disabled(!viewModel.canRefreshParameters)
     }
 
     @ViewBuilder private var footer: some View {

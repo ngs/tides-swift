@@ -142,9 +142,20 @@ public final class SavedLocation {
         parameters newParameters: HarmonicParameters,
         fetchedAt newFetchedAt: Date = .now
     ) throws {
-        parametersJSON = try Self.encode(newParameters)
+        try updateParameters(newParameters, fetchedAt: newFetchedAt)
         latitude = newLatitude
         longitude = newLongitude
+    }
+
+    /// Replaces the parameters with a freshly downloaded copy for the same
+    /// coordinate. Used to pick up server-side improvements — a new tidal
+    /// model, a nearby harmonic station — without moving or re-adding the
+    /// location.
+    public func updateParameters(
+        _ newParameters: HarmonicParameters,
+        fetchedAt newFetchedAt: Date = .now
+    ) throws {
+        parametersJSON = try Self.encode(newParameters)
         fetchedAt = newFetchedAt
     }
 }
