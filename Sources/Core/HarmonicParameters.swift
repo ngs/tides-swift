@@ -59,8 +59,18 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
     public var source: String
     /// Vertical datum name, e.g. "MSL".
     public var datum: String
-    /// Constant term in meters added to the harmonic sum.
+    /// Constant term in meters added to the harmonic sum. Under the current
+    /// API contract this is always 0 (heights are referenced to mean sea
+    /// level); the field is kept so pre-redesign responses still decode.
     public var mslMeters: Double
+    /// How far chart datum (Z0) lies *below* mean sea level, in meters
+    /// (non-negative), as computed by the server: the JMA fit intercept at
+    /// stations that have one, otherwise `Σ(H_M2 + H_S2 + H_K1 + H_O1)`.
+    ///
+    /// `nil` when the server did not supply it — a pre-redesign response, or a
+    /// source that omits the field. Callers read `chartDatumOffsetMeters`,
+    /// which falls back to the local amplitude sum when this is absent.
+    public var serverChartDatumOffsetMeters: Double?
     /// Seabed depth in meters (positive down), if bathymetry is available.
     public var seabedDepthMeters: Double?
     /// Reference epoch the phase lags are expressed against.
@@ -74,6 +84,7 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
         source: String,
         datum: String,
         mslMeters: Double,
+        serverChartDatumOffsetMeters: Double? = nil,
         seabedDepthMeters: Double?,
         referenceTime: Date,
         constituents: [Constituent]
@@ -83,6 +94,7 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
         self.source = source
         self.datum = datum
         self.mslMeters = mslMeters
+        self.serverChartDatumOffsetMeters = serverChartDatumOffsetMeters
         self.seabedDepthMeters = seabedDepthMeters
         self.referenceTime = referenceTime
         self.constituents = constituents
@@ -94,6 +106,7 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
         case source
         case datum
         case mslMeters = "msl_m"
+        case serverChartDatumOffsetMeters = "chart_datum_offset_m"
         case seabedDepthMeters = "seabed_depth_m"
         case referenceTime = "reference_time"
         case constituents
@@ -106,17 +119,73 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
     /// How far chart datum (Z0) lies *below* mean sea level, in meters
     /// (non-negative).
     ///
-    /// The Japanese convention (JMA / Japan Coast Guard) defines
-    /// `Z0 = MSL − (H_M2 + H_S2 + H_K1 + H_O1)`, so this returns the amplitude
-    /// sum of those four constituents. Constituents missing from the parameters
-    /// simply contribute nothing to the sum.
+    /// Prefers the server-computed `serverChartDatumOffsetMeters` when present
+    /// (the JMA fit intercept, or the server's own amplitude sum), and falls
+    /// back to `localChartDatumOffsetMeters` — the classic Japanese definition
+    /// `Z0 = MSL − (H_M2 + H_S2 + H_K1 + H_O1)` — when the server did not
+    /// supply a value.
     ///
     /// A height measured from Z0 is therefore the MSL-referenced height *plus*
     /// this offset.
     public var chartDatumOffsetMeters: Double {
+        if let server = serverChartDatumOffsetMeters {
+            // The contract guarantees a non-negative value; clamp defensively
+            // so a bad value can never put Z0 above mean sea level.
+            return max(0, server)
+        }
+        return localChartDatumOffsetMeters
+    }
+
+    /// Chart datum offset computed locally from the harmonic constituents:
+    /// `Σ(H_M2 + H_S2 + H_K1 + H_O1)`, the Japanese convention (JMA / Japan
+    /// Coast Guard). Constituents missing from the parameters simply contribute
+    /// nothing to the sum. Used as the fallback when the server did not supply
+    /// `serverChartDatumOffsetMeters`.
+    public var localChartDatumOffsetMeters: Double {
         constituents
             .filter { Self.chartDatumConstituents.contains($0.name.uppercased()) }
             .reduce(0) { $0 + abs($1.amplitudeMeters) }
+    }
+
+    /// True for parameters saved under the pre-redesign API contract, where
+    /// `msl_m` carried a datum intercept (the DL basis near JMA stations, or a
+    /// mean-dynamic-topography term offshore) and `chart_datum_offset_m` did
+    /// not exist yet.
+    ///
+    /// Legacy data is identified without a persisted schema flag: a non-zero
+    /// `msl_m` with no offset field is the signature of the old contract. The
+    /// offset field itself is optional, so parameters that omit it while
+    /// reporting `msl_m == 0` carry no stray intercept to reinterpret and are
+    /// left alone — `chartDatumOffsetMeters` already falls back to the local
+    /// amplitude sum for them.
+    public var isLegacyDatumFormat: Bool {
+        serverChartDatumOffsetMeters == nil && mslMeters != 0
+    }
+
+    /// Returns parameters normalized to the current datum contract.
+    ///
+    /// Non-legacy parameters are returned unchanged. For legacy data `msl_m` is
+    /// reset to 0 — the current contract references heights to mean sea level —
+    /// and the intercept it carried is reinterpreted by sign:
+    ///
+    /// - A *positive* intercept is the published DL basis near a JMA station,
+    ///   which is exactly what the redesigned server now returns as
+    ///   `chart_datum_offset_m`, so it becomes the chart datum offset. This
+    ///   removes the old double-counting (`msl_m` + local amplitude sum) and
+    ///   reproduces the new value closely.
+    /// - A *negative* intercept is an offshore mean-dynamic-topography term, not
+    ///   a datum: adopting it would put Z0 at (or above) mean sea level. It is
+    ///   dropped, leaving the offset to the local amplitude sum that these
+    ///   parameters used before the redesign.
+    ///
+    /// Either way the result is approximate until the parameters are re-fetched
+    /// (which happens when the location is moved or re-added).
+    public func migratedToCurrentDatumContract() -> HarmonicParameters {
+        guard isLegacyDatumFormat else { return self }
+        var migrated = self
+        migrated.serverChartDatumOffsetMeters = mslMeters > 0 ? mslMeters : nil
+        migrated.mslMeters = 0
+        return migrated
     }
 
     /// A `JSONDecoder` configured for the tides-api response format

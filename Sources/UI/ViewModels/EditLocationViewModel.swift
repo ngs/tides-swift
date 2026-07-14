@@ -75,7 +75,19 @@ public final class EditLocationViewModel {
     }
 
     public var canSave: Bool {
-        !isSaving && !trimmedName.isEmpty && enteredCoordinate != nil
+        !isSaving && !isRefreshing && !trimmedName.isEmpty && enteredCoordinate != nil
+    }
+
+    /// True while the parameters are being re-downloaded for the saved
+    /// coordinate (`refreshParameters()`), as opposed to the download a move
+    /// triggers on save.
+    public private(set) var isRefreshing = false
+
+    /// A refresh re-downloads the parameters of the location *as saved*, so it
+    /// is offered only while the pin has not been moved: saving a moved pin
+    /// downloads parameters for the new coordinate anyway.
+    public var canRefreshParameters: Bool {
+        !isSaving && !isRefreshing && !coordinateChanged
     }
 
     /// Span limits for the zoom controls, matching the add-location map.
@@ -205,5 +217,34 @@ public final class EditLocationViewModel {
 
         location.rename(to: trimmedName)
         return true
+    }
+
+    /// Re-downloads the harmonic parameters for the coordinate the location is
+    /// saved at, without moving or renaming it. The point of it is to pick up a
+    /// server-side improvement — a new tidal model, a nearby harmonic station —
+    /// for a location that was added long ago.
+    ///
+    /// A failed fetch leaves the stored parameters alone: they are what keeps
+    /// the location predicting offline.
+    ///
+    /// Returns `true` when the parameters were replaced.
+    @discardableResult
+    public func refreshParameters() async -> Bool {
+        guard canRefreshParameters else { return false }
+        isRefreshing = true
+        errorMessage = nil
+        defer { isRefreshing = false }
+
+        do {
+            let parameters = try await client.fetchParameters(
+                latitude: location.latitude,
+                longitude: location.longitude
+            )
+            try location.updateParameters(parameters)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 }

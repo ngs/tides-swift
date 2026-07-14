@@ -34,13 +34,17 @@ private struct StubPlaceSearch: PlaceSearching {
     }
 }
 
-private func makeParameters(mslMeters: Double = 0) -> HarmonicParameters {
+private func makeParameters(
+    mslMeters: Double = 0,
+    serverChartDatumOffsetMeters: Double? = nil
+) -> HarmonicParameters {
     HarmonicParameters(
         location: .init(lat: 35.0, lon: 139.75),
         stationID: nil,
         source: "fes",
         datum: "MSL",
         mslMeters: mslMeters,
+        serverChartDatumOffsetMeters: serverChartDatumOffsetMeters,
         seabedDepthMeters: nil,
         referenceTime: Date(timeIntervalSince1970: 1_325_376_000),
         constituents: [
@@ -215,7 +219,9 @@ struct EditLocationViewModelTests {
     @Test
     func movingRefetchesParametersAndUpdatesCoordinates() async throws {
         let location = try makeSavedLocation()
-        let updated = makeParameters(mslMeters: 1.25)
+        // Current-contract parameters keep msl_m at 0; the refetched set is
+        // distinguished by its server-supplied chart datum offset.
+        let updated = makeParameters(serverChartDatumOffsetMeters: 1.25)
         let viewModel = EditLocationViewModel(
             location: location,
             client: StubAPIClient(result: .success(updated))
@@ -336,6 +342,73 @@ struct EditLocationViewModelTests {
             viewModel.consumePendingCamera()
         }
         #expect(viewModel.visibleRegion?.span.latitudeDelta == EditLocationViewModel.minimumSpanDegrees)
+    }
+
+    /// Refreshing replaces the parameters of the location as saved: the
+    /// coordinate, the name and the fetch date of the request are all the
+    /// location's own.
+    @Test
+    func refreshingReplacesTheParametersOfTheSavedCoordinate() async throws {
+        let location = try makeSavedLocation()
+        let fetchedAt = location.fetchedAt
+        let updated = makeParameters(serverChartDatumOffsetMeters: 1.25)
+        let viewModel = EditLocationViewModel(
+            location: location,
+            client: StubAPIClient(result: .success(updated))
+        )
+
+        #expect(viewModel.canRefreshParameters)
+        let refreshed = await viewModel.refreshParameters()
+
+        #expect(refreshed)
+        #expect(location.parameters == updated)
+        #expect(location.latitude == 35.0)
+        #expect(location.longitude == 139.75)
+        #expect(location.name == "Old Name")
+        #expect(location.fetchedAt > fetchedAt)
+        #expect(viewModel.errorMessage == nil)
+        #expect(!viewModel.isRefreshing)
+    }
+
+    /// A failed refresh must leave the offline parameters in place — stale data
+    /// still predicts, missing data does not.
+    @Test
+    func failedRefreshKeepsTheStoredParameters() async throws {
+        let location = try makeSavedLocation()
+        let original = location.parameters
+        let viewModel = EditLocationViewModel(
+            location: location,
+            client: StubAPIClient(
+                result: .failure(TidesAPIError(message: "offline", statusCode: 503))
+            )
+        )
+
+        let refreshed = await viewModel.refreshParameters()
+
+        #expect(!refreshed)
+        #expect(viewModel.errorMessage == "offline")
+        #expect(location.parameters == original)
+    }
+
+    /// A moved pin gets its parameters from the save, so the refresh — which
+    /// fetches the *saved* coordinate — is withheld until the move is applied.
+    @Test
+    func refreshIsUnavailableWhileThePinHasMoved() async throws {
+        let location = try makeSavedLocation()
+        let viewModel = EditLocationViewModel(
+            location: location,
+            client: StubAPIClient(
+                result: .failure(TidesAPIError(message: "must not be called", statusCode: 500))
+            )
+        )
+
+        viewModel.latitudeText = "34.5"
+        #expect(viewModel.coordinateChanged)
+        #expect(!viewModel.canRefreshParameters)
+
+        let refreshed = await viewModel.refreshParameters()
+        #expect(!refreshed)
+        #expect(viewModel.errorMessage == nil)
     }
 
     @Test

@@ -83,6 +83,94 @@ struct TideDatumTests {
         #expect(abs(parameters.chartDatumOffsetMeters - (0.55 + 0.17)) < 1e-12)
     }
 
+    /// The server-supplied offset overrides the local amplitude sum, so a
+    /// station whose published Z0 differs from `ΣH₄` reports the published one.
+    @Test
+    func chartDatumOffsetPrefersServerValue() {
+        var parameters = makeTypicalParameters()
+        parameters.serverChartDatumOffsetMeters = 1.05
+        // Local sum is 0.55 + 0.24 + 0.21 + 0.17 = 1.17; the server value wins.
+        #expect(parameters.chartDatumOffsetMeters == 1.05)
+        #expect(abs(parameters.localChartDatumOffsetMeters - 1.17) < 1e-12)
+
+        // A predictor built on it shifts by the server offset, not the sum.
+        let msl = TidePredictor(parameters: parameters, datum: .meanSeaLevel)
+        let chart = TidePredictor(parameters: parameters, datum: .chartDatum)
+        let time = Date(timeIntervalSince1970: 1_752_000_000)
+        #expect(abs((chart.height(at: time) - msl.height(at: time)) - 1.05) < 1e-9)
+    }
+
+    /// A negative server value can never lift Z0 above mean sea level.
+    @Test
+    func chartDatumOffsetClampsNegativeServerValue() {
+        var parameters = makeTypicalParameters()
+        parameters.serverChartDatumOffsetMeters = -0.4
+        #expect(parameters.chartDatumOffsetMeters == 0)
+    }
+
+    // MARK: - Legacy cache migration
+
+    /// Current-contract parameters (`msl_m == 0`, offset present, or offset
+    /// absent with `msl_m == 0`) are not legacy and pass through unchanged.
+    @Test
+    func currentContractParametersAreNotLegacy() {
+        var withServerOffset = makeParameters(mslMeters: 0, amplitudes: ["M2": 0.55])
+        withServerOffset.serverChartDatumOffsetMeters = 0.5
+        #expect(withServerOffset.isLegacyDatumFormat == false)
+        #expect(withServerOffset.migratedToCurrentDatumContract() == withServerOffset)
+
+        let mslZeroNoOffset = makeParameters(mslMeters: 0, amplitudes: ["M2": 0.55])
+        #expect(mslZeroNoOffset.isLegacyDatumFormat == false)
+        #expect(mslZeroNoOffset.migratedToCurrentDatumContract() == mslZeroNoOffset)
+    }
+
+    /// Pre-redesign data (a non-zero `msl_m` intercept and no server offset) is
+    /// normalized: the intercept becomes the chart datum offset and `msl_m`
+    /// resets to 0, so the old `msl_m + ΣH₄` double-counting disappears.
+    @Test
+    func legacyParametersAreMigratedOnNormalization() {
+        let legacy = makeParameters(
+            mslMeters: 0.83,
+            amplitudes: ["M2": 0.55, "S2": 0.24, "K1": 0.21, "O1": 0.17]
+        )
+        #expect(legacy.isLegacyDatumFormat)
+
+        let migrated = legacy.migratedToCurrentDatumContract()
+        #expect(migrated.mslMeters == 0)
+        #expect(migrated.serverChartDatumOffsetMeters == 0.83)
+        // The DL intercept, not the local sum, now defines Z0.
+        #expect(migrated.chartDatumOffsetMeters == 0.83)
+        #expect(migrated.isLegacyDatumFormat == false)
+        // Constituents are untouched.
+        #expect(migrated.constituents == legacy.constituents)
+
+        // Migration is idempotent.
+        #expect(migrated.migratedToCurrentDatumContract() == migrated)
+    }
+
+    /// Offshore legacy data carries a negative `msl_m` (a mean-dynamic-topography
+    /// term, not a datum). Adopting it as the offset would collapse Z0 onto mean
+    /// sea level, so it is dropped and the local amplitude sum keeps defining Z0.
+    @Test
+    func legacyNegativeInterceptFallsBackToTheLocalSum() {
+        let legacy = makeParameters(
+            mslMeters: -0.079,
+            amplitudes: ["M2": 0.55, "S2": 0.24, "K1": 0.21, "O1": 0.17]
+        )
+        #expect(legacy.isLegacyDatumFormat)
+
+        let migrated = legacy.migratedToCurrentDatumContract()
+        #expect(migrated.mslMeters == 0)
+        #expect(migrated.serverChartDatumOffsetMeters == nil)
+        #expect(abs(migrated.chartDatumOffsetMeters - 1.17) < 1e-9)
+        #expect(migrated.chartDatumOffsetMeters == migrated.localChartDatumOffsetMeters)
+        #expect(migrated.isLegacyDatumFormat == false)
+        #expect(migrated.constituents == legacy.constituents)
+
+        // Migration is idempotent.
+        #expect(migrated.migratedToCurrentDatumContract() == migrated)
+    }
+
     /// Z0 lies below MSL, so switching to it raises every height by exactly the
     /// offset — the shape of the curve is untouched.
     @Test

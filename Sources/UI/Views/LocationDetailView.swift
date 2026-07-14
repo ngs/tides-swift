@@ -299,15 +299,13 @@ private struct CurrentTideRow: View {
             .accessibilityLabel(Text(rising ? "Rising Tide" : "Falling Tide"))
     }
 
-    /// The Moon on the centered day: icon plus lunar age, the other half of
-    /// a tide table.
+    /// The Moon on the centered day: icon, phase name and lunar age, the other
+    /// half of a tide table.
     private var moonSummary: some View {
         let moon = MoonPhase(date: centerTime)
         return HStack(spacing: 4) {
             Image(systemName: moon.phase.systemImageName)
-            Text(
-                "Moon age \(moon.ageDays, format: .number.precision(.fractionLength(1))) days"
-            )
+            moon.namedAge
         }
         .font(.caption)
         .foregroundStyle(.secondary)

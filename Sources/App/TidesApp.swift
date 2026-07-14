@@ -25,10 +25,13 @@ struct TidesApp: App {
         #endif
 
         #if os(macOS)
-        // The Mac convention: Tides > Settings… (⌘,).
+        // The Mac convention: Tides > Settings… (⌘,). The container is attached
+        // here too: this scene is not inside the WindowGroup, and settings query
+        // the saved locations to refresh their parameters.
         Settings {
             SettingsView()
         }
+        .modelContainer(TidesModelContainer.shared)
         #endif
     }
 }
