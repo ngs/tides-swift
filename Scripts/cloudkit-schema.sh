@@ -42,7 +42,7 @@ case "${1:-}" in
     ;;
   check)
     require_schema_file
-    production="$(mktemp)"
+    production="$(mktemp "${TMPDIR:-/tmp}/cloudkit-schema.XXXXXX")"
     trap 'rm -f "$production"' EXIT
     cktool export-schema --environment production --output-file "$production"
     if ! diff -u "$production" "$SCHEMA_FILE"; then
