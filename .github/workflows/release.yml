@@ -157,7 +157,7 @@ jobs:
           sudo xcode-select -s "$XCODE_PATH"
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.316.0
+        uses: ruby/setup-ruby@v1.317.0
         with:
           bundler-cache: true
 
