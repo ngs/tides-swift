@@ -15,6 +15,7 @@ struct AddLocationView: View {
     private var modelContext
     @State private var viewModel = AddLocationViewModel()
     @State private var cameraPosition: MapCameraPosition = .automatic
+    @State private var locationPermission = LocationPermission()
 
     var body: some View {
         container
@@ -183,6 +184,9 @@ struct AddLocationView: View {
             }
             .onMapCameraChange(frequency: .onEnd) { context in
                 viewModel.mapCameraChanged(to: context.region)
+            }
+            .onAppear {
+                locationPermission.requestIfNeeded()
             }
             .onChange(of: viewModel.pendingCamera) { _, target in
                 guard let target else { return }
