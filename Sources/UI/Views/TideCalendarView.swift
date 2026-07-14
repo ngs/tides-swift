@@ -175,14 +175,13 @@ struct TideCalendarView: View {
                 Image(systemName: day.moon.phase.systemImageName)
                     .font(.title3)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(moonPhaseName(day.moon.phase))
+                    day.moon.namedAge
                         .font(.subheadline)
-                    Text(
-                        "Moon age \(day.moon.ageDays, format: .number.precision(.fractionLength(1))) days · \(day.moon.illuminatedFraction, format: .percent.precision(.fractionLength(0))) lit"
-                    )
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
+                        .monospacedDigit()
+                    Text("\(day.moon.illuminatedFraction, format: .percent.precision(.fractionLength(0))) lit")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
                 }
             }
 
@@ -257,21 +256,8 @@ struct TideCalendarView: View {
         return (highs + lows).sorted { $0.time < $1.time }
     }
 
-    private func moonPhaseName(_ phase: MoonPhase.Phase) -> LocalizedStringKey {
-        switch phase {
-        case .newMoon: "New Moon"
-        case .waxingCrescent: "Waxing Crescent"
-        case .firstQuarter: "First Quarter"
-        case .waxingGibbous: "Waxing Gibbous"
-        case .fullMoon: "Full Moon"
-        case .waningGibbous: "Waning Gibbous"
-        case .lastQuarter: "Last Quarter"
-        case .waningCrescent: "Waning Crescent"
-        }
-    }
-
     private func moonAccessibilityLabel(_ moon: MoonPhase) -> Text {
-        Text(moonPhaseName(moon.phase))
+        Text(moon.phase.localizedName)
     }
 
     private func heightText(_ meters: Double) -> String {
