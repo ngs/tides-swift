@@ -107,8 +107,17 @@ public final class SavedLocation {
     }
 
     /// Decoded harmonic parameters, or `nil` if the stored JSON is corrupt.
+    ///
+    /// Parameters saved under the pre-redesign API contract are normalized on
+    /// read (`migratedToCurrentDatumContract`), so every consumer — the detail
+    /// screen, the widget and the watch app — sees a consistent datum without a
+    /// persisted schema change or a CloudKit-synced rewrite. Fresh fetches
+    /// (adding or moving a location) already carry the current contract and
+    /// pass through untouched.
     public var parameters: HarmonicParameters? {
-        try? HarmonicParameters.decoder().decode(HarmonicParameters.self, from: parametersJSON)
+        try? HarmonicParameters.decoder()
+            .decode(HarmonicParameters.self, from: parametersJSON)
+            .migratedToCurrentDatumContract()
     }
 
     /// Encodes harmonic parameters for storage in `parametersJSON`.

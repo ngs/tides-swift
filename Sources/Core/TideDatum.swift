@@ -2,12 +2,14 @@ import Foundation
 
 /// Vertical reference surface tide heights are expressed against.
 public enum TideDatum: String, CaseIterable, Codable, Sendable {
-    /// Mean sea level: the datum the harmonic parameters themselves use
-    /// (`msl_m` plus the harmonic sum). Heights go negative around low water.
+    /// Mean sea level: the datum the harmonic parameters are referenced to
+    /// (`msl_m`, always 0 under the current API contract, plus the harmonic
+    /// sum). Heights go negative around low water.
     case meanSeaLevel = "msl"
     /// Chart datum (Z0, approximate lowest low water). It lies
-    /// `HarmonicParameters.chartDatumOffsetMeters` *below* mean sea level, so
-    /// heights measured from it are almost always positive. This is the datum
+    /// `HarmonicParameters.chartDatumOffsetMeters` *below* mean sea level — the
+    /// server-supplied offset when present, otherwise the local amplitude sum —
+    /// so heights measured from it are almost always positive. This is the datum
     /// used by the Japanese tide tables (JMA / Japan Coast Guard).
     case chartDatum = "z0"
 }

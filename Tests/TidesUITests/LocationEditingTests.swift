@@ -34,13 +34,17 @@ private struct StubPlaceSearch: PlaceSearching {
     }
 }
 
-private func makeParameters(mslMeters: Double = 0) -> HarmonicParameters {
+private func makeParameters(
+    mslMeters: Double = 0,
+    serverChartDatumOffsetMeters: Double? = nil
+) -> HarmonicParameters {
     HarmonicParameters(
         location: .init(lat: 35.0, lon: 139.75),
         stationID: nil,
         source: "fes",
         datum: "MSL",
         mslMeters: mslMeters,
+        serverChartDatumOffsetMeters: serverChartDatumOffsetMeters,
         seabedDepthMeters: nil,
         referenceTime: Date(timeIntervalSince1970: 1_325_376_000),
         constituents: [
@@ -215,7 +219,9 @@ struct EditLocationViewModelTests {
     @Test
     func movingRefetchesParametersAndUpdatesCoordinates() async throws {
         let location = try makeSavedLocation()
-        let updated = makeParameters(mslMeters: 1.25)
+        // Current-contract parameters keep msl_m at 0; the refetched set is
+        // distinguished by its server-supplied chart datum offset.
+        let updated = makeParameters(serverChartDatumOffsetMeters: 1.25)
         let viewModel = EditLocationViewModel(
             location: location,
             client: StubAPIClient(result: .success(updated))
