@@ -152,9 +152,12 @@ public struct HarmonicParameters: Codable, Equatable, Sendable {
     /// mean-dynamic-topography term offshore) and `chart_datum_offset_m` did
     /// not exist yet.
     ///
-    /// Current-contract responses always report `msl_m == 0` and include the
-    /// offset field, so the two conditions together identify legacy data
-    /// without a persisted schema flag.
+    /// Legacy data is identified without a persisted schema flag: a non-zero
+    /// `msl_m` with no offset field is the signature of the old contract. The
+    /// offset field itself is optional, so parameters that omit it while
+    /// reporting `msl_m == 0` carry no stray intercept to reinterpret and are
+    /// left alone — `chartDatumOffsetMeters` already falls back to the local
+    /// amplitude sum for them.
     public var isLegacyDatumFormat: Bool {
         serverChartDatumOffsetMeters == nil && mslMeters != 0
     }
