@@ -166,7 +166,7 @@ jobs:
           sudo xcode-select -s "$XCODE_PATH"
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.317.0
+        uses: ruby/setup-ruby@v1.319.0
         with:
           bundler-cache: true
 
@@ -196,7 +196,7 @@ jobs:
             ${{ runner.os }}-certificates-
 
       - name: Install tuist (mise)
-        uses: jdx/mise-action@v4.2.0
+        uses: jdx/mise-action@v4.2.1
 
       - name: Generate Xcode project and workspace
         run: |
