@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       # With skip_pull_request, the action reports rather than opens a PR: it
       # writes the diff to the job summary and exits 1 when something is behind,
