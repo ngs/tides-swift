@@ -82,7 +82,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Select Xcode 26
         run: |
@@ -152,7 +152,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -166,7 +166,7 @@ jobs:
           sudo xcode-select -s "$XCODE_PATH"
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.317.0
+        uses: ruby/setup-ruby@v1.321.0
         with:
           bundler-cache: true
 
@@ -196,7 +196,7 @@ jobs:
             ${{ runner.os }}-certificates-
 
       - name: Install tuist (mise)
-        uses: jdx/mise-action@v4.2.0
+        uses: jdx/mise-action@v4.3.0
 
       - name: Generate Xcode project and workspace
         run: |
@@ -266,7 +266,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Get version info
         id: version
@@ -281,7 +281,7 @@ jobs:
           pattern: release-*
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3.0.2
+        uses: softprops/action-gh-release@v3.0.3
         with:
           tag_name: v${{ steps.version.outputs.version }}-${{ github.run_id }}
           name: Release v${{ steps.version.outputs.version }} (Build ${{ github.run_id }})
